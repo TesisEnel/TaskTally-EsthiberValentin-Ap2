@@ -5,23 +5,25 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "recompensa",
+    tableName = "mentor",
     foreignKeys = [
         ForeignKey(
             entity = UsuarioEntity::class,
             parentColumns = ["remoteId"],
-            childColumns = ["createdBy"],
+            childColumns = ["userId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = UserInfoEntity::class,
+            parentColumns = ["userInfoId"],
+            childColumns = ["userInfoId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class RecompensaEntity(
+data class MentorEntity(
     @PrimaryKey(autoGenerate = true)
-    val recompensaId: Int = 0,
-    val createdBy: Int,
-    val titulo: String,
-    val descripcion: String,
-    val precio: Double,
-    val isDisponible: Boolean,
-    val fechaCreacion: String
+    val mentorId: Int = 0,
+    val userId: Int,
+    val userInfoId: Int
 )

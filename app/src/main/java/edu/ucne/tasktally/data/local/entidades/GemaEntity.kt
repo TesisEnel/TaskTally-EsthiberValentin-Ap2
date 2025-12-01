@@ -5,23 +5,21 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "recompensa",
+    tableName = "gema",
     foreignKeys = [
         ForeignKey(
             entity = UsuarioEntity::class,
             parentColumns = ["remoteId"],
-            childColumns = ["createdBy"],
+            childColumns = ["userId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class RecompensaEntity(
+data class GemaEntity(
     @PrimaryKey(autoGenerate = true)
-    val recompensaId: Int = 0,
-    val createdBy: Int,
-    val titulo: String,
-    val descripcion: String,
-    val precio: Double,
-    val isDisponible: Boolean,
-    val fechaCreacion: String
+    val gemaId: Int = 0,
+    val userId: Int,
+    val userInfoId: Int?,
+    val puntosActuales: Double,
+    val puntosTotales: Double
 )
