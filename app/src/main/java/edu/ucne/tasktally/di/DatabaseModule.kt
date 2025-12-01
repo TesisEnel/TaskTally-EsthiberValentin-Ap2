@@ -9,12 +9,17 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import edu.ucne.tasktally.data.local.DAOs.EstadoDao
-import edu.ucne.tasktally.data.local.DAOs.PersonaDao
-import edu.ucne.tasktally.data.local.DAOs.PersonaRecompensaDao
+import edu.ucne.tasktally.data.local.DAOs.GemaDao
+import edu.ucne.tasktally.data.local.DAOs.GemaZonaDao
+import edu.ucne.tasktally.data.local.DAOs.MentorDao
+import edu.ucne.tasktally.data.local.DAOs.ProgresoDao
+import edu.ucne.tasktally.data.local.DAOs.RachaDao
 import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaDao
+import edu.ucne.tasktally.data.local.DAOs.TransaccionRecompensaDao
+import edu.ucne.tasktally.data.local.DAOs.UserInfoDao
 import edu.ucne.tasktally.data.local.TaskTallyDatabase
-import edu.ucne.tasktally.data.local.DAOs.UsuarioDao
+import edu.ucne.tasktally.data.local.DAOs.ZonaDao
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -33,34 +38,48 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideUsuarioDao(database: TaskTallyDatabase): UsuarioDao {
-        return database.usuarioDao()
-    }
+    fun provideEstadoDao(db: TaskTallyDatabase): EstadoDao =
+        db.estadoDao()
 
     @Provides
-    fun provideEstadoDao(database: TaskTallyDatabase): EstadoDao {
-        return database.estadoDao()
-    }
+    fun provideGemaDao(db: TaskTallyDatabase): GemaDao =
+        db.gemaDao()
 
     @Provides
-    fun providePersonaDao(database: TaskTallyDatabase): PersonaDao {
-        return database.personaDao()
-    }
+    fun provideGemaZonaDao(db: TaskTallyDatabase): GemaZonaDao =
+        db.gemaZonaDao()
 
     @Provides
-    fun provideRecompensaDao(database: TaskTallyDatabase): RecompensaDao {
-        return database.recompensaDao()
-    }
+    fun provideMentorDao(db: TaskTallyDatabase): MentorDao =
+        db.mentorDao()
 
     @Provides
-    fun provideTareaDao(database: TaskTallyDatabase): TareaDao {
-        return database.tareaDao()
-    }
+    fun provideProgresoDao(db: TaskTallyDatabase): ProgresoDao =
+        db.progresoDao()
 
     @Provides
-    fun providePersonaRecompensaDao(database: TaskTallyDatabase): PersonaRecompensaDao {
-        return database.personaRecompensaDao()
-    }
+    fun provideRachaDao(db: TaskTallyDatabase): RachaDao =
+        db.rachaDao()
+
+    @Provides
+    fun provideRecompensaDao(db: TaskTallyDatabase): RecompensaDao =
+        db.recompensaDao()
+
+    @Provides
+    fun provideTareaDao(db: TaskTallyDatabase): TareaDao =
+        db.tareaDao()
+
+    @Provides
+    fun provideTransaccionRecompensaDao(db: TaskTallyDatabase): TransaccionRecompensaDao =
+        db.transaccionRecompensaDao()
+
+    @Provides
+    fun provideUserInfoDao(db: TaskTallyDatabase): UserInfoDao =
+        db.userInfoDao()
+
+    @Provides
+    fun provideZonaDao(db: TaskTallyDatabase): ZonaDao =
+        db.zonaDao()
 
     @Provides
     @Singleton
