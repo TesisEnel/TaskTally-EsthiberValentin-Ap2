@@ -9,7 +9,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import edu.ucne.tasktally.data.remote.UsuarioApi
 import edu.ucne.tasktally.data.remote.repository.UsuariosRepositoryImpl
-import edu.ucne.tasktally.domain.repository.UsuarioRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -51,13 +50,4 @@ object ApiModule {
             .create(UsuarioApi::class.java)
 
     }
-}
-
-@InstallIn(SingletonComponent::class)
-@Module
-abstract class RepositoryModule {
-    @Binds
-    abstract fun bindUsuarioRepository(
-        usuariosRepositoryImpl: UsuariosRepositoryImpl
-    ): UsuarioRepository
 }
