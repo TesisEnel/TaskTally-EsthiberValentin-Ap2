@@ -39,7 +39,7 @@ fun TaskTallyApp() {
         Screen.CreateTarea::class.qualifiedName -> "Crear Tareas"
         Screen.CreateRecompensa::class.qualifiedName -> "Crear Recompensa"
         Screen.ListTareas::class.qualifiedName -> "Lista de Tareas"
-        Screen.ListaRecompensas::class.qualifiedName -> "Lista de Recompensas"
+        Screen.ListRecompensas::class.qualifiedName -> "Lista de Recompensas"
         else -> "TaskTally"
     }
 
@@ -50,7 +50,7 @@ fun TaskTallyApp() {
             currentRoute != Screen.CreateTarea::class.qualifiedName &&
             currentRoute != Screen.CreateRecompensa::class.qualifiedName &&
             currentRoute != Screen.ListTareas::class.qualifiedName &&
-            currentRoute != Screen.ListaRecompensas::class.qualifiedName
+            currentRoute != Screen.ListRecompensas::class.qualifiedName
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

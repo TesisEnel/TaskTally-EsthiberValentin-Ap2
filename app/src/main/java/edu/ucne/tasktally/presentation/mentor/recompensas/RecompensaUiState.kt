@@ -5,6 +5,9 @@ data class RecompensaUiState(
     val message: String? = null,
     val error: String? = null,
 
+    val recompensaId: String? = null,
+    val isEditing: Boolean = false,
+
     val titulo: String = "",
     val descripcion: String = "",
     val precio: String = "",

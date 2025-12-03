@@ -141,11 +141,11 @@ fun ListTareaBody(
                             titulo = tarea.titulo,
                             puntos = tarea.puntos.toInt(),
                             imageName = tarea.imgVector,
-                          onEditClick = {
-//                              onEvent(ListTareaUiEvent.Edit(tarea.id))
-                                        },
+                            onEditClick = {
+                                onEvent(ListTareaUiEvent.Edit(tarea.id))
+                            },
                             onDeleteClick = {
-//                                onEvent(ListTareaUiEvent.Delete(tarea.id))
+                                onEvent(ListTareaUiEvent.Delete(tarea.id))
                             }
                         )
                     }

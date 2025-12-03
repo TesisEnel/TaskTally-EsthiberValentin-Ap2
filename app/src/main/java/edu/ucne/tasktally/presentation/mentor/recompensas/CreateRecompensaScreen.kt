@@ -34,9 +34,16 @@ import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 @Composable
 fun CreateRecompensaScreen(
     viewModel: RecompensaViewModel = hiltViewModel(),
+    recompensaId: String? = null,
     onNavigateBack: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(recompensaId) {
+        if (!recompensaId.isNullOrBlank()) {
+            viewModel.onEvent(RecompensaUiEvent.LoadRecompensa(recompensaId))
+        }
+    }
 
     LaunchedEffect(state.navigateBack) {
         if (state.navigateBack) {
@@ -72,7 +79,7 @@ fun CreateRecompensaScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Crear recompensa",
+                        text = if (state.isEditing) "Editar recompensa" else "Crear recompensa",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
@@ -112,110 +119,119 @@ fun CreateRecompensaBody(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .padding(top = 16.dp, bottom = 100.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Hola, mentor!",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            OutlinedTextField(
-                value = state.titulo,
-                onValueChange = { onEvent(RecompensaUiEvent.OnTituloChange(it)) },
-                label = { Text("Título") },
-                isError = state.tituloError != null,
-                supportingText = state.tituloError?.let {
-                    { Text(it, color = MaterialTheme.colorScheme.error) }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = state.precio,
-                onValueChange = { onEvent(RecompensaUiEvent.OnPrecioChange(it)) },
-                label = { Text("Costo") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                isError = state.precioError != null,
-                supportingText = state.precioError?.let {
-                    { Text(it, color = MaterialTheme.colorScheme.error) }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = state.descripcion,
-                onValueChange = { onEvent(RecompensaUiEvent.OnDescripcionChange(it)) },
-                label = { Text("Descripción") },
-                isError = state.descripcionError != null,
-                supportingText = state.descripcionError?.let {
-                    { Text(it, color = MaterialTheme.colorScheme.error) }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary
-                )
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            ImageSelectorBox(
-                selectedImage = state.imgVector,
-                onClick = { onEvent(RecompensaUiEvent.OnShowImagePicker) }
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = { onEvent(RecompensaUiEvent.Save) },
-                enabled = !state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+        if (state.isLoading && state.isEditing) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp)
+                    .padding(top = 16.dp, bottom = 100.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Hola, mentor!",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.End
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                OutlinedTextField(
+                    value = state.titulo,
+                    onValueChange = { onEvent(RecompensaUiEvent.OnTituloChange(it)) },
+                    label = { Text("Título") },
+                    isError = state.tituloError != null,
+                    supportingText = state.tituloError?.let {
+                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary
                     )
-                } else {
-                    Text(
-                        "Guardar",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimary
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = state.precio,
+                    onValueChange = { onEvent(RecompensaUiEvent.OnPrecioChange(it)) },
+                    label = { Text("Costo") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    isError = state.precioError != null,
+                    supportingText = state.precioError?.let {
+                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary
                     )
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = state.descripcion,
+                    onValueChange = { onEvent(RecompensaUiEvent.OnDescripcionChange(it)) },
+                    label = { Text("Descripción") },
+                    isError = state.descripcionError != null,
+                    supportingText = state.descripcionError?.let {
+                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                ImageSelectorBox(
+                    selectedImage = state.imgVector,
+                    onClick = { onEvent(RecompensaUiEvent.OnShowImagePicker) }
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = { onEvent(RecompensaUiEvent.Save) },
+                    enabled = !state.isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(
+                            text = if (state.isEditing) "Actualizar" else "Guardar",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
             }
         }
