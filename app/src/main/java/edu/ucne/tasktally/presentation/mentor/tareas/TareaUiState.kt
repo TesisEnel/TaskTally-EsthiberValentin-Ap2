@@ -5,6 +5,9 @@ data class TareaUiState(
     val message: String? = null,
     val error: String? = null,
 
+    val tareaId: String? = null,
+    val isEditing: Boolean = false,
+
     val titulo: String = "",
     val descripcion: String = "",
     val puntos: String = "",

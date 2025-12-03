@@ -10,4 +10,5 @@ sealed interface TareaUiEvent {
     data object OnShowImagePicker : TareaUiEvent
     data object OnDismissImagePicker : TareaUiEvent
     data object Save : TareaUiEvent
+    data class LoadTarea(val id: String) : TareaUiEvent
 }
