@@ -27,5 +27,7 @@ sealed interface Screen {
     @Serializable
     data object CreateRecompensa : Screen
 
+    @Serializable
+    data object ListaRecompensas : Screen
 
 }

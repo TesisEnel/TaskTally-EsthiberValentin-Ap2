@@ -16,6 +16,7 @@ import edu.ucne.tasktally.presentation.auth.RegisterScreen
 import edu.ucne.tasktally.presentation.mentor.tareas.CreateTareaScreen
 import edu.ucne.tasktally.presentation.mentor.recompensas.CreateRecompensaScreen
 import edu.ucne.tasktally.presentation.mentor.tareas.list.ListTareaScreen
+import edu.ucne.tasktally.presentation.mentor.recompensas.lista.ListaRecompensaScreen
 
 @Composable
 fun TaskTallyNavHost(
@@ -43,7 +44,7 @@ fun TaskTallyNavHost(
         navController = navHostController,
         // TODO: descomentar el logged
         // startDestination = if (isLoggedIn) Screen.Tareas else Screen.Login
-        startDestination = Screen.ListTareas
+        startDestination = Screen.ListaRecompensas
     ) {
         composable<Screen.Login> {
             LoginScreen(
@@ -105,6 +106,19 @@ fun TaskTallyNavHost(
                 onNavigateToEdit = { tareaId ->
                     // TODO: implementar edit
                     println("Editar tarea: $tareaId")
+                },
+                mentorName = "Mentor"
+            )
+        }
+
+        composable<Screen.ListaRecompensas> {
+            ListaRecompensaScreen(
+                onNavigateToCreate = {
+                    navHostController.navigate(Screen.CreateRecompensa)
+                },
+                onNavigateToEdit = { recompensaId ->
+                    // TODO: implementar edit
+                    println("Editar recompensa: $recompensaId")
                 },
                 mentorName = "Mentor"
             )
