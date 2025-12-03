@@ -9,11 +9,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.ucne.tasktally.presentation.Perfil.PerfilScreen
-import edu.ucne.tasktally.presentation.Tareas.TareasScreen
 import edu.ucne.tasktally.presentation.Tienda.TiendaScreen
 import edu.ucne.tasktally.presentation.auth.LoginScreen
 import edu.ucne.tasktally.presentation.auth.LoginViewModel
 import edu.ucne.tasktally.presentation.auth.RegisterScreen
+import edu.ucne.tasktally.presentation.mentor.tareas.CreateTareaScreen
+import edu.ucne.tasktally.presentation.mentor.recompensas.CreateRecompensaScreen
+import edu.ucne.tasktally.presentation.mentor.tareas.list.ListTareaScreen
 
 @Composable
 fun TaskTallyNavHost(
@@ -22,6 +24,8 @@ fun TaskTallyNavHost(
     val loginViewModel: LoginViewModel = hiltViewModel()
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
 
+    // TODO: descomentar
+    /*
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             navHostController.navigate(Screen.Tareas) {
@@ -33,10 +37,13 @@ fun TaskTallyNavHost(
             }
         }
     }
+    */
 
     NavHost(
         navController = navHostController,
-        startDestination = if (isLoggedIn) Screen.Tareas else Screen.Login
+        // TODO: descomentar el logged
+        // startDestination = if (isLoggedIn) Screen.Tareas else Screen.Login
+        startDestination = Screen.ListTareas
     ) {
         composable<Screen.Login> {
             LoginScreen(
@@ -62,10 +69,6 @@ fun TaskTallyNavHost(
             )
         }
 
-        composable<Screen.Tareas> {
-            TareasScreen()
-        }
-
         composable<Screen.Tienda> {
             TiendaScreen()
         }
@@ -75,6 +78,35 @@ fun TaskTallyNavHost(
                 onLogout = {
                     loginViewModel.onLogoutClick()
                 }
+            )
+        }
+
+        composable<Screen.CreateTarea> {
+            CreateTareaScreen(
+                onNavigateBack = {
+                    navHostController.popBackStack()
+                }
+            )
+        }
+
+        composable<Screen.CreateRecompensa> {
+            CreateRecompensaScreen(
+                onNavigateBack = {
+                    navHostController.popBackStack()
+                }
+            )
+        }
+
+        composable<Screen.ListTareas> {
+            ListTareaScreen(
+                onNavigateToCreate = {
+                    navHostController.navigate(Screen.CreateTarea)
+                },
+                onNavigateToEdit = { tareaId ->
+                    // TODO: implementar edit
+                    println("Editar tarea: $tareaId")
+                },
+                mentorName = "Mentor"
             )
         }
     }
