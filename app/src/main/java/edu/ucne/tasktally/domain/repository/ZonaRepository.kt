@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface ZonaRepository {
     fun observeZonas(): Flow<List<Zona>>
     suspend fun getZona(id: Int?): Zona?
-    suspend fun upsert(zona: Zona): Int
+    suspend fun upsert(zona: Zona): String
     suspend fun delete(zona: Zona)
     suspend fun deleteById(id: Int)
 }

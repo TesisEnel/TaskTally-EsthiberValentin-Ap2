@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface MentorRepository {
     fun observeMentores(): Flow<List<Mentor>>
     suspend fun getMentor(id: Int?): Mentor?
-    suspend fun upsert(mentor: Mentor): Int
+    suspend fun upsert(mentor: Mentor): String
     suspend fun delete(mentor: Mentor)
     suspend fun deleteById(id: Int)
 }

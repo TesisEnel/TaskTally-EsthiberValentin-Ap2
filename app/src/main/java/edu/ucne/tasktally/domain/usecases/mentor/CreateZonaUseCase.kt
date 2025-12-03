@@ -8,10 +8,9 @@ import javax.inject.Inject
 class CreateZonaUseCase @Inject constructor(
     private val zonaRepository: ZonaRepository
 ) {
-    suspend operator fun invoke(zona: Zona): Resource<Int> {
+    suspend operator fun invoke(zona: Zona): Resource<String> {
         return try {
-            val id = zonaRepository.upsert(zona)
-            Resource.Success(id)
+            Resource.Success(zonaRepository.upsert(zona))
         } catch (e: Exception) {
             Resource.Error("Error al crear zona: ${e.message}")
         }

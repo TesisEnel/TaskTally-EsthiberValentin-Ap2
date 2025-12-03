@@ -8,8 +8,6 @@ data class RecompensaUiState(
     val titulo: String = "",
     val descripcion: String = "",
     val precio: String = "",
-    val isDisponible: Boolean = true,
-    val fechaCreacion: String = "",
     val imgVector: String? = null,
     val showImagePicker: Boolean = false,
 

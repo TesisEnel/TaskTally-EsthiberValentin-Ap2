@@ -9,8 +9,7 @@ import javax.inject.Inject
 class ObserveTareasUseCase @Inject constructor(
     private val tareaRepository: TareaRepository
 ) {
-    operator fun invoke(mentorId: Int): Flow<List<Tarea>> {
+    operator fun invoke(): Flow<List<Tarea>> {
         return tareaRepository.observeTareas()
-            .map { tareas -> tareas.filter { it.createdBy == mentorId } }
     }
 }

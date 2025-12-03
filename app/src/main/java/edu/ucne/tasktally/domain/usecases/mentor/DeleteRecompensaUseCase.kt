@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteRecompensaUseCase @Inject constructor(
     private val recompensaRepository: RecompensaRepository
 ) {
-    suspend operator fun invoke(id: Int) {
+    suspend operator fun invoke(id: String) {
         recompensaRepository.deleteById(id)
     }
 }

@@ -38,10 +38,9 @@ class ListTareaViewModel @Inject constructor(
             is ListTareaUiEvent.ShowMessage -> _state.update { it.copy(message = event.message) }
         }
     }
-
     private fun observe() {
         viewModelScope.launch {
-            observeTareasUseCase(mentorId).collectLatest { list ->
+            observeTareasUseCase().collectLatest { list ->
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -53,7 +52,7 @@ class ListTareaViewModel @Inject constructor(
         }
     }
 
-    private fun onDelete(id: Int) {
+    private fun onDelete(id: String) {
         viewModelScope.launch {
             deleteTareaUseCase(id)
             onEvent(ListTareaUiEvent.ShowMessage("Tarea eliminada"))

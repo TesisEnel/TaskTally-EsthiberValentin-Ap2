@@ -8,16 +8,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import edu.ucne.tasktally.data.local.DAOs.EstadoDao
 import edu.ucne.tasktally.data.local.DAOs.GemaDao
-import edu.ucne.tasktally.data.local.DAOs.GemaZonaDao
 import edu.ucne.tasktally.data.local.DAOs.MentorDao
-import edu.ucne.tasktally.data.local.DAOs.ProgresoDao
-import edu.ucne.tasktally.data.local.DAOs.RachaDao
 import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaDao
-import edu.ucne.tasktally.data.local.DAOs.TransaccionRecompensaDao
-import edu.ucne.tasktally.data.local.DAOs.UserInfoDao
 import edu.ucne.tasktally.data.local.TaskTallyDatabase
 import edu.ucne.tasktally.data.local.DAOs.ZonaDao
 import javax.inject.Singleton
@@ -38,28 +32,12 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideEstadoDao(db: TaskTallyDatabase): EstadoDao =
-        db.estadoDao()
-
-    @Provides
     fun provideGemaDao(db: TaskTallyDatabase): GemaDao =
         db.gemaDao()
 
     @Provides
-    fun provideGemaZonaDao(db: TaskTallyDatabase): GemaZonaDao =
-        db.gemaZonaDao()
-
-    @Provides
     fun provideMentorDao(db: TaskTallyDatabase): MentorDao =
         db.mentorDao()
-
-    @Provides
-    fun provideProgresoDao(db: TaskTallyDatabase): ProgresoDao =
-        db.progresoDao()
-
-    @Provides
-    fun provideRachaDao(db: TaskTallyDatabase): RachaDao =
-        db.rachaDao()
 
     @Provides
     fun provideRecompensaDao(db: TaskTallyDatabase): RecompensaDao =
@@ -68,14 +46,6 @@ object DatabaseModule {
     @Provides
     fun provideTareaDao(db: TaskTallyDatabase): TareaDao =
         db.tareaDao()
-
-    @Provides
-    fun provideTransaccionRecompensaDao(db: TaskTallyDatabase): TransaccionRecompensaDao =
-        db.transaccionRecompensaDao()
-
-    @Provides
-    fun provideUserInfoDao(db: TaskTallyDatabase): UserInfoDao =
-        db.userInfoDao()
 
     @Provides
     fun provideZonaDao(db: TaskTallyDatabase): ZonaDao =

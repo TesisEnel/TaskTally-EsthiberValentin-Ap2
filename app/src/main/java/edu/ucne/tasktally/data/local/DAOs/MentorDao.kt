@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MentorDao {
-    @Query("SELECT * FROM mentor ORDER BY mentorId DESC")
+    @Query("SELECT * FROM mentor ORDER BY id DESC")
     fun observeAll(): Flow<List<MentorEntity>>
 
-    @Query("SELECT * FROM mentor WHERE mentorId = :id")
+    @Query("SELECT * FROM mentor WHERE id = :id")
     suspend fun getById(id: Int?): MentorEntity?
 
     @Upsert
@@ -18,6 +18,6 @@ interface MentorDao {
     @Delete
     suspend fun delete(mentor: MentorEntity)
 
-    @Query("DELETE FROM mentor WHERE mentorId = :id")
+    @Query("DELETE FROM mentor WHERE id = :id")
     suspend fun deleteById(id: Int)
 }

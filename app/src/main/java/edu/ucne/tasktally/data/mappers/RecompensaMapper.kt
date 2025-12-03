@@ -5,24 +5,24 @@ import edu.ucne.tasktally.domain.models.Recompensa
 
 fun RecompensaEntity.toDomain(): Recompensa {
     return Recompensa(
-        recompensaId = recompensaId,
-        createdBy = createdBy,
+        id = id,
+        remoteId = remoteId,
         titulo = titulo,
         descripcion = descripcion,
         precio = precio,
-        isDisponible = isDisponible,
-        fechaCreacion = fechaCreacion
+        isPendingPost = isPendingPost,
+        isPendingUpdate = isPendingUpdate
     )
 }
 
 fun Recompensa.toEntity(): RecompensaEntity {
     return RecompensaEntity(
-        recompensaId = recompensaId,
-        createdBy = createdBy,
+        id = id,
+        remoteId = remoteId,
         titulo = titulo,
         descripcion = descripcion,
         precio = precio,
-        isDisponible = isDisponible,
-        fechaCreacion = fechaCreacion
+        isPendingPost = isPendingPost,
+        isPendingUpdate = isPendingUpdate
     )
 }

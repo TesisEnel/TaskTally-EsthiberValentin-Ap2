@@ -8,10 +8,9 @@ import javax.inject.Inject
 class CreateRecompensaUseCase @Inject constructor(
     private val recompensaRepository: RecompensaRepository
 ) {
-    suspend operator fun invoke(recompensa: Recompensa): Resource<Int> {
+    suspend operator fun invoke(recompensa: Recompensa): Resource<String> {
         return try {
-            val id = recompensaRepository.upsert(recompensa)
-            Resource.Success(id)
+            Resource.Success(recompensaRepository.upsert(recompensa))
         } catch (e: Exception) {
             Resource.Error("Error al crear recompensa: ${e.message}")
         }

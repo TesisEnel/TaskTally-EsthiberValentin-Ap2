@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object ApiModule {
-    const val BASE_URL = "https://gestionhuacalesapi.azurewebsites.net"
+    const val BASE_URL = "https://tasktallyapp.runasp.net"
 
     @Provides
     @Singleton

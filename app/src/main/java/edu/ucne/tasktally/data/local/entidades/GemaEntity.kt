@@ -4,30 +4,17 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.UUID
 
-@Entity(
-    tableName = "gema",
-    foreignKeys = [
-        ForeignKey(
-            entity = UsuarioEntity::class,
-            parentColumns = ["userId"],
-            childColumns = ["userId"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = UserInfoEntity::class,
-            parentColumns = ["userInfoId"],
-            childColumns = ["userInfoId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index("userId"),Index("userInfoId")]
-)
+@Entity(tableName = "gema")
 data class GemaEntity(
-    @PrimaryKey(autoGenerate = true)
-    val gemaId: Int = 0,
-    val userId: Int,
-    val userInfoId: Int,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val remoteId: Int? = null,
+    val nombre: String,
+    val apellido: String,
+    val fechaNacimiento: String,
     val puntosActuales: Double,
-    val puntosTotales: Double
+
+    val isPendingPost: Boolean = true,
+    val isPendingUpdate: Boolean = false
 )

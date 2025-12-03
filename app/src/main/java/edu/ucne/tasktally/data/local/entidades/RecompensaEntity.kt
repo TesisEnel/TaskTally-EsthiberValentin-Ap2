@@ -4,26 +4,16 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.UUID
 
-@Entity(
-    tableName = "recompensa",
-    foreignKeys = [
-        ForeignKey(
-            entity = UsuarioEntity::class,
-            parentColumns = ["userId"],
-            childColumns = ["createdBy"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices=[Index("createdBy")]
-)
+@Entity(tableName = "recompensa")
 data class RecompensaEntity(
-    @PrimaryKey(autoGenerate = true)
-    val recompensaId: Int = 0,
-    val createdBy: Int,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val remoteId: Int? = null,
     val titulo: String,
     val descripcion: String,
     val precio: Double,
-    val isDisponible: Boolean,
-    val fechaCreacion: String
+
+    val isPendingPost: Boolean = true,
+    val isPendingUpdate: Boolean = false
 )

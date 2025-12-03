@@ -1,8 +1,13 @@
 package edu.ucne.tasktally.domain.models
 
 data class Mentor(
-    val mentorId: Int = 0,
+    val id: String = "",
+    val remoteId: Int? = null,
     val userId: Int,
-    val userInfoId: Int
+    val nombre: String,
+    val apellido: String,
+    val fechaNacimiento: String,
+    val isPendingPost: Boolean = true,
+    val isPendingUpdate: Boolean = false
 )
 

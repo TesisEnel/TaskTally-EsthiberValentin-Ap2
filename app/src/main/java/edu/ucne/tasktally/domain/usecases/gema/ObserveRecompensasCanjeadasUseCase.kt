@@ -1,16 +1,17 @@
 package edu.ucne.tasktally.domain.usecases.gema
 
-import edu.ucne.tasktally.domain.models.TransaccionRecompensa
-import edu.ucne.tasktally.domain.repository.TransaccionRecompensaRepository
+import edu.ucne.tasktally.domain.models.Recompensa
+import edu.ucne.tasktally.domain.repository.RecompensaRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class ObserveRecompensasCanjeadasUseCase @Inject constructor(
-    private val repository: TransaccionRecompensaRepository
+    private val recompensaRepository: RecompensaRepository
 ) {
-    operator fun invoke(gemaId: Int): Flow<List<TransaccionRecompensa>> {
-        return repository.observeTransacciones()
-            .map { list -> list.filter { it.gemaId == gemaId } }
+    operator fun invoke(gemaId: String): Flow<List<Recompensa>> {
+        // Since we don't have a transaction system, return empty list for now
+        // This could be implemented with a proper transaction/canje entity later
+        return flowOf(emptyList())
     }
 }

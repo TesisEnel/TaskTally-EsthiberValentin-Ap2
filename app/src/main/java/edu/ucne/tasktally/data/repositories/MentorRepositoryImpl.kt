@@ -19,9 +19,9 @@ class MentorRepositoryImpl @Inject constructor(
     override suspend fun getMentor(id: Int?): Mentor? =
         dao.getById(id)?.toDomain()
 
-    override suspend fun upsert(mentor: Mentor): Int {
+    override suspend fun upsert(mentor: Mentor): String {
         dao.upsert(mentor.toEntity())
-        return mentor.mentorId
+        return mentor.id
     }
 
     override suspend fun delete(mentor: Mentor) {

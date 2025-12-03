@@ -4,13 +4,23 @@ import edu.ucne.tasktally.data.local.entidades.MentorEntity
 import edu.ucne.tasktally.domain.models.Mentor
 
 fun MentorEntity.toDomain() = Mentor(
-    mentorId = mentorId,
+    id = id,
+    remoteId = remoteId,
     userId = userId,
-    userInfoId = userInfoId
+    nombre = nombre,
+    apellido = apellido,
+    fechaNacimiento = fechaNacimiento,
+    isPendingPost = isPendingPost,
+    isPendingUpdate = isPendingUpdate
 )
 
 fun Mentor.toEntity() = MentorEntity(
-    mentorId = mentorId,
+    id = id,
+    remoteId = remoteId,
     userId = userId,
-    userInfoId = userInfoId
+    nombre = nombre,
+    apellido = apellido,
+    fechaNacimiento = fechaNacimiento,
+    isPendingPost = isPendingPost,
+    isPendingUpdate = isPendingUpdate
 )

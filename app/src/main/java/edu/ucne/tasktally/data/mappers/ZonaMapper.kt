@@ -4,13 +4,21 @@ import edu.ucne.tasktally.data.local.entidades.ZonaEntity
 import edu.ucne.tasktally.domain.models.Zona
 
 fun ZonaEntity.toDomain() = Zona(
-    zonaId = zonaId,
+    id = id,
+    remoteId = remoteId,
+    joinCode = joinCode,
     mentorId = mentorId,
-    zonaName = zonaName
+    zonaName = zonaName,
+    isPendingPost = isPendingPost,
+    isPendingUpdate = isPendingUpdate
 )
 
 fun Zona.toEntity() = ZonaEntity(
-    zonaId = zonaId,
+    id = id,
+    remoteId = remoteId,
+    joinCode = joinCode,
     mentorId = mentorId,
-    zonaName = zonaName
+    zonaName = zonaName,
+    isPendingPost = isPendingPost,
+    isPendingUpdate = isPendingUpdate
 )

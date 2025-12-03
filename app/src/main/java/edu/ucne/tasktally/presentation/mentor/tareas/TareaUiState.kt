@@ -8,15 +8,15 @@ data class TareaUiState(
     val titulo: String = "",
     val descripcion: String = "",
     val puntos: String = "",
-    val fechaCreacion: String = "",
-    val zonaId: Int? = null,
+    val estado: String = "Pendiente",
+    val diaAsignada: String = "",
     val imgVector: String? = null,
     val showImagePicker: Boolean = false,
 
     val tituloError: String? = null,
     val descripcionError: String? = null,
     val puntosError: String? = null,
-    val fechaCreacionError: String? = null,
+    val diaAsignadaError: String? = null,
 
     val navigateBack: Boolean = false
 )

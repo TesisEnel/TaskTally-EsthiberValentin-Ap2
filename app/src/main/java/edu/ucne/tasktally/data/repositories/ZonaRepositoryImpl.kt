@@ -19,9 +19,9 @@ class ZonaRepositoryImpl @Inject constructor(
     override suspend fun getZona(id: Int?): Zona? =
         dao.getById(id)?.toDomain()
 
-    override suspend fun upsert(zona: Zona): Int {
+    override suspend fun upsert(zona: Zona): String {
         dao.upsert(zona.toEntity())
-        return zona.zonaId
+        return zona.id
     }
 
     override suspend fun delete(zona: Zona) {

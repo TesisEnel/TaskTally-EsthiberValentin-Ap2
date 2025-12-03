@@ -186,27 +186,27 @@ fun CreateTareaBody(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = state.fechaCreacion,
-                onValueChange = { onEvent(TareaUiEvent.OnFechaCreacionChange(it)) },
-                label = { Text("Fecha creación") },
-                isError = state.fechaCreacionError != null,
-                supportingText = state.fechaCreacionError?.let {
-                    { Text(it, color = MaterialTheme.colorScheme.error) }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary
-                ),
-                placeholder = {
-                    Text(
-                        "YYYY-MM-DD",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            )
+//            OutlinedTextField(
+//                value = state.fechaCreacion,
+//                onValueChange = { onEvent(TareaUiEvent.OnFechaCreacionChange(it)) },
+//                label = { Text("Fecha creación") },
+//                isError = state.fechaCreacionError != null,
+//                supportingText = state.fechaCreacionError?.let {
+//                    { Text(it, color = MaterialTheme.colorScheme.error) }
+//                },
+//                modifier = Modifier.fillMaxWidth(),
+//                shape = RoundedCornerShape(8.dp),
+//                colors = OutlinedTextFieldDefaults.colors(
+//                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+//                    focusedBorderColor = MaterialTheme.colorScheme.primary
+//                ),
+//                placeholder = {
+//                    Text(
+//                        "YYYY-MM-DD",
+//                        color = MaterialTheme.colorScheme.onSurfaceVariant
+//                    )
+//                }
+//            )
 
             Spacer(modifier = Modifier.height(24.dp))
 

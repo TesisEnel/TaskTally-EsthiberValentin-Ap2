@@ -9,8 +9,7 @@ import javax.inject.Inject
 class ObserveRecompensaUseCase @Inject constructor(
     private val recompensaRepository: RecompensaRepository
 ) {
-    operator fun invoke(mentorId: Int): Flow<List<Recompensa>> {
+    operator fun invoke(): Flow<List<Recompensa>> {
         return recompensaRepository.observeRecompensas()
-            .map { lista -> lista.filter { it.createdBy == mentorId } }
     }
 }

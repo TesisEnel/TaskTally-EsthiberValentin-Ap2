@@ -11,6 +11,5 @@ class ObserveRecompensasDispoUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<List<Recompensa>> {
         return recompensaRepository.observeRecompensas()
-            .map { list -> list.filter { it.isDisponible } }
     }
 }

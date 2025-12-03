@@ -4,28 +4,17 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.UUID
 
-@Entity(
-    tableName = "mentor",
-    foreignKeys = [
-        ForeignKey(
-            entity = UsuarioEntity::class,
-            parentColumns = ["userId"],
-            childColumns = ["userId"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = UserInfoEntity::class,
-            parentColumns = ["userInfoId"],
-            childColumns = ["userInfoId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index("userId"), Index("userInfoId")]
-)
+@Entity(tableName = "mentor")
 data class MentorEntity(
-    @PrimaryKey(autoGenerate = true)
-    val mentorId: Int = 0,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val remoteId: Int? = null,
     val userId: Int,
-    val userInfoId: Int
+    val nombre: String,
+    val apellido: String,
+    val fechaNacimiento: String,
+
+    val isPendingPost: Boolean = true,
+    val isPendingUpdate: Boolean = false
 )

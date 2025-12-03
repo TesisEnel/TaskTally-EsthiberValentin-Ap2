@@ -4,22 +4,16 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.UUID
 
-@Entity(
-    tableName = "zona",
-    foreignKeys = [
-        ForeignKey(
-            entity = MentorEntity::class,
-            parentColumns = ["mentorId"],
-            childColumns = ["mentorId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index("mentorId")]
-)
+@Entity(tableName = "zona")
 data class ZonaEntity(
-    @PrimaryKey(autoGenerate = true)
-    val zonaId: Int = 0,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val remoteId: Int? = null,
+    val joinCode: String,
     val mentorId: Int,
-    val zonaName: String
+    val zonaName: String,
+
+    val isPendingPost: Boolean = true,
+    val isPendingUpdate: Boolean = false
 )

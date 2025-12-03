@@ -7,5 +7,5 @@ data class ListTareaUiState(
     val tareas: List<Tarea> = emptyList(),
     val message: String? = null,
     val navigateToCreate: Boolean = false,
-    val navigateToEditId: Int? = null
+    val navigateToEditId: String? = null
 )
