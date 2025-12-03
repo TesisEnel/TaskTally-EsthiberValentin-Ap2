@@ -14,5 +14,8 @@ data class LoginResponse(
 data class UserInfo(
     @Json(name = "userId") val userId: Int,
     @Json(name = "userName") val userName: String,
-    @Json(name = "email") val email: String?
+    @Json(name = "email") val email: String?,
+    @Json(name = "role") val role: String? = null,
+    @Json(name = "mentorId") val mentorId: Int? = null,
+    @Json(name = "gemaId") val gemaId: Int? = null
 )

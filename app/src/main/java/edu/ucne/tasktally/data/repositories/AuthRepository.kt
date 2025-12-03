@@ -26,7 +26,10 @@ class AuthRepository @Inject constructor(
                         userId = loginResponse.user.userId,
                         username = loginResponse.user.userName,
                         email = loginResponse.user.email,
-                        expiresAt = loginResponse.expiresAt
+                        expiresAt = loginResponse.expiresAt,
+                        role = loginResponse.user.role,
+                        mentorId = loginResponse.user.mentorId,
+                        gemaId = loginResponse.user.gemaId
                     )
                     Resource.Success(loginResponse)
                 } else {
@@ -40,9 +43,9 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    suspend fun register(username: String, password: String, email: String?): Resource<RegisterResponse> {
+    suspend fun register(username: String, password: String, email: String?, role: String): Resource<RegisterResponse> {
         return try {
-            val response = authApi.register(RegisterRequest(username, password, email))
+            val response = authApi.register(RegisterRequest(username, password, email, role))
             if (response.isSuccessful && response.body() != null) {
                 val registerResponse = response.body()!!
                 if (registerResponse.success) {
@@ -105,13 +108,62 @@ class AuthRepository @Inject constructor(
 
     fun getAccessToken(): Flow<String?> = authPreferencesManager.accessToken
 
-    fun getCurrentUser(): Flow<Triple<Int?, String?, String?>> {
+    fun getCurrentUser(): Flow<UserData> {
         return kotlinx.coroutines.flow.combine(
-            authPreferencesManager.userId,
-            authPreferencesManager.username,
-            authPreferencesManager.email
-        ) { userId, username, email ->
-            Triple(userId, username, email)
+            kotlinx.coroutines.flow.combine(
+                authPreferencesManager.userId,
+                authPreferencesManager.username,
+                authPreferencesManager.email
+            ) { userId, username, email -> Triple(userId, username, email) },
+            kotlinx.coroutines.flow.combine(
+                authPreferencesManager.role,
+                authPreferencesManager.mentorId,
+                authPreferencesManager.gemaId
+            ) { role, mentorId, gemaId -> Triple(role, mentorId, gemaId) }
+        ) { userBasic, userRole ->
+            UserData(
+                userId = userBasic.first,
+                username = userBasic.second,
+                email = userBasic.third,
+                role = userRole.first,
+                mentorId = userRole.second,
+                gemaId = userRole.third
+            )
+        }
+    }
+
+    suspend fun getCurrentUserFromApi(): Resource<UserInfo> {
+        return try {
+            val response = authApi.getCurrentUser()
+            if (response.isSuccessful && response.body() != null) {
+                Resource.Success(response.body()!!)
+            } else {
+                Resource.Error("Failed to get user info: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Unexpected error: ${e.message}")
+        }
+    }
+
+    suspend fun assignRole(userId: Int, role: String): Resource<Unit> {
+        return try {
+            val response = authApi.assignRole(AssignRoleRequest(userId, role))
+            if (response.isSuccessful) {
+                Resource.Success(Unit)
+            } else {
+                Resource.Error("Failed to assign role: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Unexpected error: ${e.message}")
         }
     }
 }
+
+data class UserData(
+    val userId: Int?,
+    val username: String?,
+    val email: String?,
+    val role: String?,
+    val mentorId: Int?,
+    val gemaId: Int?
+)

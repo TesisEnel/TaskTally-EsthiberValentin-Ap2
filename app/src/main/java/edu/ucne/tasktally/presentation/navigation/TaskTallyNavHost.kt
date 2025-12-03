@@ -24,27 +24,39 @@ fun TaskTallyNavHost(
 ) {
     val loginViewModel: LoginViewModel = hiltViewModel()
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
+    val currentUser by loginViewModel.uiState.collectAsState()
 
-    // TODO: descomentar
-    /*
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
-            navHostController.navigate(Screen.Tareas) {
+    val startDestination = if (isLoggedIn) {
+        when (currentUser.currentUser?.role) {
+            "mentor" -> Screen.MentorTareas
+            "gema" -> Screen.Tareas
+            else -> Screen.Tareas
+        }
+    } else {
+        Screen.Login
+    }
+
+    LaunchedEffect(isLoggedIn, currentUser.currentUser?.role) {
+        if (isLoggedIn && currentUser.currentUser != null) {
+            val user = currentUser.currentUser
+            val targetDestination = when (user?.role) {
+                "mentor" -> Screen.MentorTareas
+                "gema" -> Screen.Tareas
+                else -> Screen.Tareas
+            }
+            navHostController.navigate(targetDestination) {
                 popUpTo(Screen.Login) { inclusive = true }
             }
-        } else {
+        } else if (!isLoggedIn) {
             navHostController.navigate(Screen.Login) {
                 popUpTo(0) { inclusive = true }
             }
         }
     }
-    */
 
     NavHost(
         navController = navHostController,
-        // TODO: descomentar el logged
-         startDestination = if (isLoggedIn) Screen.Tareas else Screen.Login
-//        startDestination = Screen.MentorTareas
+        startDestination = startDestination
     ) {
         composable<Screen.Login> {
             LoginScreen(
@@ -52,9 +64,7 @@ fun TaskTallyNavHost(
                     navHostController.navigate(Screen.Register)
                 },
                 onLoginSuccess = {
-                    navHostController.navigate(Screen.Tareas) {
-                        popUpTo(Screen.Login) { inclusive = true }
-                    }
+
                 }
             )
         }

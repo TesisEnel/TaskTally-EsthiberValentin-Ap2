@@ -32,6 +32,7 @@ fun RegisterScreen(
     val focusManager = LocalFocusManager.current
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
+    var showUserForm by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.registrationSuccess) {
         if (uiState.registrationSuccess) {
@@ -40,26 +41,163 @@ fun RegisterScreen(
         }
     }
 
+    LaunchedEffect(uiState.role) {
+        showUserForm = uiState.role.isNotBlank()
+    }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         TopAppBar(
-            title = { Text("Create Account") },
+            title = { Text(if (showUserForm) "User Information" else "Select Role") },
             navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = {
+                    if (showUserForm && uiState.role.isNotBlank()) {
+                        viewModel.onRoleChanged("")
+                    } else {
+                        onNavigateBack()
+                    }
+                }) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             }
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        if (!showUserForm) {
+            RoleSelectionScreen(
+                onRoleSelected = { role ->
+                    viewModel.onRoleChanged(role)
+                }
+            )
+        } else {
+            UserInformationForm(
+                uiState = uiState,
+                viewModel = viewModel,
+                focusManager = focusManager,
+                isPasswordVisible = isPasswordVisible,
+                onPasswordVisibilityChanged = { isPasswordVisible = !isPasswordVisible },
+                isConfirmPasswordVisible = isConfirmPasswordVisible,
+                onConfirmPasswordVisibilityChanged = { isConfirmPasswordVisible = !isConfirmPasswordVisible }
+            )
+        }
+    }
+}
+
+@Composable
+private fun RoleSelectionScreen(
+    onRoleSelected: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "TaskTally",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(bottom = 64.dp)
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Card(
+                onClick = { onRoleSelected("gema") },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .aspectRatio(1.2f),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "💎",
+                        style = MaterialTheme.typography.displayMedium,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Text(
+                        text = "Gema",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Text(
+                        text = "Student",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                    )
+                }
+            }
+
+            Card(
+                onClick = { onRoleSelected("mentor") },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .aspectRatio(1.2f),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "💎",
+                        style = MaterialTheme.typography.displayMedium,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Text(
+                        text = "Mentor",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Text(
+                        text = "Guide students",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UserInformationForm(
+    uiState: RegisterUiState,
+    viewModel: RegisterViewModel,
+    focusManager: androidx.compose.ui.focus.FocusManager,
+    isPasswordVisible: Boolean,
+    onPasswordVisibilityChanged: () -> Unit,
+    isConfirmPasswordVisible: Boolean,
+    onConfirmPasswordVisibilityChanged: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -126,7 +264,7 @@ fun RegisterScreen(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                            IconButton(onClick = onPasswordVisibilityChanged) {
                                 Icon(
                                     imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                                     contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
@@ -156,7 +294,7 @@ fun RegisterScreen(
                             }
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
+                            IconButton(onClick = onConfirmPasswordVisibilityChanged) {
                                 Icon(
                                     imageVector = if (isConfirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                                     contentDescription = if (isConfirmPasswordVisible) "Hide password" else "Show password"
@@ -169,7 +307,7 @@ fun RegisterScreen(
                     if (uiState.error != null) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = uiState.error.toString(),
+                            text = uiState.error,
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -178,7 +316,7 @@ fun RegisterScreen(
                     if (uiState.successMessage != null) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = uiState.successMessage.toString(),
+                            text = uiState.successMessage,
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -192,7 +330,8 @@ fun RegisterScreen(
                         enabled = !uiState.isLoading &&
                                 uiState.username.isNotBlank() &&
                                 uiState.password.isNotBlank() &&
-                                uiState.confirmPassword.isNotBlank()
+                                uiState.confirmPassword.isNotBlank() &&
+                                uiState.role.isNotBlank()
                     ) {
                         if (uiState.isLoading) {
                             CircularProgressIndicator(
@@ -205,6 +344,5 @@ fun RegisterScreen(
                     }
                 }
             }
-        }
     }
 }

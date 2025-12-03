@@ -29,6 +29,9 @@ class AuthPreferencesManager @Inject constructor(
         private val EMAIL_KEY = stringPreferencesKey("email")
         private val IS_LOGGED_IN_KEY = booleanPreferencesKey("is_logged_in")
         private val TOKEN_EXPIRES_AT_KEY = stringPreferencesKey("token_expires_at")
+        private val ROLE_KEY = stringPreferencesKey("role")
+        private val MENTOR_ID_KEY = intPreferencesKey("mentor_id")
+        private val GEMA_ID_KEY = intPreferencesKey("gema_id")
     }
 
     suspend fun saveAuthData(
@@ -37,7 +40,10 @@ class AuthPreferencesManager @Inject constructor(
         userId: Int,
         username: String,
         email: String?,
-        expiresAt: String?
+        expiresAt: String?,
+        role: String? = null,
+        mentorId: Int? = null,
+        gemaId: Int? = null
     ) {
         dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN_KEY] = accessToken
@@ -47,6 +53,9 @@ class AuthPreferencesManager @Inject constructor(
             preferences[EMAIL_KEY] = email ?: ""
             preferences[IS_LOGGED_IN_KEY] = true
             preferences[TOKEN_EXPIRES_AT_KEY] = expiresAt ?: ""
+            preferences[ROLE_KEY] = role ?: ""
+            if (mentorId != null) preferences[MENTOR_ID_KEY] = mentorId
+            if (gemaId != null) preferences[GEMA_ID_KEY] = gemaId
         }
     }
 
@@ -94,5 +103,17 @@ class AuthPreferencesManager @Inject constructor(
 
     val tokenExpiresAt: Flow<String?> = dataStore.data.map { preferences ->
         preferences[TOKEN_EXPIRES_AT_KEY]
+    }
+
+    val role: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[ROLE_KEY]
+    }
+
+    val mentorId: Flow<Int?> = dataStore.data.map { preferences ->
+        preferences[MENTOR_ID_KEY]
+    }
+
+    val gemaId: Flow<Int?> = dataStore.data.map { preferences ->
+        preferences[GEMA_ID_KEY]
     }
 }

@@ -8,7 +8,7 @@ import javax.inject.Inject
 class RegisterUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(username: String, password: String, confirmPassword: String, email: String?): Resource<RegisterResponse> {
+    suspend operator fun invoke(username: String, password: String, confirmPassword: String, email: String?, role: String): Resource<RegisterResponse> {
         if (username.isBlank()) {
             return Resource.Error("Username cannot be empty")
         }
@@ -33,7 +33,15 @@ class RegisterUseCase @Inject constructor(
             return Resource.Error("Invalid email format")
         }
 
-        return authRepository.register(username.trim(), password, email?.trim())
+        if (role.isBlank()) {
+            return Resource.Error("Role is required")
+        }
+
+        if (role.lowercase() != "mentor" && role.lowercase() != "gema") {
+            return Resource.Error("Role must be 'mentor' or 'gema'")
+        }
+
+        return authRepository.register(username.trim(), password, email?.trim(), role.lowercase())
     }
 
     private fun isValidEmail(email: String): Boolean {
