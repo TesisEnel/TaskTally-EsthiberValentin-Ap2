@@ -34,12 +34,16 @@ class LoginViewModel @Inject constructor(
             getAuthStatusUseCase().collectLatest { loggedIn ->
                 _isLoggedIn.value = loggedIn
                 if (loggedIn) {
-                    getCurrentUserUseCase().collectLatest { (userId, username, email) ->
+
+                    getCurrentUserUseCase().collectLatest { userData ->
                         _uiState.value = _uiState.value.copy(
                             currentUser = UserUiState(
-                                userId = userId ?: 0,
-                                username = username ?: "",
-                                email = email ?: ""
+                                userId = userData.userId ?: 0,
+                                username = userData.username ?: "",
+                                email = userData.email ?: "",
+                                role = userData.role ?: "",
+                                mentorId = userData.mentorId,
+                                gemaId = userData.gemaId
                             )
                         )
                     }
@@ -109,5 +113,8 @@ data class LoginUiState(
 data class UserUiState(
     val userId: Int,
     val username: String,
-    val email: String
+    val email: String,
+    val role: String = "",
+    val mentorId: Int? = null,
+    val gemaId: Int? = null
 )

@@ -16,3 +16,9 @@ data class RefreshTokenResponse(
 data class LogoutRequest(
     @Json(name = "refreshToken") val refreshToken: String
 )
+
+data class AssignRoleRequest(
+    @Json(name = "userId") val userId: Int,
+    @Json(name = "role") val role: String
+)
+

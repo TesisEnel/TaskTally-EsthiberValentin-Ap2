@@ -3,6 +3,7 @@ package edu.ucne.tasktally.data.remote
 import edu.ucne.tasktally.data.remote.DTOs.auth.*
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AuthApi {
@@ -17,4 +18,10 @@ interface AuthApi {
 
     @POST("api/auth/logout")
     suspend fun logout(@Body request: LogoutRequest): Response<Unit>
+
+    @GET("api/auth/me")
+    suspend fun getCurrentUser(): Response<UserInfo>
+
+    @POST("api/auth/assign-role")
+    suspend fun assignRole(@Body request: AssignRoleRequest): Response<Unit>
 }

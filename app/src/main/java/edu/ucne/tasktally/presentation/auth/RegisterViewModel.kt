@@ -35,6 +35,10 @@ class RegisterViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(email = email)
     }
 
+    fun onRoleChanged(role: String) {
+        _uiState.value = _uiState.value.copy(role = role)
+    }
+
     fun onRegisterClick() {
         val currentState = _uiState.value
         if (currentState.isLoading) return
@@ -49,7 +53,8 @@ class RegisterViewModel @Inject constructor(
                 currentState.username,
                 currentState.password,
                 currentState.confirmPassword,
-                currentState.email.takeIf { it.isNotBlank() }
+                currentState.email.takeIf { it.isNotBlank() },
+                currentState.role
             )) {
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(
@@ -93,6 +98,7 @@ data class RegisterUiState(
     val password: String = "",
     val confirmPassword: String = "",
     val email: String = "",
+    val role: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
     val registrationSuccess: Boolean = false,

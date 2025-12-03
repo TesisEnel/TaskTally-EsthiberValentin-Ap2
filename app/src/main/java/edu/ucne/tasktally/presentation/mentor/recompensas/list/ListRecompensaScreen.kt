@@ -23,14 +23,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.tasktally.domain.models.Recompensa
 import edu.ucne.tasktally.presentation.componentes.RecompensaCard.MentorRecompensaCard
-import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListaRecompensaUiEvent
-import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListaRecompensaUiState
-import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListaRecompensaViewModel
+import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaUiEvent
+import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaUiState
+import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaViewModel
 import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 
 @Composable
-fun ListaRecompensaScreen(
-    viewModel: ListaRecompensaViewModel = hiltViewModel(),
+fun ListRecompensaScreen(
+    viewModel: ListRecompensaViewModel = hiltViewModel(),
     onNavigateToCreate: () -> Unit = {},
     onNavigateToEdit: (String) -> Unit = {},
     mentorName: String = "Mentor"
@@ -57,7 +57,7 @@ fun ListaRecompensaScreen(
         }
     }
 
-    ListaRecompensaBody(
+    ListRecompensaBody(
         state = state,
         onEvent = viewModel::onEvent,
         mentorName = mentorName
@@ -65,9 +65,9 @@ fun ListaRecompensaScreen(
 }
 
 @Composable
-fun ListaRecompensaBody(
-    state: ListaRecompensaUiState,
-    onEvent: (ListaRecompensaUiEvent) -> Unit,
+fun ListRecompensaBody(
+    state: ListRecompensaUiState,
+    onEvent: (ListRecompensaUiEvent) -> Unit,
     mentorName: String = "Mentor"
 ) {
     Box(
@@ -151,10 +151,10 @@ fun ListaRecompensaBody(
                                 precio = recompensa.precio.toInt(),
                                 imageName = recompensa.imgVector,
                                 onEditClick = {
-                                    onEvent(ListaRecompensaUiEvent.Edit(recompensa.id))
+                                    onEvent(ListRecompensaUiEvent.Edit(recompensa.id))
                                 },
                                 onDeleteClick = {
-                                    onEvent(ListaRecompensaUiEvent.Delete(recompensa.id))
+                                    onEvent(ListRecompensaUiEvent.Delete(recompensa.id))
                                 }
                             )
                         }
@@ -163,7 +163,7 @@ fun ListaRecompensaBody(
             }
         }
         FloatingActionButton(
-            onClick = { onEvent(ListaRecompensaUiEvent.CreateNew) },
+            onClick = { onEvent(ListRecompensaUiEvent.CreateNew) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
@@ -181,10 +181,10 @@ fun ListaRecompensaBody(
 
 @Preview(showBackground = true)
 @Composable
-fun ListaRecompensaScreenPreview() {
+fun ListRecompensaScreenPreview() {
     TaskTallyTheme {
-        ListaRecompensaBody(
-            state = ListaRecompensaUiState(
+        ListRecompensaBody(
+            state = ListRecompensaUiState(
                 recompensas = listOf(
                     Recompensa(
                         id = "1",
