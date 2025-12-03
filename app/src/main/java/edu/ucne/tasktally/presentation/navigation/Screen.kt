@@ -17,4 +17,15 @@ sealed interface Screen {
 
     @Serializable
     data object Perfil : Screen
+
+    @Serializable
+    data object CreateTarea : Screen
+
+    @Serializable
+    data object ListTareas : Screen
+
+    @Serializable
+    data object CreateRecompensa : Screen
+
+
 }
