@@ -6,6 +6,7 @@ data class Recompensa(
     val titulo: String,
     val descripcion: String,
     val precio: Double,
+    val imgVector: String? = null,
     val isPendingPost: Boolean = true,
     val isPendingUpdate: Boolean = false
 )
