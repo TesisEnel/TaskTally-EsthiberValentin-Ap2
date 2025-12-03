@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface TareaRepository {
     fun observeTareas(): Flow<List<Tarea>>
-    suspend fun getTarea(id: Int?): Tarea?
-    suspend fun upsert(tarea: Tarea): Int
+    suspend fun getTarea(id: String?): Tarea?
+    suspend fun upsert(tarea: Tarea): String
     suspend fun delete(tarea: Tarea)
-    suspend fun deleteById(id: Int)
+    suspend fun deleteById(id: String)
 }

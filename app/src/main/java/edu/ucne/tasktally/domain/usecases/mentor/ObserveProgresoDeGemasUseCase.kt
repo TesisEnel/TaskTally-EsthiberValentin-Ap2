@@ -1,7 +1,5 @@
 package edu.ucne.tasktally.domain.usecases.mentor
 
-import edu.ucne.tasktally.domain.models.Progreso
-import edu.ucne.tasktally.domain.repository.ProgresoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

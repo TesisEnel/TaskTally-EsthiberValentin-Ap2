@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GemaDao {
-    @Query("SELECT * FROM gema ORDER BY gemaId DESC")
+    @Query("SELECT * FROM gema ORDER BY id DESC")
     fun observeAll(): Flow<List<GemaEntity>>
 
-    @Query("SELECT * FROM gema WHERE gemaId = :id")
+    @Query("SELECT * FROM gema WHERE id = :id")
     suspend fun getById(id: Int?): GemaEntity?
 
     @Upsert
@@ -18,6 +18,6 @@ interface GemaDao {
     @Delete
     suspend fun delete(gema: GemaEntity)
 
-    @Query("DELETE FROM gema WHERE gemaId = :id")
+    @Query("DELETE FROM gema WHERE id = :id")
     suspend fun deleteById(id: Int)
 }

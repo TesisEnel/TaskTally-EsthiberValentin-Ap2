@@ -8,16 +8,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import edu.ucne.tasktally.data.local.DAOs.EstadoDao
 import edu.ucne.tasktally.data.local.DAOs.GemaDao
-import edu.ucne.tasktally.data.local.DAOs.GemaZonaDao
 import edu.ucne.tasktally.data.local.DAOs.MentorDao
-import edu.ucne.tasktally.data.local.DAOs.ProgresoDao
-import edu.ucne.tasktally.data.local.DAOs.RachaDao
 import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaDao
-import edu.ucne.tasktally.data.local.DAOs.TransaccionRecompensaDao
-import edu.ucne.tasktally.data.local.DAOs.UserInfoDao
 import edu.ucne.tasktally.data.local.TaskTallyDatabase
 import edu.ucne.tasktally.data.local.DAOs.ZonaDao
 import javax.inject.Singleton

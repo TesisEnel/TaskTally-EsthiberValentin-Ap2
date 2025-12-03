@@ -141,8 +141,8 @@ fun ListTareaBody(
                             titulo = tarea.titulo,
                             puntos = tarea.puntos.toInt(),
                             imageName = tarea.imgVector,
-                            onEditClick = { onEvent(ListTareaUiEvent.Edit(tarea.tareaId)) },
-                            onDeleteClick = { onEvent(ListTareaUiEvent.Delete(tarea.tareaId)) }
+                          onEditClick = { onEvent(ListTareaUiEvent.Edit(tarea.id)) },
+                            onDeleteClick = { onEvent(ListTareaUiEvent.Delete(tarea.id)) }
                         )
                     }
                 }
@@ -174,30 +174,29 @@ fun ListTareaScreenPreview() {
             state = ListTareaUiState(
                 tareas = listOf(
                     Tarea(
-                        tareaId = 1,
-                        createdBy = 1,
-                        zonaId = 1,
-                        estadoId = 1,
+                        id = "1",
+                        remoteId = 1,
+                        estado = "Pendiente",
                         titulo = "Arreglar la habitación",
                         descripcion = "Ordenar y limpiar",
                         puntos = 60.0,
-                        diaAsignada = null,
-                        recurrente = null,
+                        diaAsignada = "2025-12-02",
                         imgVector = null,
-                        fechaCreacion = "2025-12-02"
+                        isPendingPost = false,
+                        isPendingUpdate = false
                     ),
                     Tarea(
-                        tareaId = 2,
-                        createdBy = 1,
-                        zonaId = 1,
-                        estadoId = 1,
+                        id = "2",
+                        remoteId = 2,
+                        estado = "Pendiente",
                         titulo = "Barrer la casa",
                         descripcion = "Barrer todas las habitaciones",
                         puntos = 100.0,
                         diaAsignada = null,
-                        recurrente = null,
+                        diaAsignada = "2025-12-02",
                         imgVector = null,
-                        fechaCreacion = "2025-12-02"
+                        isPendingPost = false,
+                        isPendingUpdate = false
                     )
                 )
             ),

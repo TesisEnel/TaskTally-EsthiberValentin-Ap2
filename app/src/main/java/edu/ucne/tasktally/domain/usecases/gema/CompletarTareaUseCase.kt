@@ -1,7 +1,5 @@
 package edu.ucne.tasktally.domain.usecases.gema
 
-import edu.ucne.tasktally.domain.models.Progreso
-import edu.ucne.tasktally.domain.repository.ProgresoRepository
 import edu.ucne.tasktally.domain.repository.GemaRepository
 import edu.ucne.tasktally.data.remote.Resource
 import javax.inject.Inject

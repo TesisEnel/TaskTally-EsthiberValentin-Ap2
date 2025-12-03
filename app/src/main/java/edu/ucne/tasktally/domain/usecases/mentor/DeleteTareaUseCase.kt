@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteTareaUseCase @Inject constructor(
     private val tareaRepository: TareaRepository
 ) {
-    suspend operator fun invoke(tareaId: Int) {
+    suspend operator fun invoke(tareaId: String) {
         tareaRepository.deleteById(tareaId)
     }
 }

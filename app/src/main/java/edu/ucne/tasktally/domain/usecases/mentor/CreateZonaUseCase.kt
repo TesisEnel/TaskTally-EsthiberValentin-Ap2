@@ -10,8 +10,7 @@ class CreateZonaUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(zona: Zona): Resource<Int> {
         return try {
-            val id = zonaRepository.upsert(zona)
-            Resource.Success(id)
+            Resource.Success(zonaRepository.upsert(zona))
         } catch (e: Exception) {
             Resource.Error("Error al crear zona: ${e.message}")
         }

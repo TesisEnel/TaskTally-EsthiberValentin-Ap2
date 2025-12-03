@@ -1,9 +1,12 @@
 package edu.ucne.tasktally.domain.models
 
 data class Gema(
-    val gemaId: Int = 0,
-    val userId: Int,
-    val userInfoId: Int,
+    val id: String = "",
+    val remoteId: Int? = null,
+    val nombre: String,
+    val apellido: String,
+    val fechaNacimiento: String,
     val puntosActuales: Double,
-    val puntosTotales: Double
+    val isPendingPost: Boolean = true,
+    val isPendingUpdate: Boolean = false
 )

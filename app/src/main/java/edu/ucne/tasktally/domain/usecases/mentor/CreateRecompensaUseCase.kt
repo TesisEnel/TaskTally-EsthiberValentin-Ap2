@@ -10,8 +10,7 @@ class CreateRecompensaUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(recompensa: Recompensa): Resource<Int> {
         return try {
-            val id = recompensaRepository.upsert(recompensa)
-            Resource.Success(id)
+            Resource.Success(recompensaRepository.upsert(recompensa))
         } catch (e: Exception) {
             Resource.Error("Error al crear recompensa: ${e.message}")
         }

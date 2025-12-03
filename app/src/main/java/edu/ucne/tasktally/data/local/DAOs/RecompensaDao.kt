@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecompensaDao {
-    @Query("SELECT * FROM recompensa ORDER BY recompensaId DESC")
+    @Query("SELECT * FROM recompensa ORDER BY id DESC")
     fun observeAll(): Flow<List<RecompensaEntity>>
 
-    @Query("SELECT * FROM recompensa WHERE recompensaId = :id")
+    @Query("SELECT * FROM recompensa WHERE id = :id")
     suspend fun getById(id: Int?): RecompensaEntity?
 
     @Upsert
@@ -21,6 +21,6 @@ interface RecompensaDao {
     @Delete
     suspend fun delete(recompensa: RecompensaEntity)
 
-    @Query("DELETE FROM recompensa WHERE recompensaId = :id")
+    @Query("DELETE FROM recompensa WHERE id = :id")
     suspend fun deleteById(id: Int)
 }

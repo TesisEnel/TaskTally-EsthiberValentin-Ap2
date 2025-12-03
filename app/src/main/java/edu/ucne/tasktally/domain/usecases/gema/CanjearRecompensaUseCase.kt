@@ -1,10 +1,8 @@
 package edu.ucne.tasktally.domain.usecases.gema
 
 import edu.ucne.tasktally.data.remote.Resource
-import edu.ucne.tasktally.domain.models.TransaccionRecompensa
 import edu.ucne.tasktally.domain.repository.GemaRepository
 import edu.ucne.tasktally.domain.repository.RecompensaRepository
-import edu.ucne.tasktally.domain.repository.TransaccionRecompensaRepository
 import javax.inject.Inject
 
 class CanjearRecompensaUseCase @Inject constructor(

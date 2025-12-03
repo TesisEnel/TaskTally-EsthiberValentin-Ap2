@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TareaDao {
-    @Query("SELECT * FROM tareas ORDER BY tareaId DESC")
+    @Query("SELECT * FROM tareas ORDER BY id DESC")
     fun observeAll(): Flow<List<TareaEntity>>
 
-    @Query("SELECT * FROM tareas WHERE tareaId = :id")
-    suspend fun getById(id: Int?): TareaEntity?
+    @Query("SELECT * FROM tareas WHERE id = :id")
+    suspend fun getById(id: String?): TareaEntity?
 
-    @Query("SELECT * FROM tareas WHERE estadoId = :estadoId")
-    fun observeByEstado(estadoId: Int): Flow<List<TareaEntity>>
+    @Query("SELECT * FROM tareas WHERE estado = :estado")
+    fun observeByEstado(estado: String): Flow<List<TareaEntity>>
 
     @Upsert
     suspend fun upsert(tarea: TareaEntity)
@@ -24,6 +24,6 @@ interface TareaDao {
     @Delete
     suspend fun delete(tarea: TareaEntity)
 
-    @Query("DELETE FROM tareas WHERE tareaId = :id")
-    suspend fun deleteById(id: Int)
+    @Query("DELETE FROM tareas WHERE id = :id")
+    suspend fun deleteById(id: String)
 }
