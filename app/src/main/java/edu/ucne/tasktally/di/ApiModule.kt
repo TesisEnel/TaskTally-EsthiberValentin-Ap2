@@ -9,8 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
-import edu.ucne.tasktally.data.remote.AuthApi
-import edu.ucne.tasktally.data.remote.UsuarioApi
+import edu.ucne.tasktally.data.remote.TaskTallyApi
 import edu.ucne.tasktally.data.remote.interceptors.AuthInterceptor
 import edu.ucne.tasktally.data.remote.interceptors.TokenAuthenticator
 import okhttp3.OkHttpClient
@@ -53,13 +52,20 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun providesAuthApi(moshi: Moshi, @Named("basic") okHttpClient: OkHttpClient): AuthApi {
+    @Named("basicRetrofit")
+    fun providesBasicRetrofit(moshi: Moshi, @Named("basic") okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Named("basicApi")
+    fun providesBasicTaskTallyApi(@Named("basicRetrofit") retrofit: Retrofit): TaskTallyApi {
+        return retrofit.create(TaskTallyApi::class.java)
     }
 
     @Provides
@@ -91,7 +97,7 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun providesUsuarioApi(retrofit: Retrofit): UsuarioApi {
-        return retrofit.create(UsuarioApi::class.java)
+    fun providesTaskTallyApi(retrofit: Retrofit): TaskTallyApi {
+        return retrofit.create(TaskTallyApi::class.java)
     }
 }
