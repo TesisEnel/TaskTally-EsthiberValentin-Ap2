@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.tasktally.data.remote.DTOs.mentor.TareaDto
 import edu.ucne.tasktally.presentation.componentes.TareaCard.MentorTareaCard
 import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 
@@ -27,8 +28,7 @@ import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 fun ListTareaScreen(
     viewModel: ListTareaViewModel = hiltViewModel(),
     onNavigateToCreate: () -> Unit = {},
-    onNavigateToEdit: (String) -> Unit = {},
-    mentorName: String = "Mentor"
+    onNavigateToEdit: (Int) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -39,10 +39,10 @@ fun ListTareaScreen(
         }
     }
 
-    LaunchedEffect(state.navigateToEditId) {
-        state.navigateToEditId?.let { id ->
+    LaunchedEffect(state.navigateToEdit) {
+        state.navigateToEdit?.let { tarea ->
             viewModel.onNavigationHandled()
-            onNavigateToEdit(id)
+            onNavigateToEdit(tarea.tareasGroupId)
         }
     }
 
@@ -52,18 +52,25 @@ fun ListTareaScreen(
         }
     }
 
+    state.tareaToDelete?.let { tarea ->
+        DeleteConfirmationDialog(
+            tareaTitle = tarea.titulo,
+            isDeleting = state.isDeleting,
+            onConfirm = { viewModel.onEvent(ListTareaUiEvent.ConfirmDelete) },
+            onDismiss = { viewModel.onEvent(ListTareaUiEvent.DismissDeleteConfirmation) }
+        )
+    }
+
     ListTareaBody(
         state = state,
-        onEvent = viewModel::onEvent,
-        mentorName = mentorName
+        onEvent = viewModel::onEvent
     )
 }
 
 @Composable
 fun ListTareaBody(
     state: ListTareaUiState,
-    onEvent: (ListTareaUiEvent) -> Unit,
-    mentorName: String = "Mentor"
+    onEvent: (ListTareaUiEvent) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -79,7 +86,7 @@ fun ListTareaBody(
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 Text(
-                    text = "Hola, $mentorName!",
+                    text = "Hola, ${state.mentorName}!",
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxWidth(),
@@ -98,56 +105,30 @@ fun ListTareaBody(
                 )
             }
 
-            if (state.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else if (state.tareas.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+            when {
+                state.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = "No hay tareas",
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Toca + para crear una nueva",
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                        )
+                        CircularProgressIndicator()
                     }
                 }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    contentPadding = PaddingValues(bottom = 80.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-//                    itemsIndexed(state.tareas) { index, tarea ->
-//                        MentorTareaCard(
-//                            numeroTarea = "Tarea #${index + 1}",
-//                            titulo = tarea.titulo,
-//                            puntos = tarea.puntos.toInt(),
-//                            imageName = tarea.imgVector,
-//                            onEditClick = {
-//                                onEvent(ListTareaUiEvent.Edit(tarea.id))
-//                            },
-//                            onDeleteClick = {
-//                                onEvent(ListTareaUiEvent.Delete(tarea.id))
-//                            }
-//                        )
-//                    }
+                state.error != null -> {
+                    ErrorContent(
+                        error = state.error,
+                        onRetry = { onEvent(ListTareaUiEvent.Load) }
+                    )
+                }
+                state.tareas.isEmpty() -> {
+                    EmptyContent()
+                }
+                else -> {
+                    TareasList(
+                        tareas = state.tareas,
+                        onEdit = { tarea -> onEvent(ListTareaUiEvent.Edit(tarea)) },
+                        onDelete = { tarea -> onEvent(ListTareaUiEvent.ShowDeleteConfirmation(tarea)) }
+                    )
                 }
             }
         }
@@ -169,42 +150,183 @@ fun ListTareaBody(
     }
 }
 
+@Composable
+private fun TareasList(
+    tareas: List<TareaDto>,
+    onEdit: (TareaDto) -> Unit,
+    onDelete: (TareaDto) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        contentPadding = PaddingValues(bottom = 80.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        itemsIndexed(
+            items = tareas,
+            key = { _, tarea -> tarea.tareasGroupId }
+        ) { index, tarea ->
+            MentorTareaCard(
+                numeroTarea = "Tarea #${index + 1}",
+                titulo = tarea.titulo,
+                puntos = tarea.puntos,
+                imageName = tarea.nombreImgVector.ifBlank { null },
+                onEditClick = { onEdit(tarea) },
+                onDeleteClick = { onDelete(tarea) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyContent() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "No hay tareas",
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Toca + para crear una nueva",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ErrorContent(
+    error: String,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(24.dp)
+        ) {
+            Text(
+                text = error,
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onRetry) {
+                Text("Reintentar")
+            }
+        }
+    }
+}
+
+@Composable
+private fun DeleteConfirmationDialog(
+    tareaTitle: String,
+    isDeleting: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { if (!isDeleting) onDismiss() },
+        title = {
+            Text(text = "Eliminar tarea")
+        },
+        text = {
+            Text(text = "¿Estás seguro de que deseas eliminar la tarea \"$tareaTitle\"? Esta acción no se puede deshacer.")
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                enabled = !isDeleting,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                if (isDeleting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                } else {
+                    Text("Eliminar")
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                enabled = !isDeleting
+            ) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ListTareaScreenPreview() {
     TaskTallyTheme {
-//        ListTareaBody(
-//            state = ListTareaUiState(
-//                tareas = listOf(
-//                    Tarea(
-//                        id = "1",
-//                        remoteId = 1,
-//                        estado = "Pendiente",
-//                        titulo = "Arreglar la habitación",
-//                        descripcion = "Ordenar y limpiar",
-//                        puntos = 60.0,
-//                        diaAsignada = "2025-12-02",
-//                        imgVector = null,
-//                        isPendingPost = false,
-//                        isPendingUpdate = false
-//                    ),
-//                    Tarea(
-//                        id = "2",
-//                        remoteId = 2,
-//                        estado = "Pendiente",
-//                        titulo = "Barrer la casa",
-//                        descripcion = "Barrer todas las habitaciones",
-//                        puntos = 100.0,
-////                        diaAsignada = null,
-//                        diaAsignada = "2025-12-02",
-//                        imgVector = null,
-//                        isPendingPost = false,
-//                        isPendingUpdate = false
-//                    )
-//                )
-//            ),
-//            onEvent = {},
-//            mentorName = "Esthiber"
-//        )
+        ListTareaBody(
+            state = ListTareaUiState(
+                mentorName = "Esthiber",
+                tareas = listOf(
+                    TareaDto(
+                        tareasGroupId = 1,
+                        mentorId = 1,
+                        titulo = "Arreglar la habitación",
+                        descripcion = "Ordenar y limpiar",
+                        puntos = 60,
+                        recurrente = false,
+                        dias = "",
+                        nombreImgVector = ""
+                    ),
+                    TareaDto(
+                        tareasGroupId = 2,
+                        mentorId = 1,
+                        titulo = "Barrer la casa",
+                        descripcion = "Barrer todas las habitaciones",
+                        puntos = 100,
+                        recurrente = true,
+                        dias = "Mon,Wed,Fri",
+                        nombreImgVector = ""
+                    )
+                )
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ListTareaScreenEmptyPreview() {
+    TaskTallyTheme {
+        ListTareaBody(
+            state = ListTareaUiState(mentorName = "Esthiber"),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ListTareaScreenLoadingPreview() {
+    TaskTallyTheme {
+        ListTareaBody(
+            state = ListTareaUiState(isLoading = true, mentorName = "Esthiber"),
+            onEvent = {}
+        )
     }
 }

@@ -1,9 +1,14 @@
 package edu.ucne.tasktally.presentation.mentor.tareas.list
 
+import edu.ucne.tasktally.data.remote.DTOs.mentor.TareaDto
+
 sealed interface ListTareaUiEvent {
     data object Load : ListTareaUiEvent
-    data class Delete(val id: String) : ListTareaUiEvent
+    data object Refresh : ListTareaUiEvent
     data object CreateNew : ListTareaUiEvent
-    data class Edit(val id: String) : ListTareaUiEvent
-    data class ShowMessage(val message: String) : ListTareaUiEvent
+
+    data class Edit(val tarea: TareaDto) : ListTareaUiEvent
+    data class ShowDeleteConfirmation(val tarea: TareaDto) : ListTareaUiEvent
+    data object ConfirmDelete : ListTareaUiEvent
+    data object DismissDeleteConfirmation : ListTareaUiEvent
 }
