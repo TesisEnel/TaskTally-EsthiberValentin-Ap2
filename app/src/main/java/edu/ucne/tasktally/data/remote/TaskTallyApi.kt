@@ -1,63 +1,42 @@
 package edu.ucne.tasktally.data.remote
 
-import edu.ucne.tasktally.data.remote.DTOs.auth.*
-import edu.ucne.tasktally.data.remote.DTOs.recompensa.*
-import edu.ucne.tasktally.data.remote.DTOs.tareas.*
-import edu.ucne.tasktally.data.remote.DTOs.zone.*
+import edu.ucne.tasktally.data.remote.DTOs.mentor.MentorTareasRecompensasResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.CanjearRecompensaRequest
+import edu.ucne.tasktally.data.remote.DTOs.gema.zone.JoinZoneRequest
+import edu.ucne.tasktally.data.remote.DTOs.gema.zone.LeaveZoneRequest
+import edu.ucne.tasktally.data.remote.DTOs.gema.tarea.TareasGemaResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.tarea.UpdateTareaEstadoRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.BulkTareasRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.BulkTareasResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.tarea.BulkUpdateTareasResponse
+import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.CreateTareaRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.UpdateTareaRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.BulkRecompensasRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.BulkRecompensasResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.CanjearRecompensaResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.RecompensasGemaResponse
+import edu.ucne.tasktally.data.remote.DTOs.mentor.TareaDto
+import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneResponse
+import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.CreateRecompensaRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.RecompensaDto
+import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.UpdateRecompensaRequest
 import retrofit2.Response
 import retrofit2.http.*
 
 interface TaskTallyApi {
-
-    // auth
-
-    @POST("api/Auth/login")
-    suspend fun login(
-        @Body request: LoginRequest
-    ): Response<LoginResponse>
-
-    @POST("api/Auth/register")
-    suspend fun register(
-        @Body request: RegisterRequest
-    ): Response<RegisterResponse>
-
-    @POST("api/Auth/refresh")
-    suspend fun refreshToken(
-        @Body request: RefreshTokenRequest
-    ): Response<RefreshTokenResponse>
-
-    @POST("api/Auth/logout")
-    suspend fun logout(
-        @Body request: LogoutRequest
-    ): Response<Unit>
-
-    @GET("api/Auth/validate")
-    suspend fun validateToken(): Response<Unit>
-
-    @GET("api/Auth/me")
-    suspend fun getCurrentUser(): Response<UserInfo>
-
-    // gemas
-
+    //region Acciones Gema
     @POST("api/Gemas/join-zone")
-    suspend fun joinZone(
-        @Body request: JoinZoneRequest
-    ): Response<Unit>
+    suspend fun joinZone(@Body request: JoinZoneRequest): Response<Unit>
 
     @POST("api/Gemas/leave-zone")
-    suspend fun leaveZone(
-        @Body request: LeaveZoneRequest
-    ): Response<Unit>
+    suspend fun leaveZone(@Body request: LeaveZoneRequest): Response<Unit>
 
     @GET("api/Gemas/{gemaId}/tareas")
-    suspend fun getTareasGema(
-        @Path("gemaId") gemaId: Int
-    ): Response<List<TareaGemaResponse>>
+    suspend fun getTareasGema(@Path("gemaId") gemaId: Int): Response<List<TareasGemaResponse>>
 
     @GET("api/Gemas/{gemaId}/recompensas")
-    suspend fun getRecompensasGema(
-        @Path("gemaId") gemaId: Int
-    ): Response<List<RecompensaDto>>
+    suspend fun getRecompensasGema(@Path("gemaId") gemaId: Int): Response<List<RecompensasGemaResponse>>
 
     @PUT("api/Gemas/{gemaId}/tareas/bulk-update-estado")
     suspend fun bulkUpdateEstadoTareas(
@@ -66,11 +45,14 @@ interface TaskTallyApi {
     ): Response<BulkUpdateTareasResponse>
 
     @POST("api/Gemas/canjear-recompensa")
-    suspend fun canjearRecompensa(
-        @Body request: CanjearRecompensaRequest
-    ): Response<CanjearRecompensaResponse>
+    suspend fun canjearRecompensa(@Body request: CanjearRecompensaRequest): Response<CanjearRecompensaResponse>
+    //endregion
 
-    // mentor - tareas
+    //region Acciones Mentor
+    @GET("api/Mentors/{mentorId}/tareas-recompensas")
+    suspend fun getTareasRecompensasMentor(
+        @Path("mentorId") mentorId: Int ): Response<List<MentorTareasRecompensasResponse>>
+
 
     @POST("api/Mentors/{mentorId}/tareas")
     suspend fun createTarea(
@@ -92,11 +74,7 @@ interface TaskTallyApi {
     ): Response<Unit>
 
     @POST("api/Mentors/tareas/bulk")
-    suspend fun bulkTareas(
-        @Body request: BulkTareasRequest
-    ): Response<BulkTareasResponse>
-
-    // mentor - recompensas
+    suspend fun bulkTareas(@Body request: BulkTareasRequest): Response<BulkTareasResponse>
 
     @POST("api/Mentors/{mentorId}/recompensas")
     suspend fun createRecompensa(
@@ -118,20 +96,15 @@ interface TaskTallyApi {
     ): Response<Unit>
 
     @POST("api/Mentors/recompensas/bulk")
-    suspend fun bulkRecompensas(
-        @Body request: BulkRecompensasRequest
-    ): Response<BulkRecompensasResponse>
-
-    // mentor - zone
+    suspend fun bulkRecompensas(@Body request: BulkRecompensasRequest): Response<BulkRecompensasResponse>
 
     @POST("api/Mentors/{mentorId}/zone/update-code")
-    suspend fun updateZoneCode(
-        @Path("mentorId") mentorId: Int
-    ): Response<Unit>
+    suspend fun updateZoneCode(@Path("mentorId") mentorId: Int): Response<Unit>
 
     @PUT("api/Mentors/{mentorId}/zone/name")
     suspend fun updateZoneName(
         @Path("mentorId") mentorId: Int,
         @Body request: UpdateZoneRequest
-    ): Response<Unit>
+    ): Response<UpdateZoneResponse>
+    //endregion
 }

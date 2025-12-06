@@ -1,11 +1,14 @@
 package edu.ucne.tasktally.domain.models
 
+import java.util.UUID
+
 data class Zona(
-    val id: String = "",
+    val zonaId: String = UUID.randomUUID().toString(),
     val remoteId: Int? = null,
     val joinCode: String,
-    val mentorId: Int,
+    val mentorId: Int? = null,
     val zonaName: String,
-    val isPendingPost: Boolean = true,
-    val isPendingUpdate: Boolean = false
+    val isPendingCreate: Boolean = true,
+    val isPendingUpdate: Boolean = false,
+    val isPendingDelete: Boolean = false
 )

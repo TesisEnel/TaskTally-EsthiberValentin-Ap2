@@ -1,13 +1,16 @@
 package edu.ucne.tasktally.domain.models
 
+import java.util.UUID
+
 data class Mentor(
-    val id: String = "",
+    val mentorId: String = UUID.randomUUID().toString(),
     val remoteId: Int? = null,
-    val userId: Int,
+    val userId: Int? = null,
     val nombre: String,
     val apellido: String,
     val fechaNacimiento: String,
-    val isPendingPost: Boolean = true,
-    val isPendingUpdate: Boolean = false
+    val isPendingCreate: Boolean = true,
+    val isPendingUpdate: Boolean = false,
+    val isPendingDelete: Boolean = false
 )
 

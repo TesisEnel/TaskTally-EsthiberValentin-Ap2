@@ -1,10 +1,10 @@
 package edu.ucne.tasktally.presentation.mentor.recompensas.list
 
-import edu.ucne.tasktally.domain.models.Recompensa
+import java.util.Objects
 
 data class ListRecompensaUiState(
     val isLoading: Boolean = false,
-    val recompensas: List<Recompensa> = emptyList(),
+    val recompensas: List<Objects> = emptyList(),
     val message: String? = null,
     val navigateToCreate: Boolean = false,
     val navigateToEditId: String? = null

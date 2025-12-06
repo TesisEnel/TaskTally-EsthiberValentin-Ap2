@@ -9,7 +9,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
+import edu.ucne.tasktally.data.remote.AuthApi
 import edu.ucne.tasktally.data.remote.TaskTallyApi
+
 import edu.ucne.tasktally.data.remote.interceptors.AuthInterceptor
 import edu.ucne.tasktally.data.remote.interceptors.TokenAuthenticator
 import okhttp3.OkHttpClient
@@ -66,6 +68,12 @@ object ApiModule {
     @Named("basicApi")
     fun providesBasicTaskTallyApi(@Named("basicRetrofit") retrofit: Retrofit): TaskTallyApi {
         return retrofit.create(TaskTallyApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAuthApi(@Named("basicRetrofit") retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
     }
 
     @Provides

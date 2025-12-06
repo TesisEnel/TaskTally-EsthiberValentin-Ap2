@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import edu.ucne.tasktally.domain.models.Recompensa
 import edu.ucne.tasktally.presentation.componentes.RecompensaCard.MentorRecompensaCard
 import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaUiEvent
 import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaUiState
@@ -144,20 +143,20 @@ fun ListRecompensaBody(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        itemsIndexed(state.recompensas) { index, recompensa ->
-                            MentorRecompensaCard(
-                                numeroRecompensa = "Recompensa #${index + 1}",
-                                titulo = recompensa.titulo,
-                                precio = recompensa.precio.toInt(),
-                                imageName = recompensa.imgVector,
-                                onEditClick = {
-                                    onEvent(ListRecompensaUiEvent.Edit(recompensa.id))
-                                },
-                                onDeleteClick = {
-                                    onEvent(ListRecompensaUiEvent.Delete(recompensa.id))
-                                }
-                            )
-                        }
+//                        itemsIndexed(state.recompensas) { index, recompensa ->
+//                            MentorRecompensaCard(
+//                                numeroRecompensa = "Recompensa #${index + 1}",
+//                                titulo = recompensa.titulo,
+//                                precio = recompensa.precio.toInt(),
+//                                imageName = recompensa.imgVector,
+//                                onEditClick = {
+//                                    onEvent(ListRecompensaUiEvent.Edit(recompensa.id))
+//                                },
+//                                onDeleteClick = {
+//                                    onEvent(ListRecompensaUiEvent.Delete(recompensa.id))
+//                                }
+//                            )
+//                        }
                     }
                 }
             }
@@ -183,53 +182,53 @@ fun ListRecompensaBody(
 @Composable
 fun ListRecompensaScreenPreview() {
     TaskTallyTheme {
-        ListRecompensaBody(
-            state = ListRecompensaUiState(
-                recompensas = listOf(
-                    Recompensa(
-                        id = "1",
-                        remoteId = 1,
-                        titulo = "Cenar pizza",
-                        descripcion = "Una deliciosa pizza familiar",
-                        precio = 750.0,
-                        imgVector = "img27_pizza",
-                        isPendingPost = false,
-                        isPendingUpdate = false
-                    ),
-                    Recompensa(
-                        id = "2",
-                        remoteId = 2,
-                        titulo = "Salir el fin de semana",
-                        descripcion = "Paseo familiar",
-                        precio = 1500.0,
-                        imgVector = null,
-                        isPendingPost = false,
-                        isPendingUpdate = false
-                    ),
-                    Recompensa(
-                        id = "3",
-                        remoteId = 3,
-                        titulo = "Ir al cine",
-                        descripcion = "Ver una película",
-                        precio = 1300.0,
-                        imgVector = "img23_ice_cream",
-                        isPendingPost = false,
-                        isPendingUpdate = false
-                    ),
-                    Recompensa(
-                        id = "4",
-                        remoteId = 4,
-                        titulo = "Nuevo celular",
-                        descripcion = "Un smartphone nuevo",
-                        precio = 1000000.0,
-                        imgVector = "img24_mobile_phone",
-                        isPendingPost = false,
-                        isPendingUpdate = false
-                    )
-                )
-            ),
-            onEvent = {},
-            mentorName = "Alma"
-        )
+//        ListRecompensaBody(
+//            state = ListRecompensaUiState(
+//                recompensas = listOf(
+//                    Recompensa(
+//                        id = "1",
+//                        remoteId = 1,
+//                        titulo = "Cenar pizza",
+//                        descripcion = "Una deliciosa pizza familiar",
+//                        precio = 750.0,
+//                        imgVector = "img27_pizza",
+//                        isPendingPost = false,
+//                        isPendingUpdate = false
+//                    ),
+//                    Recompensa(
+//                        id = "2",
+//                        remoteId = 2,
+//                        titulo = "Salir el fin de semana",
+//                        descripcion = "Paseo familiar",
+//                        precio = 1500.0,
+//                        imgVector = null,
+//                        isPendingPost = false,
+//                        isPendingUpdate = false
+//                    ),
+//                    Recompensa(
+//                        id = "3",
+//                        remoteId = 3,
+//                        titulo = "Ir al cine",
+//                        descripcion = "Ver una película",
+//                        precio = 1300.0,
+//                        imgVector = "img23_ice_cream",
+//                        isPendingPost = false,
+//                        isPendingUpdate = false
+//                    ),
+//                    Recompensa(
+//                        id = "4",
+//                        remoteId = 4,
+//                        titulo = "Nuevo celular",
+//                        descripcion = "Un smartphone nuevo",
+//                        precio = 1000000.0,
+//                        imgVector = "img24_mobile_phone",
+//                        isPendingPost = false,
+//                        isPendingUpdate = false
+//                    )
+//                )
+//            ),
+//            onEvent = {},
+//            mentorName = "Alma"
+//        )
     }
 }

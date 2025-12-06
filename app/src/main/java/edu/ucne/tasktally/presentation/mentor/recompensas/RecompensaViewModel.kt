@@ -4,9 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.data.remote.Resource
-import edu.ucne.tasktally.domain.models.Recompensa
-import edu.ucne.tasktally.domain.usecases.mentor.CreateRecompensaUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.GetRecompensaByIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,9 +12,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RecompensaViewModel @Inject constructor(
-    private val createRecompensaUseCase: CreateRecompensaUseCase,
-    private val getRecompensaByIdUseCase: GetRecompensaByIdUseCase
+class RecompensaViewModel @Inject constructor( // TODO DESCOMENTAR Y CORREGIR
+//    private val createRecompensaUseCase: CreateRecompensaUseCase,
+//    private val getRecompensaByIdUseCase: GetRecompensaByIdUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RecompensaUiState())
@@ -63,28 +60,28 @@ class RecompensaViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            val recompensa = getRecompensaByIdUseCase(id)
-
-            if (recompensa != null) {
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        isEditing = true,
-                        recompensaId = recompensa.id,
-                        titulo = recompensa.titulo,
-                        descripcion = recompensa.descripcion,
-                        precio = recompensa.precio.toString(),
-                        imgVector = recompensa.imgVector
-                    )
-                }
-            } else {
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "No se encontró la recompensa"
-                    )
-                }
-            }
+//            val recompensa = getRecompensaByIdUseCase(id)
+//
+//            if (recompensa != null) {
+//                _state.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        isEditing = true,
+//                        recompensaId = recompensa.id,
+//                        titulo = recompensa.titulo,
+//                        descripcion = recompensa.descripcion,
+//                        precio = recompensa.precio.toString(),
+//                        imgVector = recompensa.imgVector
+//                    )
+//                }
+//            } else {
+//                _state.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        error = "No se encontró la recompensa"
+//                    )
+//                }
+//            }
         }
     }
 
@@ -94,44 +91,44 @@ class RecompensaViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            val recompensa = Recompensa(
-                id = _state.value.recompensaId ?: "",
-                remoteId = null,
-                titulo = _state.value.titulo.trim(),
-                descripcion = _state.value.descripcion.trim(),
-                precio = _state.value.precio.toDoubleOrNull() ?: 0.0,
-                imgVector = _state.value.imgVector,
-                isPendingPost = !_state.value.isEditing,
-                isPendingUpdate = _state.value.isEditing
-            )
-
-            when (val result = createRecompensaUseCase(recompensa)) {
-                is Resource.Success -> {
-                    val mensaje = if (_state.value.isEditing) {
-                        "Recompensa actualizada exitosamente"
-                    } else {
-                        "Recompensa creada exitosamente"
-                    }
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            message = mensaje,
-                            navigateBack = true
-                        )
-                    }
-                }
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message ?: "Error desconocido al crear la recompensa"
-                        )
-                    }
-                }
-                is Resource.Loading -> {
-                    _state.update { it.copy(isLoading = true) }
-                }
-            }
+//            val recompensa = Recompensa(
+//                id = _state.value.recompensaId ?: "",
+//                remoteId = null,
+//                titulo = _state.value.titulo.trim(),
+//                descripcion = _state.value.descripcion.trim(),
+//                precio = _state.value.precio.toDoubleOrNull() ?: 0.0,
+//                imgVector = _state.value.imgVector,
+//                isPendingPost = !_state.value.isEditing,
+//                isPendingUpdate = _state.value.isEditing
+//            )
+//
+//            when (val result = createRecompensaUseCase(recompensa)) {
+//                is Resource.Success -> {
+//                    val mensaje = if (_state.value.isEditing) {
+//                        "Recompensa actualizada exitosamente"
+//                    } else {
+//                        "Recompensa creada exitosamente"
+//                    }
+//                    _state.update {
+//                        it.copy(
+//                            isLoading = false,
+//                            message = mensaje,
+//                            navigateBack = true
+//                        )
+//                    }
+//                }
+//                is Resource.Error -> {
+//                    _state.update {
+//                        it.copy(
+//                            isLoading = false,
+//                            error = result.message ?: "Error desconocido al crear la recompensa"
+//                        )
+//                    }
+//                }
+//                is Resource.Loading -> {
+//                    _state.update { it.copy(isLoading = true) }
+//                }
+//            }
         }
     }
 

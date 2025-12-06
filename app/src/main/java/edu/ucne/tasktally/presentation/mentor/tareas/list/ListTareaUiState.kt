@@ -1,10 +1,10 @@
 package edu.ucne.tasktally.presentation.mentor.tareas.list
 
-import edu.ucne.tasktally.domain.models.Tarea
+import java.util.Objects
 
 data class ListTareaUiState(
     val isLoading: Boolean = false,
-    val tareas: List<Tarea> = emptyList(),
+    val tareas: List<Objects> = emptyList(),
     val message: String? = null,
     val navigateToCreate: Boolean = false,
     val navigateToEditId: String? = null

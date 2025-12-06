@@ -3,8 +3,6 @@ package edu.ucne.tasktally.presentation.mentor.tareas.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.ucne.tasktally.domain.usecases.mentor.DeleteTareaUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.ObserveTareasUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListTareaViewModel @Inject constructor(
-    private val observeTareasUseCase: ObserveTareasUseCase,
-    private val deleteTareaUseCase: DeleteTareaUseCase
+//    private val observeTareasUseCase: ObserveTareasUseCase,
+//    private val deleteTareaUseCase: DeleteTareaUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ListTareaUiState(isLoading = true))
@@ -40,22 +38,22 @@ class ListTareaViewModel @Inject constructor(
     }
     private fun observe() {
         viewModelScope.launch {
-            observeTareasUseCase().collectLatest { list ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        tareas = list,
-                        message = null
-                    )
-                }
-            }
+//            observeTareasUseCase().collectLatest { list ->
+//                _state.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        tareas = list,
+//                        message = null
+//                    )
+//                }
+//            }
         }
     }
 
     private fun onDelete(id: String) {
         viewModelScope.launch {
-            deleteTareaUseCase(id)
-            onEvent(ListTareaUiEvent.ShowMessage("Tarea eliminada"))
+//            deleteTareaUseCase(id)
+//            onEvent(ListTareaUiEvent.ShowMessage("Tarea eliminada"))
         }
     }
 

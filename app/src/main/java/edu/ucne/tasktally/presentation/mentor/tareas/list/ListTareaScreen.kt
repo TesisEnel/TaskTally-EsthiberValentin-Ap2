@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import edu.ucne.tasktally.domain.models.Tarea
 import edu.ucne.tasktally.presentation.componentes.TareaCard.MentorTareaCard
 import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 
@@ -135,20 +134,20 @@ fun ListTareaBody(
                     contentPadding = PaddingValues(bottom = 80.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    itemsIndexed(state.tareas) { index, tarea ->
-                        MentorTareaCard(
-                            numeroTarea = "Tarea #${index + 1}",
-                            titulo = tarea.titulo,
-                            puntos = tarea.puntos.toInt(),
-                            imageName = tarea.imgVector,
-                            onEditClick = {
-                                onEvent(ListTareaUiEvent.Edit(tarea.id))
-                            },
-                            onDeleteClick = {
-                                onEvent(ListTareaUiEvent.Delete(tarea.id))
-                            }
-                        )
-                    }
+//                    itemsIndexed(state.tareas) { index, tarea ->
+//                        MentorTareaCard(
+//                            numeroTarea = "Tarea #${index + 1}",
+//                            titulo = tarea.titulo,
+//                            puntos = tarea.puntos.toInt(),
+//                            imageName = tarea.imgVector,
+//                            onEditClick = {
+//                                onEvent(ListTareaUiEvent.Edit(tarea.id))
+//                            },
+//                            onDeleteClick = {
+//                                onEvent(ListTareaUiEvent.Delete(tarea.id))
+//                            }
+//                        )
+//                    }
                 }
             }
         }
@@ -174,38 +173,38 @@ fun ListTareaBody(
 @Composable
 fun ListTareaScreenPreview() {
     TaskTallyTheme {
-        ListTareaBody(
-            state = ListTareaUiState(
-                tareas = listOf(
-                    Tarea(
-                        id = "1",
-                        remoteId = 1,
-                        estado = "Pendiente",
-                        titulo = "Arreglar la habitación",
-                        descripcion = "Ordenar y limpiar",
-                        puntos = 60.0,
-                        diaAsignada = "2025-12-02",
-                        imgVector = null,
-                        isPendingPost = false,
-                        isPendingUpdate = false
-                    ),
-                    Tarea(
-                        id = "2",
-                        remoteId = 2,
-                        estado = "Pendiente",
-                        titulo = "Barrer la casa",
-                        descripcion = "Barrer todas las habitaciones",
-                        puntos = 100.0,
-//                        diaAsignada = null,
-                        diaAsignada = "2025-12-02",
-                        imgVector = null,
-                        isPendingPost = false,
-                        isPendingUpdate = false
-                    )
-                )
-            ),
-            onEvent = {},
-            mentorName = "Esthiber"
-        )
+//        ListTareaBody(
+//            state = ListTareaUiState(
+//                tareas = listOf(
+//                    Tarea(
+//                        id = "1",
+//                        remoteId = 1,
+//                        estado = "Pendiente",
+//                        titulo = "Arreglar la habitación",
+//                        descripcion = "Ordenar y limpiar",
+//                        puntos = 60.0,
+//                        diaAsignada = "2025-12-02",
+//                        imgVector = null,
+//                        isPendingPost = false,
+//                        isPendingUpdate = false
+//                    ),
+//                    Tarea(
+//                        id = "2",
+//                        remoteId = 2,
+//                        estado = "Pendiente",
+//                        titulo = "Barrer la casa",
+//                        descripcion = "Barrer todas las habitaciones",
+//                        puntos = 100.0,
+////                        diaAsignada = null,
+//                        diaAsignada = "2025-12-02",
+//                        imgVector = null,
+//                        isPendingPost = false,
+//                        isPendingUpdate = false
+//                    )
+//                )
+//            ),
+//            onEvent = {},
+//            mentorName = "Esthiber"
+//        )
     }
 }

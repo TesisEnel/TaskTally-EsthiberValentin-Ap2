@@ -3,8 +3,6 @@ package edu.ucne.tasktally.presentation.mentor.recompensas.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.ucne.tasktally.domain.usecases.mentor.DeleteRecompensaUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.ObserveRecompensaUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListRecompensaViewModel @Inject constructor(
-    private val observeRecompensaUseCase: ObserveRecompensaUseCase,
-    private val deleteRecompensaUseCase: DeleteRecompensaUseCase
+//    private val observeRecompensaUseCase: ObserveRecompensaUseCase,
+//    private val deleteRecompensaUseCase: DeleteRecompensaUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ListRecompensaUiState(isLoading = true))
@@ -38,22 +36,22 @@ class ListRecompensaViewModel @Inject constructor(
 
     private fun observe() {
         viewModelScope.launch {
-            observeRecompensaUseCase().collectLatest { list ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        recompensas = list,
-                        message = null
-                    )
-                }
-            }
+//            observeRecompensaUseCase().collectLatest { list ->
+//                _state.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        recompensas = list,
+//                        message = null
+//                    )
+//                }
+//            }
         }
     }
 
     private fun onDelete(id: String) {
         viewModelScope.launch {
-            deleteRecompensaUseCase(id)
-            onEvent(ListRecompensaUiEvent.ShowMessage("Recompensa eliminada"))
+//            deleteRecompensaUseCase(id)
+//            onEvent(ListRecompensaUiEvent.ShowMessage("Recompensa eliminada"))
         }
     }
 
