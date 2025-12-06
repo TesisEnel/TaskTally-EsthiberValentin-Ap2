@@ -18,24 +18,27 @@ sealed interface Screen {
     @Serializable
     data object Perfil : Screen
 
-    //tareas
+    // Tareas
     @Serializable
     data object CreateTarea : Screen
+
     @Serializable
-    data class EditTarea(val tareaId: String) : Screen
+    data class EditTarea(val tareaId: Int) : Screen
 
     @Serializable
     data object ListTareas : Screen
 
-    //recompensa
+    // Recompensa
     @Serializable
     data object CreateRecompensa : Screen
+
     @Serializable
-    data class EditRecompensa(val recompensaId: String) : Screen
+    data class EditRecompensa(val recompensaId: Int) : Screen
+
     @Serializable
     data object ListRecompensas : Screen
 
-    //mentor
+    // Mentor
     @Serializable
     data object MentorTareas : Screen
 
@@ -44,5 +47,4 @@ sealed interface Screen {
 
     @Serializable
     data object MentorPerfil : Screen
-
 }

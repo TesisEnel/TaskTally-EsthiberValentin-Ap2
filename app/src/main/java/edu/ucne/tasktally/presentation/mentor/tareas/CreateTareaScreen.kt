@@ -34,14 +34,13 @@ import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 @Composable
 fun CreateTareaScreen(
     viewModel: TareaViewModel = hiltViewModel(),
-    tareaId: String? = null,
+    tareaId: Int? = null,
     onNavigateBack: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-
     LaunchedEffect(tareaId) {
-        if (!tareaId.isNullOrBlank()) {
+        if (tareaId != null && tareaId > 0) {
             viewModel.onEvent(TareaUiEvent.LoadTarea(tareaId))
         }
     }
@@ -109,6 +108,7 @@ fun CreateTareaScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CreateTareaBody(
     state: TareaUiState,
@@ -149,10 +149,10 @@ fun CreateTareaBody(
                 OutlinedTextField(
                     value = state.titulo,
                     onValueChange = { onEvent(TareaUiEvent.OnTituloChange(it)) },
-                    label = { Text("Título") },
+                    label = { Text(text = "Título") },
                     isError = state.tituloError != null,
                     supportingText = state.tituloError?.let {
-                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                        { Text(text = it, color = MaterialTheme.colorScheme.error) }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -167,12 +167,13 @@ fun CreateTareaBody(
                 OutlinedTextField(
                     value = state.descripcion,
                     onValueChange = { onEvent(TareaUiEvent.OnDescripcionChange(it)) },
-                    label = { Text("Descripción") },
+                    label = { Text(text = "Descripción") },
                     isError = state.descripcionError != null,
                     supportingText = state.descripcionError?.let {
-                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                        { Text(text = it, color = MaterialTheme.colorScheme.error) }
                     },
                     modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -185,11 +186,11 @@ fun CreateTareaBody(
                 OutlinedTextField(
                     value = state.puntos,
                     onValueChange = { onEvent(TareaUiEvent.OnPuntosChange(it)) },
-                    label = { Text("Puntos") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    label = { Text(text = "Puntos") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     isError = state.puntosError != null,
                     supportingText = state.puntosError?.let {
-                        { Text(it, color = MaterialTheme.colorScheme.error) }
+                        { Text(text = it, color = MaterialTheme.colorScheme.error) }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -198,6 +199,32 @@ fun CreateTareaBody(
                         focusedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                RecurrenteSwitch(
+                    isRecurrente = state.recurrente,
+                    onRecurrenteChange = { onEvent(TareaUiEvent.OnRecurrenteChange(it)) }
+                )
+
+                if (state.recurrente) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Días de la semana",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    DiasSelectorChips(
+                        diasSeleccionados = state.diasSeleccionados,
+                        onDiasChange = { onEvent(TareaUiEvent.OnDiasChange(it)) }
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -233,7 +260,100 @@ fun CreateTareaBody(
                         )
                     }
                 }
+
+                state.error?.let { error ->
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun RecurrenteSwitch(
+    isRecurrente: Boolean,
+    onRecurrenteChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = "Tarea recurrente",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "Se repite cada semana por un mes",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Switch(
+            checked = isRecurrente,
+            onCheckedChange = onRecurrenteChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DiasSelectorChips(
+    diasSeleccionados: List<String>,
+    onDiasChange: (List<String>) -> Unit
+) {
+    val dias = listOf(
+        "Mon" to "Lun",
+        "Tue" to "Mar",
+        "Wed" to "Mié",
+        "Thu" to "Jue",
+        "Fri" to "Vie",
+        "Sat" to "Sáb",
+        "Sun" to "Dom"
+    )
+
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        dias.forEach { (codigo, nombre) ->
+            val isSelected = diasSeleccionados.contains(codigo)
+
+            FilterChip(
+                selected = isSelected,
+                onClick = {
+                    val nuevaLista = if (isSelected) {
+                        diasSeleccionados - codigo
+                    } else {
+                        diasSeleccionados + codigo
+                    }
+                    onDiasChange(nuevaLista)
+                },
+                label = { Text(text = nombre) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
         }
     }
 }
@@ -289,12 +409,12 @@ private fun ImageSelectorBox(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Subir una imagen",
+                    text = "Subir una imagen",
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    "Toca para seleccionar",
+                    text = "Toca para seleccionar",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
@@ -309,6 +429,20 @@ fun CreateTareaScreenPreview() {
     TaskTallyTheme {
         CreateTareaBody(
             state = TareaUiState(),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CreateTareaScreenRecurrentePreview() {
+    TaskTallyTheme {
+        CreateTareaBody(
+            state = TareaUiState(
+                recurrente = true,
+                diasSeleccionados = listOf("Mon", "Wed", "Fri")
+            ),
             onEvent = {}
         )
     }

@@ -15,8 +15,6 @@ import edu.ucne.tasktally.presentation.auth.LoginScreen
 import edu.ucne.tasktally.presentation.auth.LoginViewModel
 import edu.ucne.tasktally.presentation.auth.RegisterScreen
 import edu.ucne.tasktally.presentation.mentor.tareas.CreateTareaScreen
-import edu.ucne.tasktally.presentation.mentor.recompensas.CreateRecompensaScreen
-import edu.ucne.tasktally.presentation.mentor.recompensas.lista.ListRecompensaScreen
 import edu.ucne.tasktally.presentation.mentor.tareas.list.ListTareaScreen
 
 @Composable
@@ -26,16 +24,6 @@ fun TaskTallyNavHost(
     val loginViewModel: LoginViewModel = hiltViewModel()
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
     val currentUser by loginViewModel.uiState.collectAsState()
-
-    val startDestination = if (isLoggedIn) {
-        when (currentUser.currentUser?.role) {
-            "mentor" -> Screen.MentorTareas
-            "gema" -> Screen.Tareas
-            else -> Screen.Tareas
-        }
-    } else {
-        Screen.Login
-    }
 
     LaunchedEffect(isLoggedIn, currentUser.currentUser?.role) {
         if (isLoggedIn && currentUser.currentUser != null) {
@@ -57,16 +45,15 @@ fun TaskTallyNavHost(
 
     NavHost(
         navController = navHostController,
-        startDestination = Screen.Login // TODO Cambiar cuado lo demas funcione.
+        startDestination = Screen.Login
     ) {
+
         composable<Screen.Login> {
             LoginScreen(
                 onNavigateToRegister = {
                     navHostController.navigate(Screen.Register)
                 },
-                onLoginSuccess = {
-
-                }
+                onLoginSuccess = { }
             )
         }
 
@@ -81,6 +68,10 @@ fun TaskTallyNavHost(
             )
         }
 
+        composable<Screen.Tareas> {
+            // TODO: Pantalla de tareas para gemas
+        }
+
         composable<Screen.Tienda> {
             TiendaScreen()
         }
@@ -89,6 +80,28 @@ fun TaskTallyNavHost(
             PerfilScreen(
                 onLogout = {
                     loginViewModel.onLogoutClick()
+                }
+            )
+        }
+
+        composable<Screen.MentorTareas> {
+            ListTareaScreen(
+                onNavigateToCreate = {
+                    navHostController.navigate(Screen.CreateTarea)
+                },
+                onNavigateToEdit = { tareaId ->
+                    navHostController.navigate(Screen.EditTarea(tareaId = tareaId))
+                }
+            )
+        }
+
+        composable<Screen.ListTareas> {
+            ListTareaScreen(
+                onNavigateToCreate = {
+                    navHostController.navigate(Screen.CreateTarea)
+                },
+                onNavigateToEdit = { tareaId ->
+                    navHostController.navigate(Screen.EditTarea(tareaId = tareaId))
                 }
             )
         }
@@ -112,6 +125,19 @@ fun TaskTallyNavHost(
             )
         }
 
+        // TODO: Descomentar cuando esté listo
+        /*
+        composable<Screen.ListRecompensas> {
+            ListRecompensaScreen(
+                onNavigateToCreate = {
+                    navHostController.navigate(Screen.CreateRecompensa)
+                },
+                onNavigateToEdit = { recompensaId ->
+                    navHostController.navigate(Screen.EditRecompensa(recompensaId = recompensaId))
+                }
+            )
+        }
+
         composable<Screen.CreateRecompensa> {
             CreateRecompensaScreen(
                 recompensaId = null,
@@ -130,28 +156,17 @@ fun TaskTallyNavHost(
                 }
             )
         }
+        */
 
-        composable<Screen.ListTareas> {
-            ListTareaScreen(
-                onNavigateToCreate = {
-                    navHostController.navigate(Screen.CreateTarea)
-                },
-                onNavigateToEdit = { tareaId ->
-                    navHostController.navigate(Screen.EditTarea(tareaId = tareaId))
-                },
-                mentorName = "Mentor"
-            )
+        composable<Screen.MentorTienda> {
+            // TODO: Tienda del mentor (lista de recompensas)
         }
 
-        composable<Screen.ListRecompensas> {
-            ListRecompensaScreen(
-                onNavigateToCreate = {
-                    navHostController.navigate(Screen.CreateRecompensa)
-                },
-                onNavigateToEdit = { recompensaId ->
-                    navHostController.navigate(Screen.EditRecompensa(recompensaId = recompensaId))
-                },
-                mentorName = "Mentor"
+        composable<Screen.MentorPerfil> {
+            PerfilScreen(
+                onLogout = {
+                    loginViewModel.onLogoutClick()
+                }
             )
         }
     }
