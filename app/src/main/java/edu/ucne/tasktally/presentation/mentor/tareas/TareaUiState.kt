@@ -5,21 +5,23 @@ data class TareaUiState(
     val message: String? = null,
     val error: String? = null,
 
-    val tareaId: String? = null,
+    val tareaId: Int? = null,
     val isEditing: Boolean = false,
 
     val titulo: String = "",
     val descripcion: String = "",
     val puntos: String = "",
-    val estado: String = "Pendiente",
-    val diaAsignada: String = "",
+    val recurrente: Boolean = false,
+    val diasSeleccionados: List<String> = emptyList(),
+    val asignada: String = "0",
     val imgVector: String? = null,
+
     val showImagePicker: Boolean = false,
+    val showDiasPicker: Boolean = false,
 
     val tituloError: String? = null,
     val descripcionError: String? = null,
     val puntosError: String? = null,
-    val diaAsignadaError: String? = null,
 
     val navigateBack: Boolean = false
 )

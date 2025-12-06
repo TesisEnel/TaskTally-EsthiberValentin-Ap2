@@ -4,11 +4,13 @@ sealed interface TareaUiEvent {
     data class OnTituloChange(val value: String) : TareaUiEvent
     data class OnDescripcionChange(val value: String) : TareaUiEvent
     data class OnPuntosChange(val value: String) : TareaUiEvent
-    data class OnDiaAsignadaChange(val value: String) : TareaUiEvent
-    data class OnEstadoChange(val value: String) : TareaUiEvent
+    data class OnRecurrenteChange(val value: Boolean) : TareaUiEvent
+    data class OnDiasChange(val dias: List<String>) : TareaUiEvent
+    data class OnAsignadaChange(val gemaId: String) : TareaUiEvent
     data class OnImageSelected(val imageName: String) : TareaUiEvent
+    data class LoadTarea(val id: Int) : TareaUiEvent
+
     data object OnShowImagePicker : TareaUiEvent
     data object OnDismissImagePicker : TareaUiEvent
     data object Save : TareaUiEvent
-    data class LoadTarea(val id: String) : TareaUiEvent
 }
