@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import edu.ucne.tasktally.domain.models.Tarea
 import edu.ucne.tasktally.presentation.componentes.TareaCard.MentorTareaCard
 import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 

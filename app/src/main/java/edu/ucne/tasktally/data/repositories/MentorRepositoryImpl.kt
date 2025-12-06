@@ -16,19 +16,26 @@ class MentorRepositoryImpl @Inject constructor(
     override fun observeMentores(): Flow<List<Mentor>> =
         dao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    override suspend fun getMentor(id: Int?): Mentor? =
+    override suspend fun getMentor(id: String?): Mentor? =
         dao.getById(id)?.toDomain()
+
+    override suspend fun getMentorByRemoteId(remoteId: Int?): Mentor? =
+        dao.getByRemoteId(remoteId)?.toDomain()
 
     override suspend fun upsert(mentor: Mentor): String {
         dao.upsert(mentor.toEntity())
-        return mentor.id
+        return mentor.mentorId
     }
 
     override suspend fun delete(mentor: Mentor) {
         dao.delete(mentor.toEntity())
     }
 
-    override suspend fun deleteById(id: Int) {
+    override suspend fun deleteById(id: String) {
         dao.deleteById(id)
+    }
+
+    override suspend fun deleteByRemoteId(remoteId: Int) {
+        dao.deleteByRemoteId(remoteId)
     }
 }

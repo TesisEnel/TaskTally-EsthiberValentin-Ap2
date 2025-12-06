@@ -1,6 +1,5 @@
 package edu.ucne.tasktally.domain.repository
 
-import edu.ucne.tasktally.domain.models.Tarea
 import kotlinx.coroutines.flow.Flow
 
 interface TareaRepository {

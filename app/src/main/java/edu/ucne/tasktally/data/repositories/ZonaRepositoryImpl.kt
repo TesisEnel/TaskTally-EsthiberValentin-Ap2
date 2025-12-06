@@ -16,19 +16,26 @@ class ZonaRepositoryImpl @Inject constructor(
     override fun observeZonas(): Flow<List<Zona>> =
         dao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    override suspend fun getZona(id: Int?): Zona? =
+    override suspend fun getZona(id: String?): Zona? =
         dao.getById(id)?.toDomain()
+
+    override suspend fun getZonaByRemoteId(remoteId: Int?): Zona? =
+        dao.getByRemoteId(remoteId)?.toDomain()
 
     override suspend fun upsert(zona: Zona): String {
         dao.upsert(zona.toEntity())
-        return zona.id
+        return zona.zonaId
     }
 
     override suspend fun delete(zona: Zona) {
         dao.delete(zona.toEntity())
     }
 
-    override suspend fun deleteById(id: Int) {
+    override suspend fun deleteById(id: String) {
         dao.deleteById(id)
+    }
+
+    override suspend fun deleteByRemoteId(remoteId: Int) {
+        dao.deleteByRemoteId(remoteId)
     }
 }

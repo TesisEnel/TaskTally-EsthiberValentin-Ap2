@@ -1,7 +1,5 @@
 package edu.ucne.tasktally.presentation.mentor.tareas.list
 
-import edu.ucne.tasktally.domain.models.Tarea
-
 data class ListTareaUiState(
     val isLoading: Boolean = false,
     val tareas: List<Tarea> = emptyList(),

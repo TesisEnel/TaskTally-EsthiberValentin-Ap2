@@ -4,23 +4,25 @@ import edu.ucne.tasktally.data.local.entidades.GemaEntity
 import edu.ucne.tasktally.domain.models.Gema
 
 fun GemaEntity.toDomain() = Gema(
-    id = id,
+    gemaId = gemaId,
     remoteId = remoteId,
     nombre = nombre,
     apellido = apellido,
     fechaNacimiento = fechaNacimiento,
     puntosActuales = puntosActuales,
-    isPendingPost = isPendingPost,
-    isPendingUpdate = isPendingUpdate
+    isPendingCreate = isPendingCreate,
+    isPendingUpdate = isPendingUpdate,
+    isPendingDelete = isPendingDelete
 )
 
 fun Gema.toEntity() = GemaEntity(
-    id = id,
+    gemaId = gemaId,
     remoteId = remoteId,
     nombre = nombre,
     apellido = apellido,
     fechaNacimiento = fechaNacimiento,
     puntosActuales = puntosActuales,
-    isPendingPost = isPendingPost,
-    isPendingUpdate = isPendingUpdate
+    isPendingCreate = isPendingCreate,
+    isPendingUpdate = isPendingUpdate,
+    isPendingDelete = isPendingDelete
 )

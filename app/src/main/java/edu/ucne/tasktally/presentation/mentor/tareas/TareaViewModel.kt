@@ -4,9 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.data.remote.Resource
-import edu.ucne.tasktally.domain.models.Tarea
-import edu.ucne.tasktally.domain.usecases.mentor.CreateTareaUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.GetTareaByIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,9 +14,9 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class TareaViewModel @Inject constructor(
-    private val createTareaUseCase: CreateTareaUseCase,
-    private val getTareaByIdUseCase: GetTareaByIdUseCase
+class TareaViewModel @Inject constructor(// TODO DESCOMENTAR Y CORREGIR
+//    private val createTareaUseCase: CreateTareaUseCase,
+//    private val getTareaByIdUseCase: GetTareaByIdUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TareaUiState())
@@ -78,30 +75,30 @@ class TareaViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            val tarea = getTareaByIdUseCase(id)
-
-            if (tarea != null) {
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        isEditing = true,
-                        tareaId = tarea.id,
-                        titulo = tarea.titulo,
-                        descripcion = tarea.descripcion,
-                        puntos = tarea.puntos.toString(),
-                        estado = tarea.estado,
-                        diaAsignada = tarea.diaAsignada ?: "",
-                        imgVector = tarea.imgVector
-                    )
-                }
-            } else {
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "No se encontró la tarea"
-                    )
-                }
-            }
+//            val tarea = getTareaByIdUseCase(id)
+//
+//            if (tarea != null) {
+//                _state.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        isEditing = true,
+//                        tareaId = tarea.id,
+//                        titulo = tarea.titulo,
+//                        descripcion = tarea.descripcion,
+//                        puntos = tarea.puntos.toString(),
+//                        estado = tarea.estado,
+//                        diaAsignada = tarea.diaAsignada ?: "",
+//                        imgVector = tarea.imgVector
+//                    )
+//                }
+//            } else {
+//                _state.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        error = "No se encontró la tarea"
+//                    )
+//                }
+//            }
         }
     }
 
@@ -110,46 +107,46 @@ class TareaViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            val tarea = Tarea(
-                id = _state.value.tareaId ?: "",
-                remoteId = null,
-                estado = _state.value.estado,
-                titulo = _state.value.titulo.trim(),
-                descripcion = _state.value.descripcion.trim(),
-                puntos = _state.value.puntos.toDoubleOrNull() ?: 0.0,
-                diaAsignada = _state.value.diaAsignada,
-                imgVector = _state.value.imgVector,
-                isPendingPost = !_state.value.isEditing,
-                isPendingUpdate = _state.value.isEditing
-            )
-
-            when (val result = createTareaUseCase(tarea)) {
-                is Resource.Success -> {
-                    val mensaje = if (_state.value.isEditing) {
-                        "Tarea actualizada exitosamente"
-                    } else {
-                        "Tarea creada exitosamente"
-                    }
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            message = mensaje,
-                            navigateBack = true
-                        )
-                    }
-                }
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message ?: "Error desconocido"
-                        )
-                    }
-                }
-                is Resource.Loading -> {
-                    _state.update { it.copy(isLoading = true) }
-                }
-            }
+//            val tarea = Tarea(
+//                id = _state.value.tareaId ?: "",
+//                remoteId = null,
+//                estado = _state.value.estado,
+//                titulo = _state.value.titulo.trim(),
+//                descripcion = _state.value.descripcion.trim(),
+//                puntos = _state.value.puntos.toDoubleOrNull() ?: 0.0,
+//                diaAsignada = _state.value.diaAsignada,
+//                imgVector = _state.value.imgVector,
+//                isPendingPost = !_state.value.isEditing,
+//                isPendingUpdate = _state.value.isEditing
+//            )
+//
+//            when (val result = createTareaUseCase(tarea)) {
+//                is Resource.Success -> {
+//                    val mensaje = if (_state.value.isEditing) {
+//                        "Tarea actualizada exitosamente"
+//                    } else {
+//                        "Tarea creada exitosamente"
+//                    }
+//                    _state.update {
+//                        it.copy(
+//                            isLoading = false,
+//                            message = mensaje,
+//                            navigateBack = true
+//                        )
+//                    }
+//                }
+//                is Resource.Error -> {
+//                    _state.update {
+//                        it.copy(
+//                            isLoading = false,
+//                            error = result.message ?: "Error desconocido"
+//                        )
+//                    }
+//                }
+//                is Resource.Loading -> {
+//                    _state.update { it.copy(isLoading = true) }
+//                }
+//            }
         }
     }
 

@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import edu.ucne.tasktally.domain.models.Recompensa
 import edu.ucne.tasktally.presentation.componentes.RecompensaCard.MentorRecompensaCard
 import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaUiEvent
 import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaUiState

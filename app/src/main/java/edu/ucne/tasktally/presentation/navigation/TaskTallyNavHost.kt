@@ -57,7 +57,7 @@ fun TaskTallyNavHost(
 
     NavHost(
         navController = navHostController,
-        startDestination = startDestination
+        startDestination = Screen.Login // TODO Cambiar cuado lo demas funcione.
     ) {
         composable<Screen.Login> {
             LoginScreen(
