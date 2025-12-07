@@ -30,6 +30,7 @@ fun ImagePickerBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val availableImages = listOf(
+        //maticas
         "img0_yellow_tree" to "🌳 Árbol amarillo",
         "img1_purple_vines" to "🌿 Vines moradas",
         "img2_little_bush" to "🌱 Arbusto",
@@ -40,6 +41,8 @@ fun ImagePickerBottomSheet(
         "img7_green_tree" to "🌲 Árbol verde",
         "img8_green_leaves" to "🍃 Hojas verdes",
         "img9_color_leaves" to "🍂 Hojas colores",
+
+        //objetos
         "img10_batteries" to "🔋 Baterías",
         "img11_boxes" to "📦 Cajas",
         "img12_calendar" to "📅 Calendario",

@@ -1,5 +1,6 @@
 package edu.ucne.tasktally.presentation.componentes.TareaCard
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +34,10 @@ fun MentorTareaCard(
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {}
 ) {
+    val imageResId = remember(imageName) {
+        getDrawableResourceIdSafe(imageName)
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -39,12 +45,12 @@ fun MentorTareaCard(
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.primary)
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            val imageResId = getDrawableResourceId(imageName)
-            if (imageResId != null) {
+        // Solo mostrar imagen si tenemos un ID válido
+        if (imageResId != null) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
                 Image(
                     painter = painterResource(id = imageResId),
                     contentDescription = "Imagen de tarea",
@@ -131,43 +137,55 @@ fun MentorTareaCard(
     }
 }
 
-private fun getDrawableResourceId(imageName: String?): Int? {
-    if (imageName == null) return R.drawable.img0_yellow_tree
+private fun getDrawableResourceIdSafe(imageName: String?): Int? {
+    if (imageName.isNullOrBlank()) return null
 
-    return when (imageName) {
-        "img0_yellow_tree" -> R.drawable.img0_yellow_tree
-        "img1_purple_vines" -> R.drawable.img1_purple_vines
-        "img2_little_bush" -> R.drawable.img2_little_bush
-        "img3_little_plant" -> R.drawable.img3_little_plant
-        "img4_pink_tree" -> R.drawable.img4_pink_tree
-        "img5_purple_flower" -> R.drawable.img5_purple_flower
-        "img6_purple_plant" -> R.drawable.img6_purple_plant
-        "img7_green_tree" -> R.drawable.img7_green_tree
-        "img8_green_leaves" -> R.drawable.img8_green_leaves
-        "img9_color_leaves" -> R.drawable.img9_color_leaves
-        "img10_batteries" -> R.drawable.img10_batteries
-        "img11_boxes" -> R.drawable.img11_boxes
-        "img12_calendar" -> R.drawable.img12_calendar
-        "img13_chocolate" -> R.drawable.img13_chocolate
-        "img14_clock" -> R.drawable.img14_clock
-        "img15_coffee_cup" -> R.drawable.img15_coffee_cup
-        "img16_coffee_machine" -> R.drawable.img16_coffee_machine
-        "img16_dishes" -> R.drawable.img16_dishes
-        "img17_doughnut" -> R.drawable.img17_doughnut
-        "img18_doughnut" -> R.drawable.img18_doughnut
-        "img19_files" -> R.drawable.img19_files
-        "img20_folder" -> R.drawable.img20_folder
-        "img21_food" -> R.drawable.img21_food
-        "img22_hamburguer" -> R.drawable.img22_hamburguer
-        "img23_ice_cream" -> R.drawable.img23_ice_cream
-        "img24_mobile_phone" -> R.drawable.img24_mobile_phone
-        "img25_notebook" -> R.drawable.img25_notebook
-        "img26_pancakes" -> R.drawable.img26_pancakes
-        "img27_pizza" -> R.drawable.img27_pizza
-        "img28_pizza_slice" -> R.drawable.img28_pizza_slice
-        "img29_pudding" -> R.drawable.img29_pudding
-        "img30_recycle_bin" -> R.drawable.img30_recycle_bin
-        else -> R.drawable.img0_yellow_tree // Imagen por defecto si no encuentra
+    return try {
+        when (imageName) {
+            //maticas
+            "img0_yellow_tree" -> R.drawable.img0_yellow_tree
+            "img1_purple_vines" -> R.drawable.img1_purple_vines
+            "img2_little_bush" -> R.drawable.img2_little_bush
+            "img3_little_plant" -> R.drawable.img3_little_plant
+            "img4_pink_tree" -> R.drawable.img4_pink_tree
+            "img5_purple_flower" -> R.drawable.img5_purple_flower
+            "img6_purple_plant" -> R.drawable.img6_purple_plant
+            "img7_green_tree" -> R.drawable.img7_green_tree
+            "img8_green_leaves" -> R.drawable.img8_green_leaves
+            "img9_color_leaves" -> R.drawable.img9_color_leaves
+
+            //objetos
+            "img10_batteries" -> R.drawable.img10_batteries
+            "img11_boxes" -> R.drawable.img11_boxes
+            "img12_calendar" -> R.drawable.img12_calendar
+            "img13_chocolate" -> R.drawable.img13_chocolate
+            "img14_clock" -> R.drawable.img14_clock
+            "img15_coffee_cup" -> R.drawable.img15_coffee_cup
+            "img16_coffee_machine" -> R.drawable.img16_coffee_machine
+            "img16_dishes" -> R.drawable.img16_dishes
+            "img17_doughnut" -> R.drawable.img17_doughnut
+            "img18_doughnut" -> R.drawable.img18_doughnut
+            "img19_files" -> R.drawable.img19_files
+            "img20_folder" -> R.drawable.img20_folder
+            "img21_food" -> R.drawable.img21_food
+            "img22_hamburguer" -> R.drawable.img22_hamburguer
+            "img23_ice_cream" -> R.drawable.img23_ice_cream
+            "img24_mobile_phone" -> R.drawable.img24_mobile_phone
+            "img25_notebook" -> R.drawable.img25_notebook
+            "img26_pancakes" -> R.drawable.img26_pancakes
+            "img27_pizza" -> R.drawable.img27_pizza
+            "img28_pizza_slice" -> R.drawable.img28_pizza_slice
+            "img29_pudding" -> R.drawable.img29_pudding
+            "img30_recycle_bin" -> R.drawable.img30_recycle_bin
+
+            else -> {
+                Log.w("TareaCard", "Imagen no encontrada: $imageName")
+                null
+            }
+        }
+    } catch (e: Exception) {
+        Log.e("TareaCard", "Error al cargar drawable: $imageName", e)
+        null
     }
 }
 
