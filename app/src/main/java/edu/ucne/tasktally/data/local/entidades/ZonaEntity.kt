@@ -3,24 +3,18 @@ package edu.ucne.tasktally.data.local.entidades
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.util.UUID
 
 @Entity(
-    tableName = "zona",
+    tableName = "zonas",
     indices = [
-        Index(value = ["remoteId"]),
-        Index(value = ["isPendingCreate"]),
-        Index(value = ["isPendingUpdate"]),
-        Index(value = ["isPendingDelete"])
+        Index(value = ["mentorId"]),
+        Index(value = ["joinCode"], unique = true)
     ]
 )
 data class ZonaEntity(
-    @PrimaryKey val zonaId: String = UUID.randomUUID().toString(),
-    val remoteId: Int? = null,
+    @PrimaryKey(autoGenerate = true)
+    val zonaId: Int = 0,
+    val nombre: String,
     val joinCode: String,
-    val mentorId: Int? = null,
-    val zonaName: String,
-    val isPendingCreate: Boolean = true,
-    val isPendingUpdate: Boolean = false,
-    val isPendingDelete: Boolean = false
+    val mentorId: String
 )

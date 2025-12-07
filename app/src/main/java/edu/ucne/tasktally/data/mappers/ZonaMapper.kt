@@ -3,24 +3,20 @@ package edu.ucne.tasktally.data.mappers
 import edu.ucne.tasktally.data.local.entidades.ZonaEntity
 import edu.ucne.tasktally.domain.models.Zona
 
-fun ZonaEntity.toZonaDomain() = Zona(
-    zonaId = zonaId,
-    remoteId = remoteId,
-    joinCode = joinCode,
-    mentorId = mentorId,
-    zonaName = zonaName,
-    isPendingCreate = isPendingCreate,
-    isPendingUpdate = isPendingUpdate,
-    isPendingDelete = isPendingDelete
-)
+fun ZonaEntity.toDomain(): Zona {
+    return Zona(
+        zonaId = zonaId,
+        nombre = nombre,
+        joinCode = joinCode,
+        mentorId = mentorId
+    )
+}
 
-fun Zona.toZonaEntity() = ZonaEntity(
-    zonaId = zonaId,
-    remoteId = remoteId,
-    joinCode = joinCode,
-    mentorId = mentorId,
-    zonaName = zonaName,
-    isPendingCreate = isPendingCreate,
-    isPendingUpdate = isPendingUpdate,
-    isPendingDelete = isPendingDelete
-)
+fun Zona.toEntity(): ZonaEntity {
+    return ZonaEntity(
+        zonaId = zonaId,
+        nombre = nombre,
+        joinCode = joinCode,
+        mentorId = mentorId
+    )
+}

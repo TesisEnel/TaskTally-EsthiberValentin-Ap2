@@ -10,10 +10,10 @@ import javax.inject.Inject
 class LeaveZoneUseCase @Inject constructor(
     private val api: TaskTallyApi
 ) {
-    operator fun invoke(gemaId: Int, zoneCode: String): Flow<Resource<Unit>> = flow {
+    operator fun invoke(gemaId: Int): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            val response = api.leaveZone(LeaveZoneRequest(gemaId, zoneCode))
+            val response = api.leaveZone(LeaveZoneRequest(gemaId))
             if (response.isSuccessful) {
                 emit(Resource.Success(Unit))
             } else {
