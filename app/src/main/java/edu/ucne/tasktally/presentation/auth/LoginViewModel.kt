@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.data.remote.Resource
+import edu.ucne.tasktally.domain.usecase.gema.CheckGemaZoneAccessUseCase
 import edu.ucne.tasktally.domain.usecases.auth.GetAuthStatusUseCase
 import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
 import edu.ucne.tasktally.domain.usecases.auth.LoginUseCase
@@ -20,7 +21,8 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val getAuthStatusUseCase: GetAuthStatusUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val checkGemaZoneAccessUseCase: CheckGemaZoneAccessUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -34,18 +36,23 @@ class LoginViewModel @Inject constructor(
             getAuthStatusUseCase().collectLatest { loggedIn ->
                 _isLoggedIn.value = loggedIn
                 if (loggedIn) {
-
                     getCurrentUserUseCase().collectLatest { userData ->
-                        _uiState.value = _uiState.value.copy(
-                            currentUser = UserUiState(
-                                userId = userData.userId ?: 0,
-                                username = userData.username ?: "",
-                                email = userData.email ?: "",
-                                role = userData.role ?: "",
-                                mentorId = userData.mentorId,
-                                gemaId = userData.gemaId
-                            )
+                        val userUiState = UserUiState(
+                            userId = userData.userId ?: 0,
+                            username = userData.username ?: "",
+                            email = userData.email ?: "",
+                            role = userData.role ?: "",
+                            mentorId = userData.mentorId,
+                            gemaId = userData.gemaId
                         )
+
+                        _uiState.value = _uiState.value.copy(currentUser = userUiState)
+
+                        if (userUiState.role == "gema" && userUiState.gemaId != null) {
+                            checkZoneAccess(userUiState.gemaId)
+                        } else {
+                            _uiState.value = _uiState.value.copy(hasZoneAccess = true)
+                        }
                     }
                 }
             }
@@ -100,6 +107,30 @@ class LoginViewModel @Inject constructor(
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
+
+    private suspend fun checkZoneAccess(gemaId: Int) {
+        when (val result = checkGemaZoneAccessUseCase(gemaId)) {
+            is Resource.Success -> {
+                _uiState.value = _uiState.value.copy(hasZoneAccess = result.data ?: false)
+            }
+            is Resource.Error -> {
+                _uiState.value = _uiState.value.copy(
+                    hasZoneAccess = false,
+                    error = result.message
+                )
+            }
+            is Resource.Loading -> {}
+        }
+    }
+
+    fun refreshZoneAccess() {
+        viewModelScope.launch {
+            val currentUser = _uiState.value.currentUser
+            if (currentUser?.role == "gema" && currentUser.gemaId != null) {
+                checkZoneAccess(currentUser.gemaId)
+            }
+        }
+    }
 }
 
 data class LoginUiState(
@@ -107,7 +138,8 @@ data class LoginUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
-    val currentUser: UserUiState? = null
+    val currentUser: UserUiState? = null,
+    val hasZoneAccess: Boolean = false
 )
 
 data class UserUiState(

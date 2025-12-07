@@ -15,12 +15,14 @@ import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.BulkRecompensasRequ
 import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.BulkRecompensasResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.CanjearRecompensaResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.RecompensasGemaResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.zone.ZoneInfoGemaResponse
 import edu.ucne.tasktally.data.remote.DTOs.mentor.TareaDto
 import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneResponse
 import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.CreateRecompensaRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.RecompensaDto
 import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.UpdateRecompensaRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.ZoneInfoMentorResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -46,6 +48,9 @@ interface TaskTallyApi {
 
     @POST("api/Gemas/canjear-recompensa")
     suspend fun canjearRecompensa(@Body request: CanjearRecompensaRequest): Response<CanjearRecompensaResponse>
+
+    @GET("api/Gemas/{gemaId}/zones/info")
+    suspend fun obtenerInformacionZonas(@Path("gemaId") gemaId: Int): Response<List<ZoneInfoGemaResponse>>
     //endregion
 
     //region Acciones Mentor
@@ -106,5 +111,8 @@ interface TaskTallyApi {
         @Path("mentorId") mentorId: Int,
         @Body request: UpdateZoneRequest
     ): Response<UpdateZoneResponse>
+
+    @GET("api/Mentors/{mentorId}/zone/info")
+    suspend fun obtenerInformacionZona(@Path("mentorId") mentorId: Int): Response<ZoneInfoMentorResponse>
     //endregion
 }

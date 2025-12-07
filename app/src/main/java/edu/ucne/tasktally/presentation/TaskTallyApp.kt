@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import edu.ucne.tasktally.presentation.auth.LoginViewModel
 import edu.ucne.tasktally.presentation.componentes.BottomNavBar.BottomNavBar
 import edu.ucne.tasktally.presentation.componentes.TopAppBar
 import edu.ucne.tasktally.presentation.navigation.Screen
@@ -24,8 +27,9 @@ fun TaskTallyApp() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // TODO: Esta logica debe venir de un ViewModel/Repository que maneje el estado del usuario
-    val isMentor = currentRoute?.contains("Mentor") == true
+    val loginViewModel: LoginViewModel = hiltViewModel()
+    val currentUser by loginViewModel.uiState.collectAsState()
+    val isMentor = currentUser.currentUser?.role == "mentor"
 
     val title = when (currentRoute) {
         Screen.Tareas::class.qualifiedName -> "Mis Tareas"
@@ -40,11 +44,13 @@ fun TaskTallyApp() {
         Screen.CreateRecompensa::class.qualifiedName -> "Crear Recompensa"
         Screen.ListTareas::class.qualifiedName -> "Lista de Tareas"
         Screen.ListRecompensas::class.qualifiedName -> "Lista de Recompensas"
+        Screen.ZoneAccess::class.qualifiedName -> "Acceso a Zona"
         else -> "TaskTally"
     }
 
     val isAuthScreen = currentRoute == Screen.Login::class.qualifiedName ||
-            currentRoute == Screen.Register::class.qualifiedName
+            currentRoute == Screen.Register::class.qualifiedName ||
+            currentRoute == Screen.ZoneAccess::class.qualifiedName
 
     val showBottomBar = !isAuthScreen &&
             currentRoute != Screen.CreateTarea::class.qualifiedName &&

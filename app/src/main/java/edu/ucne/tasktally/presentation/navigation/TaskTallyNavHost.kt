@@ -14,8 +14,10 @@ import edu.ucne.tasktally.presentation.Tienda.TiendaScreen
 import edu.ucne.tasktally.presentation.auth.LoginScreen
 import edu.ucne.tasktally.presentation.auth.LoginViewModel
 import edu.ucne.tasktally.presentation.auth.RegisterScreen
+import edu.ucne.tasktally.presentation.gema.tareas.GemaTareasScreen
 import edu.ucne.tasktally.presentation.mentor.tareas.CreateTareaScreen
 import edu.ucne.tasktally.presentation.mentor.tareas.list.ListTareaScreen
+import edu.ucne.tasktally.presentation.zona.ZoneAccessScreen
 
 @Composable
 fun TaskTallyNavHost(
@@ -25,13 +27,16 @@ fun TaskTallyNavHost(
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
     val currentUser by loginViewModel.uiState.collectAsState()
 
-    LaunchedEffect(isLoggedIn, currentUser.currentUser?.role) {
+    LaunchedEffect(isLoggedIn, currentUser.currentUser?.role, currentUser.hasZoneAccess) {
         if (isLoggedIn && currentUser.currentUser != null) {
             val user = currentUser.currentUser
             val targetDestination = when (user?.role) {
                 "mentor" -> Screen.MentorTareas
-                "gema" -> Screen.Tareas
-                else -> Screen.Tareas
+                "gema" -> if (currentUser.hasZoneAccess) Screen.Tareas else Screen.ZoneAccess
+                else -> {
+                    loginViewModel.onLogoutClick()
+                    Screen.Login
+                }
             }
             navHostController.navigate(targetDestination) {
                 popUpTo(Screen.Login) { inclusive = true }
@@ -68,20 +73,51 @@ fun TaskTallyNavHost(
             )
         }
 
+        composable<Screen.ZoneAccess> {
+            ZoneAccessScreen(
+                onZoneAccessGranted = {
+                    loginViewModel.refreshZoneAccess()
+                }
+            )
+        }
+
         composable<Screen.Tareas> {
-            // TODO: Pantalla de tareas para gemas
+            GemaTareasScreen()
         }
 
         composable<Screen.Tienda> {
-            TiendaScreen()
+            NavigationGuard(
+                navController = navHostController,
+                requiredRole = "gema"
+            ) {
+                TiendaScreen()
+            }
         }
 
         composable<Screen.Perfil> {
-            PerfilScreen(
-                onLogout = {
-                    loginViewModel.onLogoutClick()
-                }
-            )
+            NavigationGuard(
+                navController = navHostController,
+                requiredRole = "gema"
+            ) {
+                PerfilScreen(
+                    onLogout = {
+                        loginViewModel.onLogoutClick()
+                    },
+                    onNavigateToZona = {
+                        navHostController.navigate(Screen.Zona)
+                    }
+                )
+            }
+        }
+
+        composable<Screen.Zona> {
+            val user = currentUser.currentUser
+            if (user != null) {
+                edu.ucne.tasktally.presentation.zona.ZonaScreen(
+                    userId = (user.gemaId ?: user.mentorId)?.toString() ?: "",
+                    isMentor = user.role == "mentor"
+                )
+            }
         }
 
         composable<Screen.MentorTareas> {
@@ -166,6 +202,9 @@ fun TaskTallyNavHost(
             PerfilScreen(
                 onLogout = {
                     loginViewModel.onLogoutClick()
+                },
+                onNavigateToZona = {
+                    navHostController.navigate(Screen.Zona)
                 }
             )
         }

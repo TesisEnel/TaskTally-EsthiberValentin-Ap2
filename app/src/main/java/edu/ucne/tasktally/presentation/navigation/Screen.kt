@@ -18,6 +18,12 @@ sealed interface Screen {
     @Serializable
     data object Perfil : Screen
 
+    @Serializable
+    data object Zona : Screen
+
+    @Serializable
+    data object ZoneAccess : Screen
+
     // Tareas
     @Serializable
     data object CreateTarea : Screen
