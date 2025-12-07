@@ -21,8 +21,8 @@ interface TareaGemaDao {
     @Query("SELECT * FROM tareas_gema WHERE estado = :estado")
     fun observeByEstado(estado: String): Flow<List<TareaGemaEntity>>
 
-    @Query("SELECT * FROM tareas_gema WHERE gemaId = :gemaId")
-    fun observeByGema(gemaId: Int): Flow<List<TareaGemaEntity>>
+    @Query("SELECT * FROM tareas_gema WHERE userInfoId = :userInfoId")
+    fun observeByUserInfo(userInfoId: Int): Flow<List<TareaGemaEntity>>
 
     @Query("SELECT * FROM tareas_gema WHERE isPendingCreate = 1")
     suspend fun getPendingCreate(): List<TareaGemaEntity>

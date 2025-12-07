@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
-import edu.ucne.tasktally.data.remote.Resource
-import edu.ucne.tasktally.domain.usecases.mentor.GetTareasRecompensasMentorUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.tarea.DeleteTareaUseCase
+
+import edu.ucne.tasktally.domain.usecases.mentor.tarea.GetTareasMentorLocalUseCase
+import edu.ucne.tasktally.data.mappers.toTareaDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListTareaViewModel @Inject constructor(
-    private val getTareasRecompensasMentorUseCase: GetTareasRecompensasMentorUseCase,
-    private val deleteTareaUseCase: DeleteTareaUseCase,
+    private val getTareasMentorLocalUseCase: GetTareasMentorLocalUseCase,
     private val authPreferencesManager: AuthPreferencesManager
 ) : ViewModel() {
 
@@ -59,90 +58,39 @@ class ListTareaViewModel @Inject constructor(
 
     private fun loadTareas() {
         viewModelScope.launch {
-            val mentorId = authPreferencesManager.mentorId.first()
+            _state.update { it.copy(isLoading = true, error = null) }
 
-            if (mentorId == null) {
+            try {
+                getTareasMentorLocalUseCase().collect { tareasMentor ->
+                    val tareasDto = tareasMentor.map { it.toTareaDto() }
+
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            tareas = tareasDto,
+                            error = null
+                        )
+                    }
+                }
+            } catch (e: Exception) {
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        error = "No se encontró el ID del mentor"
+                        error = e.message ?: "Error al cargar las tareas locales"
                     )
-                }
-                return@launch
-            }
-
-            getTareasRecompensasMentorUseCase(mentorId).collect { result ->
-                when (result) {
-                    is Resource.Loading -> {
-                        _state.update { it.copy(isLoading = true, error = null) }
-                    }
-                    is Resource.Success -> {
-                        val allTareas = result.data?.flatMap { it.tareas } ?: emptyList()
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                tareas = allTareas,
-                                error = null
-                            )
-                        }
-                    }
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                error = result.message ?: "Error al cargar las tareas"
-                            )
-                        }
-                    }
                 }
             }
         }
     }
 
     private fun confirmDelete() {
-        val tareaToDelete = _state.value.tareaToDelete ?: return
-
-        viewModelScope.launch {
-            val mentorId = authPreferencesManager.mentorId.first()
-
-            if (mentorId == null) {
-                _state.update {
-                    it.copy(
-                        tareaToDelete = null,
-                        error = "No se encontró el ID del mentor"
-                    )
-                }
-                return@launch
-            }
-
-            _state.update { it.copy(isDeleting = true) }
-
-            deleteTareaUseCase(mentorId, tareaToDelete.tareasGroupId).collect { result ->
-                when (result) {
-                    is Resource.Loading -> {
-                        _state.update { it.copy(isDeleting = true) }
-                    }
-                    is Resource.Success -> {
-                        _state.update {
-                            it.copy(
-                                isDeleting = false,
-                                tareaToDelete = null,
-                                message = "Tarea eliminada exitosamente"
-                            )
-                        }
-                        loadTareas()
-                    }
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                isDeleting = false,
-                                tareaToDelete = null,
-                                error = result.message ?: "Error al eliminar la tarea"
-                            )
-                        }
-                    }
-                }
-            }
+        // TODO: Implementar eliminacion local
+        _state.update {
+            it.copy(
+                isDeleting = false,
+                tareaToDelete = null,
+                error = "Funcion de eliminacion no implementada todavias"
+            )
         }
     }
 

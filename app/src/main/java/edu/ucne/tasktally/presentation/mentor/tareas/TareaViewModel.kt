@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
-import edu.ucne.tasktally.data.remote.Resource
-import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.CreateTareaRequest
-import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.UpdateTareaRequest
-import edu.ucne.tasktally.domain.usecases.mentor.tarea.CreateTareaUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.tarea.UpdateTareaUseCase
+
+import edu.ucne.tasktally.domain.usecases.mentor.tarea.CreateTareaMentorLocalUseCase
+import edu.ucne.tasktally.domain.models.TareaMentor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TareaViewModel @Inject constructor(
-    private val createTareaUseCase: CreateTareaUseCase,
-    private val updateTareaUseCase: UpdateTareaUseCase,
+    private val createTareaMentorLocalUseCase: CreateTareaMentorLocalUseCase,
     private val authPreferencesManager: AuthPreferencesManager
 ) : ViewModel() {
 
@@ -108,79 +105,46 @@ class TareaViewModel @Inject constructor(
     }
 
     private suspend fun createTarea(mentorId: Int, currentState: TareaUiState) {
-        val request = CreateTareaRequest(
-            titulo = currentState.titulo.trim(),
-            descripcion = currentState.descripcion.trim().ifBlank { null },
-            puntos = currentState.puntos.toIntOrNull() ?: 0,
-            recurrente = currentState.recurrente,
-            dias = currentState.diasSeleccionados.joinToString(",").ifBlank { null },
-            nombreImgVector = currentState.imgVector,
-            asignada = currentState.asignada
-        )
+        try {
+            val tarea = TareaMentor(
+                titulo = currentState.titulo.trim(),
+                descripcion = currentState.descripcion.trim(),
+                puntos = currentState.puntos.toIntOrNull() ?: 0,
+                recurrente = currentState.recurrente,
+                dias = if (currentState.recurrente)
+                    currentState.diasSeleccionados.joinToString(",").ifBlank { null }
+                else null,
+                nombreImgVector = currentState.imgVector,
+                mentorId = mentorId,
+                isPendingCreate = true
+            )
 
-        createTareaUseCase(mentorId, request).collect { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _state.update { it.copy(isLoading = true) }
-                }
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            message = "Tarea creada exitosamente",
-                            navigateBack = true
-                        )
-                    }
-                }
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message ?: "Error al crear la tarea"
-                        )
-                    }
-                }
+            createTareaMentorLocalUseCase(tarea)
+
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    message = "Tarea guardada localmente. Se sincronizará automáticamente.",
+                    navigateBack = true
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    error = e.message ?: "Error al crear la tarea"
+                )
             }
         }
     }
 
     private suspend fun updateTarea(mentorId: Int, currentState: TareaUiState) {
-        val tareaId = currentState.tareaId ?: return
-
-        val request = UpdateTareaRequest(
-            tareaId = tareaId,
-            titulo = currentState.titulo.trim(),
-            descripcion = currentState.descripcion.trim().ifBlank { null },
-            puntos = currentState.puntos.toIntOrNull() ?: 0,
-            recurrente = currentState.recurrente,
-            dias = currentState.diasSeleccionados.joinToString(",").ifBlank { null },
-            nombreImgVector = currentState.imgVector,
-            asignada = currentState.asignada
-        )
-
-        updateTareaUseCase(mentorId, tareaId, request).collect { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _state.update { it.copy(isLoading = true) }
-                }
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            message = "Tarea actualizada exitosamente",
-                            navigateBack = true
-                        )
-                    }
-                }
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message ?: "Error al actualizar la tarea"
-                        )
-                    }
-                }
-            }
+        // TODO: Implement local update functionality
+        _state.update {
+            it.copy(
+                isLoading = false,
+                error = "Función de edición no implementada aún"
+            )
         }
     }
 

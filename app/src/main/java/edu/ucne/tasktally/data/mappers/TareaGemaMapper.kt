@@ -6,7 +6,7 @@ import edu.ucne.tasktally.domain.models.TareaGema
 fun TareaGemaEntity.toTareaGemaDomain() = TareaGema(
     tareaId = tareaId,
     remoteId = remoteId,
-    gemaId = gemaId,
+    gemaId = userInfoId,
     titulo = titulo,
     estado = estado,
     puntos = puntos,
@@ -21,7 +21,7 @@ fun TareaGemaEntity.toTareaGemaDomain() = TareaGema(
 fun TareaGema.toTareaGemaEntity() = TareaGemaEntity(
     tareaId = tareaId,
     remoteId = remoteId,
-    gemaId = gemaId,
+    userInfoId = gemaId,
     titulo = titulo,
     estado = estado,
     puntos = puntos,

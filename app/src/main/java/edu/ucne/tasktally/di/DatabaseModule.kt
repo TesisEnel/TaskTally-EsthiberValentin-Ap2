@@ -8,13 +8,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import edu.ucne.tasktally.data.local.DAOs.GemaDao
-import edu.ucne.tasktally.data.local.DAOs.MentorDao
 import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
 import edu.ucne.tasktally.data.local.DAOs.RecompensaGemaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaGemaDao
+import edu.ucne.tasktally.data.local.DAOs.TareaMentorDao
 import edu.ucne.tasktally.data.local.DAOs.TransaccionDao
 import edu.ucne.tasktally.data.local.TaskTallyDatabase
+import edu.ucne.tasktally.data.local.DAOs.UserInfoDao
 import edu.ucne.tasktally.data.local.DAOs.ZonaDao
 import javax.inject.Singleton
 
@@ -33,12 +33,6 @@ object DatabaseModule {
             .build()
     }
     @Provides
-    fun provideGemaDao(db: TaskTallyDatabase): GemaDao =
-        db.gemaDao()
-    @Provides
-    fun provideMentorDao(db: TaskTallyDatabase): MentorDao =
-        db.mentorDao()
-    @Provides
     fun provideRecompensaDao(db: TaskTallyDatabase): RecompensaDao =
         db.recompensaDao()
     @Provides
@@ -51,8 +45,14 @@ object DatabaseModule {
     fun provideTransaccionDao(db: TaskTallyDatabase): TransaccionDao =
         db.transaccionDao()
     @Provides
+    fun provideUserInfoDao(db: TaskTallyDatabase): UserInfoDao =
+        db.userInfoDao()
+    @Provides
     fun provideZonaDao(db: TaskTallyDatabase): ZonaDao =
         db.zonaDao()
+    @Provides
+    fun provideTareaMentorDao(db: TaskTallyDatabase): TareaMentorDao =
+        db.tareaDao()
     @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager {

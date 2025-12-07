@@ -7,7 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +24,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun PerfilScreen(
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onNavigateToZona: () -> Unit = {}
 ) { // TODO Completar PerfilScreen
     var isLoading by remember { mutableStateOf(false) }
 
@@ -106,7 +107,26 @@ fun PerfilScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Logout Button
+            Button(
+                onClick = onNavigateToZona,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Group,
+                    contentDescription = "Zona",
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = "Mi Zona",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(
                 onClick = onLogout,
                 modifier = Modifier.fillMaxWidth(),
