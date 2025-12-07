@@ -18,7 +18,7 @@ data class TareaMentorEntity(
     @PrimaryKey val tareaId: String = UUID.randomUUID().toString(),
     val remoteId: Int? = null,
     val tareasGroupId: Int? = null,
-    val mentorId: Int? = null,
+    val userInfoId: Int? = null,
     val titulo: String,
     val descripcion: String,
     val puntos: Int,

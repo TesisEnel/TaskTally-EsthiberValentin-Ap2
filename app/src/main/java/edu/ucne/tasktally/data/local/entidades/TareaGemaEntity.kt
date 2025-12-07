@@ -17,7 +17,7 @@ import java.util.UUID
 data class TareaGemaEntity(
     @PrimaryKey val tareaId: String = UUID.randomUUID().toString(),
     val remoteId: Int? = null,
-    val gemaId: Int? = null,
+    val userInfoId: Int? = null,
     val titulo: String,
     val estado: String,
     val puntos: Int,

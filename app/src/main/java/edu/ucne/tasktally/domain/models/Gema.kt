@@ -9,6 +9,7 @@ data class Gema(
     val apellido: String? = null,
     val fechaNacimiento: String? = null,
     val puntosActuales: Int = 0,
+    val zonaId: Int? = null,
     val isPendingCreate: Boolean = true,
     val isPendingUpdate: Boolean = false,
     val isPendingDelete: Boolean = false
