@@ -24,17 +24,15 @@ sealed interface Screen {
     @Serializable
     data object ZoneAccess : Screen
 
-    // Tareas
     @Serializable
     data object CreateTarea : Screen
 
     @Serializable
-    data class EditTarea(val tareaId: Int) : Screen
+    data class EditTarea(val tareaId: String) : Screen
 
     @Serializable
     data object ListTareas : Screen
 
-    // Recompensa
     @Serializable
     data object CreateRecompensa : Screen
 
@@ -44,7 +42,6 @@ sealed interface Screen {
     @Serializable
     data object ListRecompensas : Screen
 
-    // Mentor
     @Serializable
     data object MentorTareas : Screen
 

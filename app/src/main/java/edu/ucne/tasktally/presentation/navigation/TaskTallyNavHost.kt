@@ -29,7 +29,9 @@ fun TaskTallyNavHost(
 
     LaunchedEffect(isLoggedIn, currentUser.currentUser?.role, currentUser.hasZoneAccess) {
         if (isLoggedIn && currentUser.currentUser != null) {
+
             val user = currentUser.currentUser
+
             val targetDestination = when (user?.role) {
                 "mentor" -> Screen.MentorTareas
                 "gema" -> if (currentUser.hasZoneAccess) Screen.Tareas else Screen.ZoneAccess
@@ -38,6 +40,7 @@ fun TaskTallyNavHost(
                     Screen.Login
                 }
             }
+
             navHostController.navigate(targetDestination) {
                 popUpTo(Screen.Login) { inclusive = true }
             }
@@ -58,26 +61,20 @@ fun TaskTallyNavHost(
                 onNavigateToRegister = {
                     navHostController.navigate(Screen.Register)
                 },
-                onLoginSuccess = { }
+                onLoginSuccess = {}
             )
         }
 
         composable<Screen.Register> {
             RegisterScreen(
-                onNavigateBack = {
-                    navHostController.popBackStack()
-                },
-                onRegisterSuccess = {
-                    navHostController.popBackStack()
-                }
+                onNavigateBack = { navHostController.popBackStack() },
+                onRegisterSuccess = { navHostController.popBackStack() }
             )
         }
 
         composable<Screen.ZoneAccess> {
             ZoneAccessScreen(
-                onZoneAccessGranted = {
-                    loginViewModel.refreshZoneAccess()
-                }
+                onZoneAccessGranted = { loginViewModel.refreshZoneAccess() }
             )
         }
 
@@ -100,9 +97,7 @@ fun TaskTallyNavHost(
                 requiredRole = "gema"
             ) {
                 PerfilScreen(
-                    onLogout = {
-                        loginViewModel.onLogoutClick()
-                    },
+                    onLogout = { loginViewModel.onLogoutClick() },
                     onNavigateToZona = {
                         navHostController.navigate(Screen.Zona)
                     }
@@ -126,7 +121,7 @@ fun TaskTallyNavHost(
                     navHostController.navigate(Screen.CreateTarea)
                 },
                 onNavigateToEdit = { tareaId ->
-                    navHostController.navigate(Screen.EditTarea(tareaId = tareaId))
+                    navHostController.navigate(Screen.EditTarea(tareaId))
                 }
             )
         }
@@ -137,7 +132,7 @@ fun TaskTallyNavHost(
                     navHostController.navigate(Screen.CreateTarea)
                 },
                 onNavigateToEdit = { tareaId ->
-                    navHostController.navigate(Screen.EditTarea(tareaId = tareaId))
+                    navHostController.navigate(Screen.EditTarea(tareaId))
                 }
             )
         }
@@ -145,9 +140,7 @@ fun TaskTallyNavHost(
         composable<Screen.CreateTarea> {
             CreateTareaScreen(
                 tareaId = null,
-                onNavigateBack = {
-                    navHostController.popBackStack()
-                }
+                onNavigateBack = { navHostController.popBackStack() }
             )
         }
 
@@ -155,54 +148,15 @@ fun TaskTallyNavHost(
             val args = backStackEntry.toRoute<Screen.EditTarea>()
             CreateTareaScreen(
                 tareaId = args.tareaId,
-                onNavigateBack = {
-                    navHostController.popBackStack()
-                }
+                onNavigateBack = { navHostController.popBackStack() }
             )
         }
 
-        // TODO: Descomentar cuando esté listo
-        /*
-        composable<Screen.ListRecompensas> {
-            ListRecompensaScreen(
-                onNavigateToCreate = {
-                    navHostController.navigate(Screen.CreateRecompensa)
-                },
-                onNavigateToEdit = { recompensaId ->
-                    navHostController.navigate(Screen.EditRecompensa(recompensaId = recompensaId))
-                }
-            )
-        }
-
-        composable<Screen.CreateRecompensa> {
-            CreateRecompensaScreen(
-                recompensaId = null,
-                onNavigateBack = {
-                    navHostController.popBackStack()
-                }
-            )
-        }
-
-        composable<Screen.EditRecompensa> { backStackEntry ->
-            val args = backStackEntry.toRoute<Screen.EditRecompensa>()
-            CreateRecompensaScreen(
-                recompensaId = args.recompensaId,
-                onNavigateBack = {
-                    navHostController.popBackStack()
-                }
-            )
-        }
-        */
-
-        composable<Screen.MentorTienda> {
-            // TODO: Tienda del mentor (lista de recompensas)
-        }
+        composable<Screen.MentorTienda> {}
 
         composable<Screen.MentorPerfil> {
             PerfilScreen(
-                onLogout = {
-                    loginViewModel.onLogoutClick()
-                },
+                onLogout = { loginViewModel.onLogoutClick() },
                 onNavigateToZona = {
                     navHostController.navigate(Screen.Zona)
                 }
