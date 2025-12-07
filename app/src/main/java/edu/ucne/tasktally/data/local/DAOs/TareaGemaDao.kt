@@ -12,6 +12,16 @@ interface TareaGemaDao {
     @Query("SELECT * FROM tareas_gema ORDER BY tareaId DESC")
     fun observeAll(): Flow<List<TareaGemaEntity>>
 
+
+    @Query("SELECT * FROM tareas_gema WHERE perteneceA = :gemaId AND (dia = :dia OR :dia IS NULL) ORDER BY tareaId DESC")
+    suspend fun getTareasGemaLocal(gemaId: Int, dia: String?): List<TareaGemaEntity>
+
+    @Query("UPDATE tareas_gema SET isPendingUpdate = 1, estado = 'iniciada' WHERE tareaId = :id")
+    suspend fun iniciarTarea(id: String)
+
+    @Query("UPDATE tareas_gema SET isPendingUpdate = 1, estado = 'completada' WHERE tareaId = :id")
+    suspend fun completarTarea(id: String)
+
     @Query("SELECT * FROM tareas_gema WHERE tareaId = :id")
     suspend fun getById(id: String?): TareaGemaEntity?
 
@@ -21,8 +31,8 @@ interface TareaGemaDao {
     @Query("SELECT * FROM tareas_gema WHERE estado = :estado")
     fun observeByEstado(estado: String): Flow<List<TareaGemaEntity>>
 
-    @Query("SELECT * FROM tareas_gema WHERE userInfoId = :userInfoId")
-    fun observeByUserInfo(userInfoId: Int): Flow<List<TareaGemaEntity>>
+    @Query("SELECT * FROM tareas_gema WHERE perteneceA = :perteneceA")
+    fun observeByUserInfo(perteneceA: Int): Flow<List<TareaGemaEntity>>
 
     @Query("SELECT * FROM tareas_gema WHERE isPendingCreate = 1")
     suspend fun getPendingCreate(): List<TareaGemaEntity>

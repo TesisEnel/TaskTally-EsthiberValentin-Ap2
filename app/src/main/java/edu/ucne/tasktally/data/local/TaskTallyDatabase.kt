@@ -27,7 +27,7 @@ import edu.ucne.tasktally.data.local.entidades.ZonaEntity
         TransaccionEntity::class,
         UserInfoEntity::class,
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 abstract class TaskTallyDatabase : RoomDatabase() {

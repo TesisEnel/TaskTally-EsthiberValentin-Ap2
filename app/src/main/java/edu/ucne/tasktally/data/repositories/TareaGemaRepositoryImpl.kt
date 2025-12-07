@@ -24,6 +24,9 @@ class TareaGemaRepositoryImpl @Inject constructor(
     override suspend fun getTareaGemaByRemoteId(remoteId: Int): TareaGema? =
         dao.getByRemoteId(remoteId)?.toTareaGemaDomain()
 
+    override suspend fun getTareasGemaLocal(gemaId: Int, dia: String?): List<TareaGema> =
+        dao.getTareasGemaLocal(gemaId, dia).map { it.toTareaGemaDomain() }
+
     override suspend fun upsert(tarea: TareaGema): String {
         dao.upsert(tarea.toTareaGemaEntity())
         return tarea.tareaId
@@ -39,5 +42,13 @@ class TareaGemaRepositoryImpl @Inject constructor(
 
     override suspend fun deleteByRemoteId(remoteId: Int) {
         dao.deleteByRemoteId(remoteId)
+    }
+
+    override suspend fun iniciarTarea(id: String) {
+        dao.iniciarTarea(id)
+    }
+
+    override suspend fun completarTarea(id: String) {
+        dao.completarTarea(id)
     }
 }

@@ -7,8 +7,14 @@ interface TareaGemaRepository {
     fun observeTareasGema(): Flow<List<TareaGema>>
     suspend fun getTareaGema(id: String?): TareaGema?
     suspend fun getTareaGemaByRemoteId(remoteId: Int): TareaGema?
+
+    suspend fun getTareasGemaLocal(gemaId: Int, dia: String? = null): List<TareaGema>
+
     suspend fun upsert(tarea: TareaGema): String
     suspend fun delete(tarea: TareaGema)
     suspend fun deleteById(id: String)
     suspend fun deleteByRemoteId(remoteId: Int)
+
+    suspend fun iniciarTarea(id: String)
+    suspend fun completarTarea(id: String)
 }
