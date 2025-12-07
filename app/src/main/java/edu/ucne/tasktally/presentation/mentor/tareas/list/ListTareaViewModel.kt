@@ -4,9 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
-
 import edu.ucne.tasktally.domain.usecases.mentor.tarea.GetTareasMentorLocalUseCase
-import edu.ucne.tasktally.data.mappers.toTareaDto
+import edu.ucne.tasktally.domain.usecases.DeleteTareaMentorUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ListTareaViewModel @Inject constructor(
     private val getTareasMentorLocalUseCase: GetTareasMentorLocalUseCase,
+    private val deleteTareaMentorUseCase: DeleteTareaMentorUseCase,
     private val authPreferencesManager: AuthPreferencesManager
 ) : ViewModel() {
 
@@ -62,12 +62,10 @@ class ListTareaViewModel @Inject constructor(
 
             try {
                 getTareasMentorLocalUseCase().collect { tareasMentor ->
-                    val tareasDto = tareasMentor.map { it.toTareaDto() }
-
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            tareas = tareasDto,
+                            tareas = tareasMentor,
                             error = null
                         )
                     }
@@ -84,13 +82,29 @@ class ListTareaViewModel @Inject constructor(
     }
 
     private fun confirmDelete() {
-        // TODO: Implementar eliminacion local
-        _state.update {
-            it.copy(
-                isDeleting = false,
-                tareaToDelete = null,
-                error = "Funcion de eliminacion no implementada todavias"
-            )
+        val tarea = _state.value.tareaToDelete ?: return
+
+        viewModelScope.launch {
+            _state.update { it.copy(isDeleting = true) }
+
+            try {
+                deleteTareaMentorUseCase(tarea)
+                _state.update {
+                    it.copy(
+                        isDeleting = false,
+                        tareaToDelete = null,
+                        message = "Tarea eliminada correctamente"
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        isDeleting = false,
+                        tareaToDelete = null,
+                        error = e.message ?: "Error al eliminar la tarea"
+                    )
+                }
+            }
         }
     }
 

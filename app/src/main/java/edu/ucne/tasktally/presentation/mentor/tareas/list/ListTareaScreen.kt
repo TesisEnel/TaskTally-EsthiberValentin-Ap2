@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import edu.ucne.tasktally.data.remote.DTOs.mentor.TareaDto
+import edu.ucne.tasktally.domain.models.TareaMentor
 import edu.ucne.tasktally.presentation.componentes.TareaCard.MentorTareaCard
 import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 
@@ -28,7 +28,7 @@ import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 fun ListTareaScreen(
     viewModel: ListTareaViewModel = hiltViewModel(),
     onNavigateToCreate: () -> Unit = {},
-    onNavigateToEdit: (Int) -> Unit = {}
+    onNavigateToEdit: (String) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -42,7 +42,7 @@ fun ListTareaScreen(
     LaunchedEffect(state.navigateToEdit) {
         state.navigateToEdit?.let { tarea ->
             viewModel.onNavigationHandled()
-            onNavigateToEdit(tarea.tareasGroupId)
+            onNavigateToEdit(tarea.tareaId)
         }
     }
 
@@ -77,9 +77,8 @@ fun ListTareaBody(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -114,15 +113,18 @@ fun ListTareaBody(
                         CircularProgressIndicator()
                     }
                 }
+
                 state.error != null -> {
                     ErrorContent(
                         error = state.error,
                         onRetry = { onEvent(ListTareaUiEvent.Load) }
                     )
                 }
+
                 state.tareas.isEmpty() -> {
                     EmptyContent()
                 }
+
                 else -> {
                     TareasList(
                         tareas = state.tareas,
@@ -152,9 +154,9 @@ fun ListTareaBody(
 
 @Composable
 private fun TareasList(
-    tareas: List<TareaDto>,
-    onEdit: (TareaDto) -> Unit,
-    onDelete: (TareaDto) -> Unit
+    tareas: List<TareaMentor>,
+    onEdit: (TareaMentor) -> Unit,
+    onDelete: (TareaMentor) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -165,13 +167,13 @@ private fun TareasList(
     ) {
         itemsIndexed(
             items = tareas,
-            key = { _, tarea -> tarea.tareasGroupId }
+            key = { _, tarea -> tarea.tareaId }
         ) { index, tarea ->
             MentorTareaCard(
                 numeroTarea = "Tarea #${index + 1}",
                 titulo = tarea.titulo,
                 puntos = tarea.puntos,
-                imageName = tarea.nombreImgVector.ifBlank { null },
+                imageName = tarea.nombreImgVector,
                 onEditClick = { onEdit(tarea) },
                 onDeleteClick = { onDelete(tarea) }
             )
@@ -185,9 +187,7 @@ private fun EmptyContent() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "No hay tareas",
                 fontSize = 18.sp,
@@ -239,11 +239,11 @@ private fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = { if (!isDeleting) onDismiss() },
-        title = {
-            Text(text = "Eliminar tarea")
-        },
+        title = { Text(text = "Eliminar tarea") },
         text = {
-            Text(text = "¿Estás seguro de que deseas eliminar la tarea \"$tareaTitle\"? Esta acción no se puede deshacer.")
+            Text(
+                text = "¿Estás seguro de que deseas eliminar la tarea \"$tareaTitle\"? Esta acción no se puede deshacer."
+            )
         },
         confirmButton = {
             Button(
@@ -282,25 +282,25 @@ fun ListTareaScreenPreview() {
             state = ListTareaUiState(
                 mentorName = "Esthiber",
                 tareas = listOf(
-                    TareaDto(
-                        tareasGroupId = 1,
+                    TareaMentor(
+                        tareaId = "1",
                         mentorId = 1,
                         titulo = "Arreglar la habitación",
                         descripcion = "Ordenar y limpiar",
                         puntos = 60,
                         recurrente = false,
-                        dias = "",
-                        nombreImgVector = ""
+                        dias = null,
+                        nombreImgVector = "img0_yellow_tree"
                     ),
-                    TareaDto(
-                        tareasGroupId = 2,
+                    TareaMentor(
+                        tareaId = "2",
                         mentorId = 1,
                         titulo = "Barrer la casa",
                         descripcion = "Barrer todas las habitaciones",
                         puntos = 100,
                         recurrente = true,
                         dias = "Mon,Wed,Fri",
-                        nombreImgVector = ""
+                        nombreImgVector = "img5_purple_flower"
                     )
                 )
             ),

@@ -1,17 +1,17 @@
 package edu.ucne.tasktally.presentation.mentor.tareas.list
 
-import edu.ucne.tasktally.data.remote.DTOs.mentor.TareaDto
+import edu.ucne.tasktally.domain.models.TareaMentor
 
 data class ListTareaUiState(
     val isLoading: Boolean = false,
-    val tareas: List<TareaDto> = emptyList(),
+    val tareas: List<TareaMentor> = emptyList(),
     val error: String? = null,
     val message: String? = null,
     val mentorName: String = "Mentor",
 
     val navigateToCreate: Boolean = false,
-    val navigateToEdit: TareaDto? = null,
+    val navigateToEdit: TareaMentor? = null,
 
-    val tareaToDelete: TareaDto? = null,
+    val tareaToDelete: TareaMentor? = null,
     val isDeleting: Boolean = false
 )
