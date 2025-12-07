@@ -1,9 +1,14 @@
 package edu.ucne.tasktally.presentation.mentor.recompensas.list
 
+import edu.ucne.tasktally.domain.models.RecompensaMentor
+
 sealed interface ListRecompensaUiEvent {
     data object Load : ListRecompensaUiEvent
-    data class Delete(val id: String) : ListRecompensaUiEvent
+    data object Refresh : ListRecompensaUiEvent
     data object CreateNew : ListRecompensaUiEvent
-    data class Edit(val id: String) : ListRecompensaUiEvent
-    data class ShowMessage(val message: String) : ListRecompensaUiEvent
+
+    data class Edit(val recompensa: RecompensaMentor) : ListRecompensaUiEvent
+    data class ShowDeleteConfirmation(val recompensa: RecompensaMentor) : ListRecompensaUiEvent
+    data object ConfirmDelete : ListRecompensaUiEvent
+    data object DismissDeleteConfirmation : ListRecompensaUiEvent
 }
