@@ -19,6 +19,6 @@ interface ZonaRepository {
 
     suspend fun updateZoneCode(zoneId:Int, newJoinCode: String)
 
-    suspend fun getZoneInfoMentor(mentorId: Int): Resource<ZoneInfoMentorResponse>
-    suspend fun getZoneInfoGema(zoneId: Int): Resource<List<ZoneInfoGemaResponse>>
+    suspend fun getZoneInfoMentor(zoneId: Int): Resource<ZoneInfoMentorResponse>
+    suspend fun getZoneInfoGema(zoneId: Int): Resource<ZoneInfoGemaResponse>
 }

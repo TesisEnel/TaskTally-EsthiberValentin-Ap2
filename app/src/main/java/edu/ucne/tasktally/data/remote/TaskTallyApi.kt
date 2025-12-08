@@ -50,9 +50,6 @@ interface TaskTallyApi {
 
     @POST("api/Gemas/canjear-recompensa")
     suspend fun canjearRecompensa(@Body request: CanjearRecompensaRequest): Response<CanjearRecompensaResponse>
-
-    @GET("api/Zones/{zoneId}/info")
-    suspend fun obtenerInformacionZonas(@Path("zoneId") zoneId: Int): Response<List<ZoneInfoGemaResponse>>
     //endregion
 
     //region Acciones Mentor
@@ -114,7 +111,10 @@ interface TaskTallyApi {
         @Body request: UpdateZoneRequest
     ): Response<UpdateZoneResponse>
 
-    @GET("api/Zones/{zoneId}/info")
-    suspend fun obtenerInformacionZona(@Path("zoneId") zoneId: Int): Response<ZoneInfoMentorResponse>
-    //endregion
+    @GET("api/Mentors/Zones/{zoneId}/info")
+    suspend fun obtenerMentorInfoZona(@Path("zoneId") zoneId: Int): Response<ZoneInfoMentorResponse>
+
+    @GET("api/Gemas/Zones/{zoneId}/info")
+    suspend fun obtenerGemaInfoZona(@Path("zoneId") zoneId: Int): Response<ZoneInfoGemaResponse>
+//endregion
 }

@@ -10,7 +10,7 @@ class CheckGemaZoneAccessUseCase @Inject constructor(
     suspend operator fun invoke(gemaId: Int): Resource<Boolean> {
         return when (val result = zonaRepository.getZoneInfoGema(gemaId)) {
             is Resource.Success -> {
-                val hasAccess = !result.data.isNullOrEmpty()
+                val hasAccess = result.data != null
                 Resource.Success(hasAccess)
             }
             is Resource.Error -> {

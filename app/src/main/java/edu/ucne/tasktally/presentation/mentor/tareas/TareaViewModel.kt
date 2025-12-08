@@ -8,6 +8,7 @@ import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
 import edu.ucne.tasktally.domain.usecases.mentor.tarea.CreateTareaMentorLocalUseCase
 import edu.ucne.tasktally.domain.usecases.mentor.tarea.GetTareaMentorByIdLocalUseCase
 import edu.ucne.tasktally.domain.usecases.mentor.tarea.UpdateTareaMentorLocalUseCase
+import edu.ucne.tasktally.domain.usecases.sync.TriggerSyncUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -21,7 +22,8 @@ class TareaViewModel @Inject constructor(
     private val createTareaMentorLocalUseCase: CreateTareaMentorLocalUseCase,
     private val getTareaByIdUseCase: GetTareaMentorByIdLocalUseCase,
     private val updateTareaMentorUseCase: UpdateTareaMentorLocalUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val triggerSyncUseCase: TriggerSyncUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TareaUiState())
@@ -113,8 +115,10 @@ class TareaViewModel @Inject constructor(
 
             if (st.isEditing && st.tareaId != null) {
                 updateTarea(mentorId, st)
+                triggerSyncUseCase()
             } else {
                 createTarea(mentorId, st)
+                triggerSyncUseCase()
             }
         }
     }

@@ -66,19 +66,14 @@ class GemaRepositoryImpl @Inject constructor(
 
     override suspend fun getZoneInfo(zoneId: Int): Zona {
         return try {
-            val response = api.obtenerInformacionZonas(zoneId)
+            val response = api.obtenerGemaInfoZona(zoneId)
             if (response.isSuccessful) {
-                response.body()?.let { zoneInfoList ->
-                    zoneInfoList.firstOrNull()?.let { zoneInfo ->
-                        val zona = zoneInfo.toZonaDomain()
+                response.body()?.let { zoneInfo ->
+                    val zona = zoneInfo.toZonaDomain()
 
-                        zonaDao.upsert(zona.toEntity())
+                    zonaDao.upsert(zona.toEntity())
 
-                        zona
-                    } ?: run {
-
-                        getLocalZoneInfo(zoneId)
-                    }
+                    zona
                 } ?: run {
                     getLocalZoneInfo(zoneId)
                 }

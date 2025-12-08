@@ -9,6 +9,7 @@ import edu.ucne.tasktally.domain.usecases.mentor.recompensa.CreateRecompensaMent
 import edu.ucne.tasktally.domain.usecases.mentor.recompensa.GetRecompensaByIdLocalUseCase
 import edu.ucne.tasktally.domain.usecases.mentor.recompensa.ObserveRecompensasByMentorIdLocalUseCase
 import edu.ucne.tasktally.domain.usecases.mentor.recompensa.UpdateRecompensaMentorUseCase
+import edu.ucne.tasktally.domain.usecases.sync.TriggerSyncUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +24,8 @@ class RecompensaViewModel @Inject constructor(
     private val observeRecompensasMentorUseCase: ObserveRecompensasByMentorIdLocalUseCase,
     private val createRecompensaMentorLocalUseCase: CreateRecompensaMentorLocalUseCase,
     private val updateRecompensaMentorUseCase: UpdateRecompensaMentorUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val triggerSyncUseCase: TriggerSyncUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RecompensaUiState())
@@ -115,8 +117,10 @@ class RecompensaViewModel @Inject constructor(
 
             if (st.isEditing && st.recompensaId != null) {
                 updateRecompensa(mentorId, st)
+                triggerSyncUseCase()
             } else {
                 createRecompensa(mentorId, st)
+                triggerSyncUseCase()
             }
         }
     }

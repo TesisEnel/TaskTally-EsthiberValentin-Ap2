@@ -94,13 +94,12 @@ class MentorRepositoryImpl @Inject constructor(
     //region zona
     override suspend fun getZoneInfo(zoneId: Int): Zona {
         return try {
-            val response = api.obtenerInformacionZona(zoneId)
+            val response = api.obtenerMentorInfoZona(zoneId)
             if (response.isSuccessful) {
                 response.body()?.let { zoneInfo ->
                     val zona = zoneInfo.toZonaDomain().copy(zonaId = zoneId)
 
                     zonaDao.upsert(zona.toEntity())
-
 
                     zona
                 } ?: run {

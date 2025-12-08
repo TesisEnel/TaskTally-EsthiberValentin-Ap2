@@ -29,6 +29,11 @@ class RemoteDataSource @Inject constructor(
                 throw Exception("Join zone response body is null")
             }
 
+            if (joinZoneResponse.zoneId == null || joinZoneResponse.zoneName == null) {
+                Log.e("RemoteDataSource", "Join zone response missing required fields")
+                throw Exception("Join zone response missing required fields")
+            }
+
             Log.d("RemoteDataSource", "Se ingreso correctamente a la zona: ${joinZoneResponse.zoneName} (ID: ${joinZoneResponse.zoneId})")
             return joinZoneResponse
         } catch (e: Exception) {

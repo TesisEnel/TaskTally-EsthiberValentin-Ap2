@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.domain.usecases.mentor.zona.UpdateZoneCodeRemoteUseCase
 import edu.ucne.tasktally.domain.usecases.UpdateZoneNameLocalUseCase
+import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
 import edu.ucne.tasktally.domain.usecases.gema.zona.GetGemaZonaByIdUseCase
 import edu.ucne.tasktally.domain.usecases.mentor.zona.GetMentorZonaByIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +22,7 @@ class ZonaViewModel @Inject constructor(
     private val getGemaZonaByIdUseCase: GetGemaZonaByIdUseCase,
     private val updateZoneNameUseCase: UpdateZoneNameLocalUseCase,
     private val updateZoneCodeUseCase: UpdateZoneCodeRemoteUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ZonaUiState())
@@ -103,8 +106,20 @@ class ZonaViewModel @Inject constructor(
                     }
                     return@launch
                 }
+                val userData = getCurrentUserUseCase().first()
+                val zoneId = userData.zoneId
 
-                val zona = getMentorZonaByIdUseCase(mentorId)
+                if (zoneId == null || zoneId <= 0) {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            userMessage = "No tienes una zona asignada"
+                        )
+                    }
+                    return@launch
+                }
+
+                val zona = getMentorZonaByIdUseCase(zoneId)
                 _state.update {
                     it.copy(
                         zona = zona,
