@@ -14,7 +14,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.ucne.tasktally.presentation.auth.LoginViewModel
 import edu.ucne.tasktally.presentation.componentes.BottomNavBar.BottomNavBar
-import edu.ucne.tasktally.presentation.componentes.TopAppBar
 import edu.ucne.tasktally.presentation.navigation.Screen
 import edu.ucne.tasktally.presentation.navigation.TaskTallyNavHost
 import edu.ucne.tasktally.ui.theme.TaskTallyTheme
@@ -29,23 +28,6 @@ fun TaskTallyApp() {
     val currentUser by loginViewModel.uiState.collectAsState()
     val isMentor = currentUser.currentUser?.role == "mentor"
 
-    val title = when (currentRoute) {
-        Screen.Tareas::class.qualifiedName -> "Mis Tareas"
-        Screen.Tienda::class.qualifiedName -> "Tienda"
-        Screen.Perfil::class.qualifiedName -> "Perfil"
-        Screen.MentorTareas::class.qualifiedName -> "Gestionar Tareas"
-        Screen.MentorTienda::class.qualifiedName -> "Gestionar Recompensas"
-        Screen.MentorPerfil::class.qualifiedName -> "Perfil Mentor"
-        Screen.Login::class.qualifiedName -> "Iniciar Sesión"
-        Screen.Register::class.qualifiedName -> "Registrarse"
-        Screen.CreateTarea::class.qualifiedName -> "Crear Tareas"
-        Screen.CreateRecompensa::class.qualifiedName -> "Crear Recompensa"
-        Screen.ListTareas::class.qualifiedName -> "Lista de Tareas"
-        Screen.ListRecompensas::class.qualifiedName -> "Lista de Recompensas"
-        Screen.ZoneAccess::class.qualifiedName -> "Acceso a Zona"
-        else -> "TaskTally"
-    }
-
     val isAuthScreen = currentRoute == Screen.Login::class.qualifiedName ||
             currentRoute == Screen.Register::class.qualifiedName ||
             currentRoute == Screen.ZoneAccess::class.qualifiedName
@@ -58,11 +40,6 @@ fun TaskTallyApp() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            if (!isAuthScreen) {
-                TopAppBar(title = title)
-            }
-        },
         bottomBar = {
             if (showBottomBar) {
                 BottomNavBar(
