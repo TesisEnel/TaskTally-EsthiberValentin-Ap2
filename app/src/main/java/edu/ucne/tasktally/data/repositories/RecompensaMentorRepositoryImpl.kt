@@ -1,6 +1,6 @@
 package edu.ucne.tasktally.data.repositories
 
-import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
+import edu.ucne.tasktally.data.local.DAOs.RecompensaMentorDao
 
 import edu.ucne.tasktally.data.local.entidades.RecompensaMentorEntity
 import edu.ucne.tasktally.data.mappers.toRecompensaMentorDomain
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RecompensaMentorRepositoryImpl @Inject constructor(
-    private val dao: RecompensaDao
+    private val dao: RecompensaMentorDao
 ) : RecompensaMentorRepository {
 
     override fun observeRecompensasMentor(): Flow<List<RecompensaMentor>> =

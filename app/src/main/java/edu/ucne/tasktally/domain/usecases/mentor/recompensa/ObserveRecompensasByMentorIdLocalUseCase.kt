@@ -2,11 +2,11 @@ package edu.ucne.tasktally.domain.usecases.mentor.recompensa
 
 import edu.ucne.tasktally.domain.models.RecompensaMentor
 import edu.ucne.tasktally.domain.repository.MentorRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class CreateRecompensaMentorLocalUseCase @Inject constructor(
+class ObserveRecompensasByMentorIdLocalUseCase @Inject constructor(
     private val repo: MentorRepository
 ) {
-    suspend operator fun invoke(recompensa: RecompensaMentor) =
-        repo.createRecompensaLocal(recompensa)
+    operator fun invoke(mentorId: Int): Flow<List<RecompensaMentor>> = repo.observeRecompensasByMentor(mentorId)
 }

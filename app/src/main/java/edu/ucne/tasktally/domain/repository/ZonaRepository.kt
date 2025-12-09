@@ -14,8 +14,11 @@ interface ZonaRepository {
     suspend fun upsert(zona: Zona): Int
     suspend fun delete(zona: Zona)
     suspend fun deleteById(id: Int)
-    suspend fun generateNewJoinCode(zonaId: Int): String
 
-    suspend fun getZoneInfoMentor(mentorId: Int): Resource<ZoneInfoMentorResponse>
-    suspend fun getZoneInfoGema(gemaId: Int): Resource<List<ZoneInfoGemaResponse>>
+    suspend fun updateZoneName(zoneId: Int, newName: String)
+
+    suspend fun updateZoneCode(zoneId:Int, newJoinCode: String)
+
+    suspend fun getZoneInfoMentor(zoneId: Int): Resource<ZoneInfoMentorResponse>
+    suspend fun getZoneInfoGema(zoneId: Int): Resource<ZoneInfoGemaResponse>
 }

@@ -26,6 +26,7 @@ data class BulkRecompensasResponse(
 
 data class RecompensaOperationResult(
     @Json(name = "accion") val accion: String,
+    @Json(name = "titulo") val titulo: String?,
     @Json(name = "recompensaId") val recompensaId: Int?,
     @Json(name = "success") val success: Boolean,
     @Json(name = "mensaje") val mensaje: String?

@@ -9,16 +9,19 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TareaMentorDao {
-    @Query("SELECT * FROM tareas_mentor ORDER BY tareaId DESC")
+    @Query("SELECT * FROM tareas_mentor WHERE isPendingDelete = 0 ORDER BY tareaId DESC")
     fun observeAll(): Flow<List<TareaMentorEntity>>
 
-    @Query("SELECT * FROM tareas_mentor WHERE tareaId = :id")
+    @Query("SELECT * FROM tareas_mentor WHERE userInfoId = :mentorId AND isPendingDelete = 0 ORDER BY tareaId DESC")
+    fun observeByMentor(mentorId: Int): Flow<List<TareaMentorEntity>>
+
+    @Query("SELECT * FROM tareas_mentor WHERE tareaId = :id AND isPendingDelete = 0")
     suspend fun getById(id: String?): TareaMentorEntity?
 
-    @Query("SELECT * FROM tareas_mentor WHERE remoteId = :remoteId")
+    @Query("SELECT * FROM tareas_mentor WHERE remoteId = :remoteId AND isPendingDelete = 0")
     suspend fun getByRemoteId(remoteId: Int): TareaMentorEntity?
 
-    @Query("SELECT * FROM tareas_mentor WHERE tareasGroupId = :groupId")
+    @Query("SELECT * FROM tareas_mentor WHERE tareasGroupId = :groupId AND isPendingDelete = 0")
     fun observeByGroup(groupId: Int): Flow<List<TareaMentorEntity>>
 
     @Query("SELECT * FROM tareas_mentor WHERE isPendingCreate = 1")

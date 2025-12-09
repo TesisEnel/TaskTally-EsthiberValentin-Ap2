@@ -6,6 +6,7 @@ import edu.ucne.tasktally.domain.models.RecompensaGema
 fun RecompensaGemaEntity.toRecompensaGemaDomain() = RecompensaGema(
     recompensaId = recompensaId,
     remoteId = remoteId,
+    gemaId = perteneceA,
     titulo = titulo,
     descripcion = descripcion,
     precio = precio,
@@ -18,6 +19,7 @@ fun RecompensaGemaEntity.toRecompensaGemaDomain() = RecompensaGema(
 fun RecompensaGema.toRecompensaGemaEntity() = RecompensaGemaEntity(
     recompensaId = recompensaId,
     remoteId = remoteId,
+    perteneceA = gemaId,
     titulo = titulo,
     descripcion = descripcion,
     precio = precio,

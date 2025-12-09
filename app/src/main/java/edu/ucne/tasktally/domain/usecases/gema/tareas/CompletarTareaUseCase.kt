@@ -1,12 +1,11 @@
 package edu.ucne.tasktally.domain.usecases.gema.tareas
 
-import edu.ucne.tasktally.domain.repository.TareaGemaRepository
+import edu.ucne.tasktally.domain.repository.GemaRepository
 import javax.inject.Inject
 
 class CompletarTareaUseCase @Inject constructor(
-    private val repository: TareaGemaRepository
+    private val repo: GemaRepository
 ) {
-    suspend operator fun invoke(tareaId: String) {
-        repository.completarTarea(tareaId)
-    }
+    suspend operator fun invoke(tareaId: String) =
+        repo.completarTareaGema(tareaId)
 }

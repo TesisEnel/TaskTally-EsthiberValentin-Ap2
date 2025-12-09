@@ -4,9 +4,8 @@ import edu.ucne.tasktally.domain.models.RecompensaMentor
 import edu.ucne.tasktally.domain.repository.MentorRepository
 import javax.inject.Inject
 
-class CreateRecompensaMentorLocalUseCase @Inject constructor(
+class GetRecompensaByIdLocalUseCase @Inject constructor(
     private val repo: MentorRepository
 ) {
-    suspend operator fun invoke(recompensa: RecompensaMentor) =
-        repo.createRecompensaLocal(recompensa)
+    suspend operator fun invoke(id: String): RecompensaMentor? = repo.getRecompensaById(id)
 }

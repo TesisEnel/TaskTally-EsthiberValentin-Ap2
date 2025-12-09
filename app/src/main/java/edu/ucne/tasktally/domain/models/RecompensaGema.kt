@@ -5,6 +5,7 @@ import java.util.UUID
 data class RecompensaGema(
     val recompensaId: String = UUID.randomUUID().toString(),
     val remoteId: Int? = null,
+    val gemaId: Int? = null,
     val titulo: String,
     val descripcion: String,
     val precio: Int,

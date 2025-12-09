@@ -8,7 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
+import edu.ucne.tasktally.data.local.DAOs.RecompensaMentorDao
 import edu.ucne.tasktally.data.local.DAOs.RecompensaGemaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaGemaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaMentorDao
@@ -33,7 +33,7 @@ object DatabaseModule {
             .build()
     }
     @Provides
-    fun provideRecompensaDao(db: TaskTallyDatabase): RecompensaDao =
+    fun provideRecompensaDao(db: TaskTallyDatabase): RecompensaMentorDao =
         db.recompensaDao()
     @Provides
     fun provideRecompensaGemaDao(db: TaskTallyDatabase): RecompensaGemaDao =

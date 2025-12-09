@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecompensaGemaDao {
-    @Query("SELECT * FROM recompensas_gema ORDER BY recompensaId DESC")
+    @Query("SELECT * FROM recompensas_gema WHERE isPendingDelete = 0 ORDER BY recompensaId DESC")
     fun observeAll(): Flow<List<RecompensaGemaEntity>>
 
-    @Query("SELECT * FROM recompensas_gema WHERE recompensaId = :id")
+    @Query("SELECT * FROM recompensas_gema WHERE recompensaId = :id AND isPendingDelete = 0")
     suspend fun getById(id: String?): RecompensaGemaEntity?
 
-    @Query("SELECT * FROM recompensas_gema WHERE remoteId = :remoteId")
+    @Query("SELECT * FROM recompensas_gema WHERE remoteId = :remoteId AND isPendingDelete = 0")
     suspend fun getByRemoteId(remoteId: Int?): RecompensaGemaEntity?
 
     @Query("SELECT * FROM recompensas_gema WHERE isPendingCreate = 1")

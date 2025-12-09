@@ -11,7 +11,8 @@ fun ZoneInfoMentorResponse.toZonaDomain(): Zona {
         zonaId = zoneId,
         nombre = zoneName,
         joinCode = joinCode,
-        mentorId = ""
+        mentorId = "",
+        gemas = gemas.map { it.toGemaDomain() }
     )
 }
 
@@ -20,7 +21,8 @@ fun ZoneInfoGemaResponse.toZonaDomain(): Zona {
         zonaId = zoneId,
         nombre = zoneName,
         joinCode = "",
-        mentorId = ""
+        mentorId = "",
+        gemas = gemas.map { it.toGemaDomain() }
     )
 }
 

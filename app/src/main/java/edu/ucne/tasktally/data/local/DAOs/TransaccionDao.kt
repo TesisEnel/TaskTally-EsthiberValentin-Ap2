@@ -9,16 +9,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TransaccionDao {
-    @Query("SELECT * FROM transaccion ORDER BY transaccionId DESC")
+    @Query("SELECT * FROM transaccion WHERE isPendingDelete = 0 ORDER BY transaccionId DESC")
     fun observeAll(): Flow<List<TransaccionEntity>>
 
-    @Query("SELECT * FROM transaccion WHERE transaccionId = :id")
+    @Query("SELECT * FROM transaccion WHERE transaccionId = :id AND isPendingDelete = 0")
     suspend fun getById(id: String?): TransaccionEntity?
 
-    @Query("SELECT * FROM transaccion WHERE remoteId = :remoteId")
+    @Query("SELECT * FROM transaccion WHERE remoteId = :remoteId AND isPendingDelete = 0")
     suspend fun getByRemoteId(remoteId: Int?): TransaccionEntity?
 
-    @Query("SELECT * FROM transaccion WHERE gemaId = :gemaId")
+    @Query("SELECT * FROM transaccion WHERE gemaId = :gemaId AND isPendingDelete = 0")
     fun observeByGema(gemaId: Int): Flow<List<TransaccionEntity>>
 
     @Query("SELECT * FROM transaccion WHERE isPendingCreate = 1")

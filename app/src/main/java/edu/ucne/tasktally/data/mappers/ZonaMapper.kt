@@ -8,7 +8,8 @@ fun ZonaEntity.toDomain(): Zona {
         zonaId = zonaId,
         nombre = nombre,
         joinCode = joinCode,
-        mentorId = mentorId
+        mentorId = mentorId,
+        gemas = emptyList()
     )
 }
 

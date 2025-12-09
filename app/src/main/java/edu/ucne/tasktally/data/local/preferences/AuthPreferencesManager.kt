@@ -32,6 +32,7 @@ class AuthPreferencesManager @Inject constructor(
         private val ROLE_KEY = stringPreferencesKey("role")
         private val MENTOR_ID_KEY = intPreferencesKey("mentor_id")
         private val GEMA_ID_KEY = intPreferencesKey("gema_id")
+        private val ZONE_ID_KEY = intPreferencesKey("zone_id")
     }
 
     suspend fun saveAuthData(
@@ -43,7 +44,8 @@ class AuthPreferencesManager @Inject constructor(
         expiresAt: String?,
         role: String? = null,
         mentorId: Int? = null,
-        gemaId: Int? = null
+        gemaId: Int? = null,
+        zoneId: Int? = null
     ) {
         dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN_KEY] = accessToken
@@ -56,6 +58,7 @@ class AuthPreferencesManager @Inject constructor(
             preferences[ROLE_KEY] = role ?: ""
             if (mentorId != null) preferences[MENTOR_ID_KEY] = mentorId
             if (gemaId != null) preferences[GEMA_ID_KEY] = gemaId
+            if (zoneId != null) preferences[ZONE_ID_KEY] = zoneId
         }
     }
 
@@ -115,5 +118,9 @@ class AuthPreferencesManager @Inject constructor(
 
     val gemaId: Flow<Int?> = dataStore.data.map { preferences ->
         preferences[GEMA_ID_KEY]
+    }
+
+    val zoneId: Flow<Int?> = dataStore.data.map { preferences ->
+        preferences[ZONE_ID_KEY]
     }
 }

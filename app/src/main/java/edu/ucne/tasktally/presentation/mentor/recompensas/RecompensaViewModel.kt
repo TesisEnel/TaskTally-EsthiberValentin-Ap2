@@ -3,11 +3,13 @@ package edu.ucne.tasktally.presentation.mentor.recompensas
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
 import edu.ucne.tasktally.domain.models.RecompensaMentor
-import edu.ucne.tasktally.domain.usecases.GetRecompensaMentorUseCase
-import edu.ucne.tasktally.domain.usecases.UpsertRecompensaMentorUseCase
+import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
 import edu.ucne.tasktally.domain.usecases.mentor.recompensa.CreateRecompensaMentorLocalUseCase
+import edu.ucne.tasktally.domain.usecases.mentor.recompensa.GetRecompensaByIdLocalUseCase
+import edu.ucne.tasktally.domain.usecases.mentor.recompensa.ObserveRecompensasByMentorIdLocalUseCase
+import edu.ucne.tasktally.domain.usecases.mentor.recompensa.UpdateRecompensaMentorUseCase
+import edu.ucne.tasktally.domain.usecases.sync.TriggerSyncUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,10 +20,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecompensaViewModel @Inject constructor(
+    private val getRecompensaByIdLocalUseCase: GetRecompensaByIdLocalUseCase,
+    private val observeRecompensasMentorUseCase: ObserveRecompensasByMentorIdLocalUseCase,
     private val createRecompensaMentorLocalUseCase: CreateRecompensaMentorLocalUseCase,
-    private val getRecompensaMentorUseCase: GetRecompensaMentorUseCase,
-    private val upsertRecompensaMentorUseCase: UpsertRecompensaMentorUseCase,
-    private val authPreferencesManager: AuthPreferencesManager
+    private val updateRecompensaMentorUseCase: UpdateRecompensaMentorUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val triggerSyncUseCase: TriggerSyncUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RecompensaUiState())
@@ -33,7 +37,8 @@ class RecompensaViewModel @Inject constructor(
 
     private fun loadMentorName() {
         viewModelScope.launch {
-            val username = authPreferencesManager.username.first() ?: "Mentor"
+            val userData = getCurrentUserUseCase().first()
+            val username = userData.username ?: "Mentor"
             _state.update { it.copy(mentorName = username) }
         }
     }
@@ -67,7 +72,7 @@ class RecompensaViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, isEditing = true) }
 
             try {
-                val recompensa = getRecompensaMentorUseCase(id)
+                val recompensa = getRecompensaByIdLocalUseCase(id)
 
                 if (recompensa != null) {
                     _state.update {
@@ -100,7 +105,8 @@ class RecompensaViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            val mentorId = authPreferencesManager.mentorId.first()
+            val userData = getCurrentUserUseCase().first()
+            val mentorId = userData.mentorId
 
             if (mentorId == null) {
                 _state.update { it.copy(isLoading = false, error = "No se encontró ID mentor") }
@@ -111,8 +117,10 @@ class RecompensaViewModel @Inject constructor(
 
             if (st.isEditing && st.recompensaId != null) {
                 updateRecompensa(mentorId, st)
+                triggerSyncUseCase()
             } else {
                 createRecompensa(mentorId, st)
+                triggerSyncUseCase()
             }
         }
     }
@@ -155,7 +163,7 @@ class RecompensaViewModel @Inject constructor(
                 isPendingUpdate = true
             )
 
-            upsertRecompensaMentorUseCase(recompensa)
+            updateRecompensaMentorUseCase(recompensa)
 
             _state.update {
                 it.copy(

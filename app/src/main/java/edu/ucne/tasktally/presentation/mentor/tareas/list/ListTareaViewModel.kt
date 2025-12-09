@@ -3,9 +3,9 @@ package edu.ucne.tasktally.presentation.mentor.tareas.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
-import edu.ucne.tasktally.domain.usecases.mentor.tarea.GetTareasMentorLocalUseCase
-import edu.ucne.tasktally.domain.usecases.DeleteTareaMentorUseCase
+import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
+import edu.ucne.tasktally.domain.usecases.mentor.tarea.DeleteTareaMentorUseCase
+import edu.ucne.tasktally.domain.usecases.mentor.tarea.ObserveTareasByMentorIdLocalUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,9 +16,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListTareaViewModel @Inject constructor(
-    private val getTareasMentorLocalUseCase: GetTareasMentorLocalUseCase,
+    private val observeTareasByMentorIdLocalUseCase: ObserveTareasByMentorIdLocalUseCase,
     private val deleteTareaMentorUseCase: DeleteTareaMentorUseCase,
-    private val authPreferencesManager: AuthPreferencesManager
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ListTareaUiState())
@@ -30,7 +30,8 @@ class ListTareaViewModel @Inject constructor(
 
     private fun loadInitialData() {
         viewModelScope.launch {
-            val username = authPreferencesManager.username.first() ?: "Mentor"
+            val userData = getCurrentUserUseCase().first()
+            val username = userData.username ?: "Mentor"
             _state.update { it.copy(mentorName = username) }
             onEvent(ListTareaUiEvent.Load)
         }
@@ -61,7 +62,15 @@ class ListTareaViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
 
             try {
-                getTareasMentorLocalUseCase().collect { tareasMentor ->
+                val userData = getCurrentUserUseCase().first()
+                val mentorId = userData.mentorId
+
+                if (mentorId == null) {
+                    _state.update { it.copy(isLoading = false, error = "No se encontró ID mentor") }
+                    return@launch
+                }
+
+                observeTareasByMentorIdLocalUseCase(mentorId).collect { tareasMentor ->
                     _state.update {
                         it.copy(
                             isLoading = false,

@@ -32,4 +32,7 @@ interface ZonaDao {
 
     @Query("UPDATE zonas SET joinCode = :newJoinCode WHERE zonaId = :zonaId")
     suspend fun updateJoinCode(zonaId: Int, newJoinCode: String)
+
+    @Query("UPDATE zonas SET nombre = :newName WHERE zonaId = :zonaId")
+    suspend fun updateZoneName(zonaId: Int, newName: String)
 }

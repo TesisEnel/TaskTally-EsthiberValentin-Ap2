@@ -2,7 +2,7 @@ package edu.ucne.tasktally.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
+import edu.ucne.tasktally.data.local.DAOs.RecompensaMentorDao
 import edu.ucne.tasktally.data.local.DAOs.RecompensaGemaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaGemaDao
 import edu.ucne.tasktally.data.local.DAOs.TareaMentorDao
@@ -27,14 +27,14 @@ import edu.ucne.tasktally.data.local.entidades.ZonaEntity
         TransaccionEntity::class,
         UserInfoEntity::class,
     ],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 abstract class TaskTallyDatabase : RoomDatabase() {
     abstract fun zonaDao(): ZonaDao
     abstract fun tareaDao(): TareaMentorDao
     abstract fun tareaGemaDao(): TareaGemaDao
-    abstract fun recompensaDao(): RecompensaDao
+    abstract fun recompensaDao(): RecompensaMentorDao
     abstract fun recompensaGemaDao(): RecompensaGemaDao
     abstract fun transaccionDao(): TransaccionDao
     abstract fun userInfoDao(): UserInfoDao

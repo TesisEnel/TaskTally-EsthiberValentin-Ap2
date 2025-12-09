@@ -3,33 +3,26 @@ package edu.ucne.tasktally.presentation.zona
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.ucne.tasktally.data.mappers.toGemaDomain
-import edu.ucne.tasktally.data.mappers.toZonaDomain
-import edu.ucne.tasktally.data.remote.Resource
-import edu.ucne.tasktally.domain.usecases.GetZonaByMentorUseCase
-import edu.ucne.tasktally.domain.usecases.UpsertZonaUseCase
-import edu.ucne.tasktally.domain.usecases.GenerateNewJoinCodeUseCase
-import edu.ucne.tasktally.domain.usecases.gema.zona.GetZoneInfoGemaUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.zona.GetZoneInfoMentorUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.zona.UpdateZoneCodeUseCase
-import edu.ucne.tasktally.domain.usecases.mentor.zona.UpdateZoneNameUseCase
+import edu.ucne.tasktally.domain.usecases.mentor.zona.UpdateZoneCodeRemoteUseCase
+import edu.ucne.tasktally.domain.usecases.zona.UpdateZoneNameLocalUseCase
+import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
+import edu.ucne.tasktally.domain.usecases.gema.zona.GetGemaZonaByIdUseCase
+import edu.ucne.tasktally.domain.usecases.mentor.zona.GetMentorZonaByIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ZonaViewModel @Inject constructor(
-    private val getZonaByMentorUseCase: GetZonaByMentorUseCase,
-    private val upsertZonaUseCase: UpsertZonaUseCase,
-    private val generateNewJoinCodeUseCase: GenerateNewJoinCodeUseCase,
-    private val getZoneInfoMentorUseCase: GetZoneInfoMentorUseCase,
-    private val getZoneInfoGemaUseCase: GetZoneInfoGemaUseCase,
-    private val updateZoneNameUseCase: UpdateZoneNameUseCase,
-    private val updateZoneCodeUseCase: UpdateZoneCodeUseCase
+    private val getMentorZonaByIdUseCase: GetMentorZonaByIdUseCase,
+    private val getGemaZonaByIdUseCase: GetGemaZonaByIdUseCase,
+    private val updateZoneNameUseCase: UpdateZoneNameLocalUseCase,
+    private val updateZoneCodeUseCase: UpdateZoneCodeRemoteUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ZonaUiState())
@@ -113,41 +106,26 @@ class ZonaViewModel @Inject constructor(
                     }
                     return@launch
                 }
+                val userData = getCurrentUserUseCase().first()
+                val zoneId = userData.zoneId
 
-                when (val result = getZoneInfoMentorUseCase(mentorId)) {
-                    is Resource.Success -> {
-                        val zoneInfo = result.data
-                        if (zoneInfo != null) {
-                            val zona = zoneInfo.toZonaDomain().copy(mentorId = userId)
-                            val gemas = zoneInfo.gemas.map { it.toGemaDomain() }
-
-                            _state.update {
-                                it.copy(
-                                    zona = zona,
-                                    gemas = gemas,
-                                    isLoading = false
-                                )
-                            }
-                        } else {
-                            _state.update {
-                                it.copy(
-                                    isLoading = false,
-                                    userMessage = "No se pudo obtener información de la zona"
-                                )
-                            }
-                        }
+                if (zoneId == null || zoneId <= 0) {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            userMessage = "No tienes una zona asignada"
+                        )
                     }
+                    return@launch
+                }
 
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                userMessage = result.message
-                                    ?: "Error al cargar información de la zona"
-                            )
-                        }
-                    }
-                    is Resource.Loading -> {}
+                val zona = getMentorZonaByIdUseCase(zoneId)
+                _state.update {
+                    it.copy(
+                        zona = zona,
+                        gemas = zona?.gemas ?: emptyList(),
+                        isLoading = false
+                    )
                 }
             } else {
                 val gemaId = userId.toIntOrNull()
@@ -161,42 +139,13 @@ class ZonaViewModel @Inject constructor(
                     return@launch
                 }
 
-                when (val result = getZoneInfoGemaUseCase(gemaId)) {
-                    is Resource.Success -> {
-                        val zoneInfoList = result.data
-                        if (!zoneInfoList.isNullOrEmpty()) {
-                            val zoneInfo = zoneInfoList.first()
-                            val zona = zoneInfo.toZonaDomain()
-                            val gemas = zoneInfo.gemas.map { it.toGemaDomain() }
-
-                            _state.update {
-                                it.copy(
-                                    zona = zona,
-                                    gemas = gemas,
-                                    isLoading = false
-                                )
-                            }
-                        } else {
-                            _state.update {
-                                it.copy(
-                                    isLoading = false,
-                                    userMessage = "No estás en ninguna zona de estudio"
-                                )
-                            }
-                        }
-                    }
-
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                userMessage = result.message
-                                    ?: "Error al cargar información de las zonas"
-                            )
-                        }
-                    }
-
-                    is Resource.Loading -> {}
+                val zona = getGemaZonaByIdUseCase(gemaId)
+                _state.update {
+                    it.copy(
+                        zona = zona,
+                        gemas = zona?.gemas ?: emptyList(),
+                        isLoading = false
+                    )
                 }
             }
         } catch (e: Exception) {
@@ -213,9 +162,9 @@ class ZonaViewModel @Inject constructor(
         val currentState = _state.value
         val zona = currentState.zona
         val newName = currentState.zonaName.trim()
-        val mentorId = currentState.currentUserId?.toIntOrNull()
+        val zoneId = zona?.zonaId
 
-        if (zona == null || newName.isEmpty() || mentorId == null) {
+        if (zona == null || newName.isEmpty() || zoneId == null) {
             _state.update {
                 it.copy(
                     userMessage = "Nombre de zona no válido"
@@ -224,33 +173,26 @@ class ZonaViewModel @Inject constructor(
             return@launch
         }
 
-        updateZoneNameUseCase(mentorId, newName).collectLatest { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    _state.update { it.copy(isLoading = true) }
-                }
+        _state.update { it.copy(isLoading = true) }
 
-                is Resource.Success -> {
-                    val updatedZona = zona.copy(nombre = newName)
-                    _state.update {
-                        it.copy(
-                            zona = updatedZona,
-                            isEditingName = false,
-                            zonaName = "",
-                            isLoading = false,
-                            userMessage = "Nombre de zona actualizado"
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            userMessage = resource.message ?: "Error al actualizar el nombre"
-                        )
-                    }
-                }
+        try {
+            updateZoneNameUseCase.invoke(zoneId, newName)
+            val updatedZona = zona.copy(nombre = newName)
+            _state.update {
+                it.copy(
+                    zona = updatedZona,
+                    isEditingName = false,
+                    zonaName = "",
+                    isLoading = false,
+                    userMessage = "Nombre de zona actualizado"
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    userMessage = "Error al actualizar el nombre: ${e.message}"
+                )
             }
         }
     }
@@ -260,37 +202,30 @@ class ZonaViewModel @Inject constructor(
         val zona = currentState.zona
         val mentorId = currentState.currentUserId?.toIntOrNull()
 
-        if (zona == null || mentorId == null) {
+        if (zona == null || mentorId == null || zona.zonaId == 0) {
             _state.update {
                 it.copy(userMessage = "No hay zona disponible")
             }
             return@launch
         }
 
-        updateZoneCodeUseCase(mentorId).collectLatest { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    _state.update { it.copy(isLoading = true) }
-                }
+        _state.update { it.copy(isLoading = true) }
 
-                is Resource.Success -> {
-                    loadZona(currentState.currentUserId!!, currentState.isMentor)
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            userMessage = "Código de acceso actualizado"
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            userMessage = resource.message ?: "Error al generar nuevo código"
-                        )
-                    }
-                }
+        try {
+            updateZoneCodeUseCase(zona.zonaId, mentorId)
+            loadZona(currentState.currentUserId, currentState.isMentor)
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    userMessage = "Código de acceso actualizado"
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    userMessage = "Error al generar nuevo código: ${e.message}"
+                )
             }
         }
     }

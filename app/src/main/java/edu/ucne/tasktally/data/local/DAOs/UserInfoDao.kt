@@ -9,31 +9,31 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserInfoDao {
-    @Query("SELECT * FROM userInfo ORDER BY userInfoId DESC")
+    @Query("SELECT * FROM userInfo WHERE isPendingDelete = 0 ORDER BY userInfoId DESC")
     fun observeAll(): Flow<List<UserInfoEntity>>
 
-    @Query("SELECT * FROM userInfo WHERE userInfoId = :id")
+    @Query("SELECT * FROM userInfo WHERE userInfoId = :id AND isPendingDelete = 0")
     suspend fun getById(id: Int?): UserInfoEntity?
 
-    @Query("SELECT * FROM userInfo WHERE userId = :userId")
+    @Query("SELECT * FROM userInfo WHERE userId = :userId AND isPendingDelete = 0")
     suspend fun getByUserId(userId: Int): UserInfoEntity?
 
-    @Query("SELECT * FROM userInfo WHERE userName = :userName")
+    @Query("SELECT * FROM userInfo WHERE userName = :userName AND isPendingDelete = 0")
     suspend fun getByUserName(userName: String): UserInfoEntity?
 
-    @Query("SELECT * FROM userInfo WHERE remoteId = :remoteId")
+    @Query("SELECT * FROM userInfo WHERE remoteId = :remoteId AND isPendingDelete = 0")
     suspend fun getByRemoteId(remoteId: Int?): UserInfoEntity?
 
-    @Query("SELECT * FROM userInfo WHERE role = :role")
+    @Query("SELECT * FROM userInfo WHERE role = :role AND isPendingDelete = 0")
     fun observeByRole(role: String): Flow<List<UserInfoEntity>>
 
-    @Query("SELECT * FROM userInfo WHERE role = :role")
+    @Query("SELECT * FROM userInfo WHERE role = :role AND isPendingDelete = 0")
     suspend fun getByRole(role: String): List<UserInfoEntity>
 
-    @Query("SELECT * FROM userInfo WHERE zonaId = :zonaId")
+    @Query("SELECT * FROM userInfo WHERE zonaId = :zonaId AND isPendingDelete = 0")
     suspend fun getByZonaId(zonaId: Int): List<UserInfoEntity>
 
-    @Query("SELECT * FROM userInfo WHERE zonaId = :zonaId AND role = :role")
+    @Query("SELECT * FROM userInfo WHERE zonaId = :zonaId AND role = :role AND isPendingDelete = 0")
     suspend fun getByZonaIdAndRole(zonaId: Int, role: String): List<UserInfoEntity>
 
     @Query("SELECT * FROM userInfo WHERE isPendingCreate = 1")

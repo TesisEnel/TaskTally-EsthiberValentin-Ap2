@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.tasktally.data.remote.Resource
 import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
-import edu.ucne.tasktally.domain.usecases.gema.JoinZoneUseCase
+import edu.ucne.tasktally.domain.usecases.gema.zona.JoinZoneRemoteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ZoneAccessViewModel @Inject constructor(
-    private val joinZoneUseCase: JoinZoneUseCase,
+    private val joinZoneUseCase: JoinZoneRemoteUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
 
@@ -61,10 +61,6 @@ class ZoneAccessViewModel @Inject constructor(
         }
 
         val zoneCode = _state.value.zoneCode.trim()
-        if (zoneCode.isBlank()) {
-            _state.update { it.copy(userMessage = "Por favor ingresa un código de zona válido") }
-            return
-        }
 
         viewModelScope.launch {
             joinZoneUseCase(gemaId, zoneCode).collectLatest { resource ->
@@ -74,11 +70,13 @@ class ZoneAccessViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
+                        val zoneName = resource.data?.zoneName ?: "la zona"
                         _state.update {
                             it.copy(
                                 isLoading = false,
                                 hasZoneAccess = true,
-                                userMessage = "¡Te has unido a la zona exitosamente!"
+                                zoneCode = "",
+                                userMessage = "¡Te has unido a $zoneName exitosamente!"
                             )
                         }
                     }

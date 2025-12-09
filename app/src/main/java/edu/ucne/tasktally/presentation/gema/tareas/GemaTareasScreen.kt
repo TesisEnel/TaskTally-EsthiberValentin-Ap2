@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.tasktally.domain.models.TareaGema
 import edu.ucne.tasktally.presentation.componentes.CircularLoadingIndicator
 import edu.ucne.tasktally.presentation.componentes.TareaCard.GemaTareaCard
 import java.time.LocalDate
@@ -25,15 +26,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun GemaTareasScreen(
     modifier: Modifier = Modifier,
-    gemaId: Int = 1,
     viewModel: GemaTareasViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
 
-    LaunchedEffect(gemaId) {
-        viewModel.setGemaId(gemaId)
-    }
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -108,7 +105,6 @@ fun GemaTareasScreen(
             }
         }
 
-        // Contenido principal
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -147,7 +143,6 @@ fun GemaTareasScreen(
         }
     }
 
-    // Date Picker Dialog
     if (showDatePicker) {
         DatePickerDialog(
             onDateSelected = { date ->
@@ -163,7 +158,7 @@ fun GemaTareasScreen(
 
 @Composable
 private fun TasksList(
-    tareas: List<edu.ucne.tasktally.domain.models.TareaGema>,
+    tareas: List<TareaGema>,
     processingTaskId: String?,
     onIniciarTarea: (String) -> Unit,
     onCompletarTarea: (String) -> Unit

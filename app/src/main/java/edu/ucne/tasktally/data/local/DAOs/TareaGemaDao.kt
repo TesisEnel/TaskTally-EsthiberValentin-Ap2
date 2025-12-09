@@ -9,11 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TareaGemaDao {
-    @Query("SELECT * FROM tareas_gema ORDER BY tareaId DESC")
+    @Query("SELECT * FROM tareas_gema WHERE isPendingDelete = 0 ORDER BY tareaId DESC")
     fun observeAll(): Flow<List<TareaGemaEntity>>
 
-
-    @Query("SELECT * FROM tareas_gema WHERE perteneceA = :gemaId AND (dia = :dia OR :dia IS NULL) ORDER BY tareaId DESC")
+    @Query("SELECT * FROM tareas_gema WHERE perteneceA = :gemaId AND (dia = :dia OR :dia IS NULL) AND isPendingDelete = 0 ORDER BY tareaId DESC")
     suspend fun getTareasGemaLocal(gemaId: Int, dia: String?): List<TareaGemaEntity>
 
     @Query("UPDATE tareas_gema SET isPendingUpdate = 1, estado = 'iniciada' WHERE tareaId = :id")
@@ -22,16 +21,16 @@ interface TareaGemaDao {
     @Query("UPDATE tareas_gema SET isPendingUpdate = 1, estado = 'completada' WHERE tareaId = :id")
     suspend fun completarTarea(id: String)
 
-    @Query("SELECT * FROM tareas_gema WHERE tareaId = :id")
+    @Query("SELECT * FROM tareas_gema WHERE tareaId = :id AND isPendingDelete = 0")
     suspend fun getById(id: String?): TareaGemaEntity?
 
-    @Query("SELECT * FROM tareas_gema WHERE remoteId = :remoteId")
+    @Query("SELECT * FROM tareas_gema WHERE remoteId = :remoteId AND isPendingDelete = 0")
     suspend fun getByRemoteId(remoteId: Int): TareaGemaEntity?
 
-    @Query("SELECT * FROM tareas_gema WHERE estado = :estado")
+    @Query("SELECT * FROM tareas_gema WHERE estado = :estado AND isPendingDelete = 0")
     fun observeByEstado(estado: String): Flow<List<TareaGemaEntity>>
 
-    @Query("SELECT * FROM tareas_gema WHERE perteneceA = :perteneceA")
+    @Query("SELECT * FROM tareas_gema WHERE perteneceA = :perteneceA AND isPendingDelete = 0")
     fun observeByUserInfo(perteneceA: Int): Flow<List<TareaGemaEntity>>
 
     @Query("SELECT * FROM tareas_gema WHERE isPendingCreate = 1")

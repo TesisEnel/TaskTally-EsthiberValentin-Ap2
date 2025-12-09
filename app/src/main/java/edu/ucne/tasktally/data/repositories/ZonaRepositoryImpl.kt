@@ -13,7 +13,6 @@ import edu.ucne.tasktally.domain.repository.ZonaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.random.Random
 
 class ZonaRepositoryImpl @Inject constructor(
     private val dao: ZonaDao,
@@ -45,26 +44,17 @@ class ZonaRepositoryImpl @Inject constructor(
         dao.deleteById(id)
     }
 
-    override suspend fun generateNewJoinCode(zonaId: Int): String {
-        var newJoinCode: String
-        do {
-            newJoinCode = generateRandomCode()
-        } while (dao.getByJoinCode(newJoinCode) != null)
-
-        dao.updateJoinCode(zonaId, newJoinCode)
-        return newJoinCode
+    override suspend fun updateZoneCode(zoneId: Int, newJoinCode: String) {
+        dao.updateJoinCode(zoneId, newJoinCode)
     }
 
-    private fun generateRandomCode(): String {
-        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return (1..6)
-            .map { chars[Random.nextInt(chars.length)] }
-            .joinToString("")
+    override suspend fun updateZoneName(zoneId: Int, newName: String) {
+        dao.updateZoneName(zoneId, newName)
     }
 
-    override suspend fun getZoneInfoMentor(mentorId: Int): Resource<ZoneInfoMentorResponse> {
+    override suspend fun getZoneInfoMentor(zoneId: Int): Resource<ZoneInfoMentorResponse> {
         return try {
-            val response = api.obtenerInformacionZona(mentorId)
+            val response = api.obtenerMentorInfoZona(zoneId)
             if (response.isSuccessful) {
                 response.body()?.let { zoneInfo ->
                     Resource.Success(zoneInfo)
@@ -79,19 +69,19 @@ class ZonaRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getZoneInfoGema(gemaId: Int): Resource<List<ZoneInfoGemaResponse>> {
+    override suspend fun getZoneInfoGema(zoneId: Int): Resource<ZoneInfoGemaResponse> {
         return try {
-            val response = api.obtenerInformacionZonas(gemaId)
+            val response = api.obtenerGemaInfoZona(zoneId)
             if (response.isSuccessful) {
-                response.body()?.let { zoneInfoList ->
-                    Resource.Success(zoneInfoList)
+                response.body()?.let { zoneInfo ->
+                    Resource.Success(zoneInfo)
                 } ?: Resource.Error("Respuesta vacía del servidor")
             } else {
-                Log.e("ZonaRepository", "Error getting gema zones info: ${response.code()} ${response.message()}")
+                Log.e("ZonaRepository", "Error getting gema zone info: ${response.code()} ${response.message()}")
                 Resource.Error("HTTP ${response.code()}: ${response.message()}")
             }
         } catch (e: Exception) {
-            Log.e("ZonaRepository", "Exception getting gema zones info", e)
+            Log.e("ZonaRepository", "Exception getting gema zone info", e)
             Resource.Error("Error de red: ${e.localizedMessage ?: "Ocurrió un error desconocido"}")
         }
     }
