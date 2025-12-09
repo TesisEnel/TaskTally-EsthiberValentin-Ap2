@@ -17,11 +17,34 @@ import javax.inject.Inject
 class GemaTareasViewModel @Inject constructor(
     private val getTareasUseCase: GetTareasGemaUseCase,
     private val iniciarTareaUseCase: IniciarTareaUseCase,
-    private val completarTareaUseCase: CompletarTareaUseCase
+    private val completarTareaUseCase: CompletarTareaUseCase,
+    private val getCurrentUserUseCase: edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GemaTareasUiState())
     val uiState: StateFlow<GemaTareasUiState> = _uiState.asStateFlow()
+
+    init {
+        loadCurrentUser()
+    }
+
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            getCurrentUserUseCase().collect { userData ->
+                val gemaId = userData.gemaId
+                if (gemaId != null && gemaId != _uiState.value.gemaId) {
+                    _uiState.update { it.copy(gemaId = gemaId) }
+                    loadTareas()
+                } else if (gemaId == null) {
+                    _uiState.update {
+                        it.copy(
+                            errorMessage = "Usuario no tiene asignado un ID de gema. Contacte al administrador."
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     fun onEvent(event: GemaTareasUiEvent) {
         when (event) {
@@ -104,11 +127,6 @@ class GemaTareasViewModel @Inject constructor(
     }
 
     private fun refreshTareas() {
-        loadTareas()
-    }
-
-    fun setGemaId(gemaId: Int) {
-        _uiState.update { it.copy(gemaId = gemaId) }
         loadTareas()
     }
 
