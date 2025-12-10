@@ -129,5 +129,6 @@ dependencies {
     kspTest("com.google.dagger:hilt-android-compiler:2.48")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48")
     kspAndroidTest("com.google.dagger:hilt-android-compiler:2.48")
+    testImplementation(kotlin("test"))
 
 }
