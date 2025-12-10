@@ -138,6 +138,7 @@ private fun getDrawableResourceId(imageName: String?): Int? {
     if (imageName == null) return null
 
     return when (imageName) {
+        //maticas
         "img0_yellow_tree" -> R.drawable.img0_yellow_tree
         "img1_purple_vines" -> R.drawable.img1_purple_vines
         "img2_little_bush" -> R.drawable.img2_little_bush
@@ -148,6 +149,8 @@ private fun getDrawableResourceId(imageName: String?): Int? {
         "img7_green_tree" -> R.drawable.img7_green_tree
         "img8_green_leaves" -> R.drawable.img8_green_leaves
         "img9_color_leaves" -> R.drawable.img9_color_leaves
+
+        //objetos
         "img10_batteries" -> R.drawable.img10_batteries
         "img11_boxes" -> R.drawable.img11_boxes
         "img12_calendar" -> R.drawable.img12_calendar
