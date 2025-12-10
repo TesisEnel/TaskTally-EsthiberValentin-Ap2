@@ -6,5 +6,7 @@ data class TareaUpdateResult(
     @Json(name = "tareaId") val tareaId: Int,
     @Json(name = "success") val success: Boolean,
     @Json(name = "mensaje") val mensaje: String,
-    @Json(name = "nuevoEstado") val nuevoEstado: String?
+    @Json(name = "nuevoEstado") val nuevoEstado: String?,
+    @Json(name = "puntosGanados") val puntosGanados: Int?,
+    @Json(name = "puntosActuales") val puntosActuales: Int?
 )

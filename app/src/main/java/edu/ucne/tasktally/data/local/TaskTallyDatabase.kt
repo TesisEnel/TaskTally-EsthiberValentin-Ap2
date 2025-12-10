@@ -23,7 +23,7 @@ import edu.ucne.tasktally.data.local.entidades.ZonaEntity
         RecompensaGemaEntity::class,
         TransaccionEntity::class,
     ],
-    version = 15,
+    version = 16,
     exportSchema = false
 )
 abstract class TaskTallyDatabase : RoomDatabase() {

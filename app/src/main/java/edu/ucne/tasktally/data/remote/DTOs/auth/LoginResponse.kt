@@ -18,5 +18,9 @@ data class UserInfo(
     @Json(name = "role") val role: String? = null,
     @Json(name = "mentorId") val mentorId: Int? = null,
     @Json(name = "gemaId") val gemaId: Int? = null,
-    @Json(name = "zoneId") val zoneId: Int? = null
+    @Json(name = "zoneId") val zoneId: Int? = null,
+
+    @Json(name = "puntosTotales") val puntosTotales: Int? = null,
+    @Json(name = "puntosDisponibles") val puntosDisponibles: Int? = null,
+    @Json(name = "puntosGastados") val puntosGastados: Int? = null
 )

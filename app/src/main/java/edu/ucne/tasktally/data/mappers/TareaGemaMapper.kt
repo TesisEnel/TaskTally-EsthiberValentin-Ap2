@@ -13,6 +13,7 @@ fun TareaGemaEntity.toTareaGemaDomain() = TareaGema(
     descripcion = descripcion,
     nombreImgVector = nombreImgVector,
     dia = dia,
+    gemaCompletoNombre = gemaCompletoNombre,
     isPendingCreate = isPendingCreate,
     isPendingUpdate = isPendingUpdate,
     isPendingDelete = isPendingDelete
@@ -22,11 +23,12 @@ fun TareaGema.toTareaGemaEntity() = TareaGemaEntity(
     tareaId = tareaId,
     remoteId = remoteId,
     titulo = titulo,
+    descripcion = descripcion,
     estado = estado,
     puntos = puntos,
-    descripcion = descripcion,
-    nombreImgVector = nombreImgVector,
     dia = dia,
+    gemaCompletoNombre = gemaCompletoNombre,
+    nombreImgVector = nombreImgVector,
     isPendingCreate = isPendingCreate,
     isPendingUpdate = isPendingUpdate,
     isPendingDelete = isPendingDelete
@@ -40,9 +42,7 @@ fun TareasGemaResponse.toTareaGemaEntity() = TareaGemaEntity(
     puntos = puntos,
     dia = dia,
     nombreImgVector = nombreImgVector,
-    isPendingCreate = false,
-    isPendingUpdate = false,
-    isPendingDelete = false
+    gemaCompletoNombre = gemaCompletoNombre
 )
 
 

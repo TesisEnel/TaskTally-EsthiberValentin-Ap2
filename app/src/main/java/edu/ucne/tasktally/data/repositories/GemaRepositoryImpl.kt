@@ -2,6 +2,7 @@ package edu.ucne.tasktally.data.repositories
 
 import edu.ucne.tasktally.data.local.DAOs.ZonaDao
 import edu.ucne.tasktally.data.local.DAOs.gema.GemaDao
+import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
 import edu.ucne.tasktally.data.mappers.toTareaGemaDomain
 import edu.ucne.tasktally.data.mappers.toTareaGemaEntity
 import edu.ucne.tasktally.data.mappers.toZonaDomain
@@ -19,13 +20,15 @@ import edu.ucne.tasktally.domain.models.TareaGema
 import edu.ucne.tasktally.domain.models.Zona
 import edu.ucne.tasktally.domain.repository.GemaRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GemaRepositoryImpl @Inject constructor(
     private val gemaDao: GemaDao,
     private val zonaDao: ZonaDao,
-    private val api: TaskTallyApi
+    private val api: TaskTallyApi,
+    private val authPreferencesManager: AuthPreferencesManager
 ) : GemaRepository {
     override suspend fun getTareasRemote(gemaId: Int): Resource<List<TareaGema>> {
         return try {
@@ -33,15 +36,12 @@ class GemaRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful) {
                 response.body()?.let { tareasResponse ->
-                    // Eliminar todas las tareas locales
                     gemaDao.eliminarTodasLasTareas()
 
-                    // Insertar las tareas nuevas de la API
                     tareasResponse.forEach { tareaDto ->
                         gemaDao.upsertTarea(tareaDto.toTareaGemaEntity())
                     }
 
-                    // Convertir a dominio y retornar
                     val tareas = tareasResponse.map { it.toTareaGemaEntity().toTareaGemaDomain() }
                     Resource.Success(tareas)
                 } ?: Resource.Error("Response body is null")
@@ -60,12 +60,21 @@ class GemaRepositoryImpl @Inject constructor(
         }
 
 
-    override suspend fun iniciarTareaGema(tareaId: String) {
+    override suspend fun iniciarTareaGema(gemaId: Int, tareaId: String) {
         gemaDao.iniciarTarea(tareaId)
     }
 
-    override suspend fun completarTareaGema(tareaId: String) {
-        gemaDao.completarTarea(tareaId)
+    override suspend fun completarTareaGema(gemaId: Int, tareaId: String) {
+        val tarea = gemaDao.obtenerTareaPorId(tareaId)
+        tarea?.let {
+            gemaDao.completarTarea(tareaId)
+
+            val puntosDisponibles = authPreferencesManager.puntosDisponibles.first() ?: 0
+            val newPuntosDisponibles = puntosDisponibles + it.puntos
+            val puntosGastados = authPreferencesManager.puntosGastados.first() ?: 0
+
+            authPreferencesManager.updatePuntos(newPuntosDisponibles, puntosGastados)
+        }
     }
 
     override suspend fun getRecompensasRemote(gemaId: Int): Resource<List<RecompensaGema>> {
@@ -74,16 +83,15 @@ class GemaRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful) {
                 response.body()?.let { recompensasResponse ->
-                    // Eliminar todas las recompensas locales
                     gemaDao.eliminarTodasLasRecompensas()
 
-                    // Insertar las recompensas nuevas de la API
                     recompensasResponse.forEach { recompensaDto ->
                         gemaDao.upsertRecompensa(recompensaDto.toRecompensaGemaEntity())
                     }
 
-                    // Convertir a dominio y retornar
-                    val recompensas = recompensasResponse.map { it.toRecompensaGemaEntity().toRecompensaGemaDomain() }
+                    val recompensas = recompensasResponse.map {
+                        it.toRecompensaGemaEntity().toRecompensaGemaDomain()
+                    }
                     Resource.Success(recompensas)
                 } ?: Resource.Error("Response body is null")
             } else {
@@ -109,6 +117,14 @@ class GemaRepositoryImpl @Inject constructor(
                 isPendingUpdate = true,
             )
             gemaDao.upsertRecompensa(updatedRecompensa)
+
+            val puntosDisponibles = authPreferencesManager.puntosDisponibles.first() ?: 0
+            val puntosGastados = authPreferencesManager.puntosGastados.first() ?: 0
+
+            val newPuntosDisponibles = puntosDisponibles - it.precio
+            val newPuntosGastados = puntosGastados + it.precio
+
+            authPreferencesManager.updatePuntos(newPuntosDisponibles, newPuntosGastados)
         }
     }
     //endregion
@@ -169,11 +185,21 @@ class GemaRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful) {
                 response.body()?.let { bulkResponse ->
-
                     pendingTareas.forEach { tarea ->
                         val updatedTarea = tarea.copy(isPendingUpdate = false)
                         gemaDao.upsertTarea(updatedTarea)
                     }
+
+                    bulkResponse.results
+                        .firstOrNull { it.success && it.puntosActuales != null }
+                        ?.let { result ->
+                            val puntosGastados = authPreferencesManager.puntosGastados.first() ?: 0
+                            authPreferencesManager.updatePuntos(
+                                puntosDisponibles = result.puntosActuales!!,
+                                puntosGastados = puntosGastados
+                            )
+                        }
+
                     Resource.Success(bulkResponse)
                 } ?: Resource.Error("Response body is null")
             } else {
@@ -202,8 +228,18 @@ class GemaRepositoryImpl @Inject constructor(
                     val response = api.canjearRecompensa(canjearRequest)
 
                     if (response.isSuccessful) {
-                        val updatedRecompensa = recompensa.copy(isPendingUpdate = false)
-                        gemaDao.upsertRecompensa(updatedRecompensa)
+                        response.body()?.let { canjearResponse ->
+                            val updatedRecompensa = recompensa.copy(isPendingUpdate = false)
+                            gemaDao.upsertRecompensa(updatedRecompensa)
+
+                            if (canjearResponse.puntosRestantes != null) {
+                                val puntosGastados = authPreferencesManager.puntosGastados.first() ?: 0
+                                authPreferencesManager.updatePuntos(
+                                    puntosDisponibles = canjearResponse.puntosRestantes,
+                                    puntosGastados = puntosGastados
+                                )
+                            }
+                        }
                     } else {
                         return Resource.Error(
                             "Failed to canjear recompensa: ${
@@ -213,7 +249,6 @@ class GemaRepositoryImpl @Inject constructor(
                     }
                 }
             }
-
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error("Exception occurred: ${e.message}")

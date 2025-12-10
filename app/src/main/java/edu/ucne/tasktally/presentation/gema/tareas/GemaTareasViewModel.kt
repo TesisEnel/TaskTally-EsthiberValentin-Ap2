@@ -97,11 +97,9 @@ class GemaTareasViewModel @Inject constructor(
 
                 when (result) {
                     is edu.ucne.tasktally.data.remote.Resource.Success -> {
-                        // Si fue exitoso, cargar las tareas locales actualizadas
                         loadTareas()
                     }
                     is edu.ucne.tasktally.data.remote.Resource.Error -> {
-                        // Si falla, cargar tareas locales existentes y mostrar advertencia
                         _uiState.update {
                             it.copy(
                                 errorMessage = "No se pudo sincronizar con el servidor: ${result.message}. Mostrando datos locales."
@@ -110,11 +108,9 @@ class GemaTareasViewModel @Inject constructor(
                         loadTareas()
                     }
                     is edu.ucne.tasktally.data.remote.Resource.Loading -> {
-                        // Continuar con el loading
                     }
                 }
             } catch (e: Exception) {
-                // En caso de excepción, cargar tareas locales
                 _uiState.update {
                     it.copy(
                         errorMessage = "Error al sincronizar: ${e.message}. Mostrando datos locales."
@@ -129,9 +125,8 @@ class GemaTareasViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(processingTaskId = tareaId) }
             try {
-                iniciarTareaUseCase(tareaId)
+                iniciarTareaUseCase(tareaId, _uiState.value.gemaId)
 
-                // Sincronizar con el servidor después de iniciar
                 triggerSyncUseCase()
 
                 loadTareas()
@@ -152,9 +147,8 @@ class GemaTareasViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(processingTaskId = tareaId) }
             try {
-                completarTareaUseCase(tareaId)
+                completarTareaUseCase(tareaId, _uiState.value.gemaId)
 
-                // Sincronizar con el servidor después de completar
                 triggerSyncUseCase()
 
                 loadTareas()

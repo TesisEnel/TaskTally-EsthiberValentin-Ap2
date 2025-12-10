@@ -41,13 +41,15 @@ class GemaTiendaViewModel @Inject constructor(
                 val gemaId = userData.gemaId
                 val zoneId = userData.zoneId
                 val gemaName = userData.username ?: "Gema"
+                val puntosDisponibles = userData.puntosDisponibles ?: 0
 
                 if (gemaId != null && gemaId != _uiState.value.gemaId) {
                     _uiState.update {
                         it.copy(
                             gemaId = gemaId,
                             zoneId = zoneId ?: 0,
-                            gemaName = gemaName
+                            gemaName = gemaName,
+                            puntosDisponibles = puntosDisponibles
                         )
                     }
                     loadRecompensasFromRemote()
@@ -56,6 +58,10 @@ class GemaTiendaViewModel @Inject constructor(
                         it.copy(
                             errorMessage = "Usuario no tiene asignado un ID de gema. Contacte al administrador."
                         )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(puntosDisponibles = puntosDisponibles)
                     }
                 }
             }
@@ -186,8 +192,7 @@ class GemaTiendaViewModel @Inject constructor(
                     it.copy(
                         processingRecompensaId = null,
                         recompensaToCanjear = null,
-                        successMessage = "¡Has canjeado \"${recompensa.titulo}\" exitosamente!",
-                        puntosDisponibles = it.puntosDisponibles - recompensa.precio
+                        successMessage = "¡Has canjeado \"${recompensa.titulo}\" exitosamente!"
                     )
                 }
 

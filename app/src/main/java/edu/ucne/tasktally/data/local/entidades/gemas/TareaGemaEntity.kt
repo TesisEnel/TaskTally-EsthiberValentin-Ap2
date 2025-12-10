@@ -24,6 +24,7 @@ data class TareaGemaEntity(
     val puntos: Int,
     val dia: String? = null,
     val nombreImgVector: String? = null,
+    val gemaCompletoNombre: String? = null,
 
     val isPendingCreate: Boolean = false,
     val isPendingUpdate: Boolean = false,

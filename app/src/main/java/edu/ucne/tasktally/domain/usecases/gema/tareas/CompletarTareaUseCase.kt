@@ -6,6 +6,6 @@ import javax.inject.Inject
 class CompletarTareaUseCase @Inject constructor(
     private val repo: GemaRepository
 ) {
-    suspend operator fun invoke(tareaId: String) =
-        repo.completarTareaGema(tareaId)
+    suspend operator fun invoke(tareaId: String, gemaId: Int) =
+        repo.completarTareaGema(gemaId, tareaId)
 }

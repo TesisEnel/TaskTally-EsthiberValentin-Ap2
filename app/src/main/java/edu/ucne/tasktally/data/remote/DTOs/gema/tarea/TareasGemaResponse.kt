@@ -8,5 +8,6 @@ data class TareasGemaResponse(
     val puntos: Int = 0,
     val descripcion: String = "",
     val nombreImgVector: String = "",
-    val dia: String =""
+    val dia: String ="",
+    val gemaCompletoNombre: String? = null,
 )
