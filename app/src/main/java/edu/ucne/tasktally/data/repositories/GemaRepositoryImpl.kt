@@ -30,6 +30,11 @@ class GemaRepositoryImpl @Inject constructor(
     private val api: TaskTallyApi,
     private val authPreferencesManager: AuthPreferencesManager
 ) : GemaRepository {
+
+    companion object {
+        private const val ERROR_NULL_RESPONSE_BODY = "Response body is null"
+    }
+
     override suspend fun getTareasRemote(gemaId: Int): Resource<List<TareaGema>> {
         return try {
             val response = api.getTareasGema(gemaId)
@@ -44,7 +49,7 @@ class GemaRepositoryImpl @Inject constructor(
 
                     val tareas = tareasResponse.map { it.toTareaGemaEntity().toTareaGemaDomain() }
                     Resource.Success(tareas)
-                } ?: Resource.Error("Response body is null")
+                } ?: Resource.Error(ERROR_NULL_RESPONSE_BODY)
             } else {
                 Resource.Error("API call failed: ${response.errorBody()?.string()}")
             }
@@ -93,7 +98,7 @@ class GemaRepositoryImpl @Inject constructor(
                         it.toRecompensaGemaEntity().toRecompensaGemaDomain()
                     }
                     Resource.Success(recompensas)
-                } ?: Resource.Error("Response body is null")
+                } ?: Resource.Error(ERROR_NULL_RESPONSE_BODY)
             } else {
                 Resource.Error("API call failed: ${response.errorBody()?.string()}")
             }
@@ -201,7 +206,7 @@ class GemaRepositoryImpl @Inject constructor(
                         }
 
                     Resource.Success(bulkResponse)
-                } ?: Resource.Error("Response body is null")
+                } ?: Resource.Error(ERROR_NULL_RESPONSE_BODY)
             } else {
                 Resource.Error("API call failed: ${response.errorBody()?.string()}")
             }
