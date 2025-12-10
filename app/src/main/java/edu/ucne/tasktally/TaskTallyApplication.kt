@@ -8,7 +8,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.HiltAndroidApp
 import edu.ucne.tasktally.data.remote.sync.MyWorkerFactory
-import edu.ucne.tasktally.data.remote.sync.SyncWorker
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -20,9 +19,4 @@ class TaskTallyApplication : Application(), Configuration.Provider {
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
-}
-
-fun triggerSyncWorker(context: Context) {
-    val req = OneTimeWorkRequestBuilder<SyncWorker>().build()
-    WorkManager.getInstance(context).enqueue(req)
 }

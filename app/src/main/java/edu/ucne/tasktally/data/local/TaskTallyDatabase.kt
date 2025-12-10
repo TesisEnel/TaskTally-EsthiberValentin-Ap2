@@ -2,35 +2,34 @@ package edu.ucne.tasktally.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import edu.ucne.tasktally.data.local.DAOs.EstadoDao
-import edu.ucne.tasktally.data.local.DAOs.PersonaDao
-import edu.ucne.tasktally.data.local.DAOs.PersonaRecompensaDao
-import edu.ucne.tasktally.data.local.DAOs.RecompensaDao
-import edu.ucne.tasktally.data.local.DAOs.TareaDao
-import edu.ucne.tasktally.data.local.DAOs.UsuarioDao
-import edu.ucne.tasktally.data.local.entidades.EstadoEntity
-import edu.ucne.tasktally.data.local.entidades.PersonaEntity
-import edu.ucne.tasktally.data.local.entidades.PersonaRecompensaEntity
-import edu.ucne.tasktally.data.local.entidades.RecompensaEntity
-import edu.ucne.tasktally.data.local.entidades.TareaEntity
-import edu.ucne.tasktally.data.local.entidades.UsuarioEntity
+import edu.ucne.tasktally.data.local.DAOs.RecompensaGemaDao
+import edu.ucne.tasktally.data.local.DAOs.TransaccionDao
+import edu.ucne.tasktally.data.local.DAOs.ZonaDao
+import edu.ucne.tasktally.data.local.DAOs.gema.GemaDao
+import edu.ucne.tasktally.data.local.DAOs.mentor.MentorDao
+import edu.ucne.tasktally.data.local.entidades.mentor.RecompensaMentorEntity
+import edu.ucne.tasktally.data.local.entidades.gemas.RecompensaGemaEntity
+import edu.ucne.tasktally.data.local.entidades.mentor.TareaMentorEntity
+import edu.ucne.tasktally.data.local.entidades.gemas.TareaGemaEntity
+import edu.ucne.tasktally.data.local.entidades.TransaccionEntity
+import edu.ucne.tasktally.data.local.entidades.ZonaEntity
 
 @Database(
     entities = [
-        UsuarioEntity::class,
-        EstadoEntity::class,
-        PersonaEntity::class,
-        PersonaRecompensaEntity::class,
-        RecompensaEntity::class,
-        TareaEntity::class],
-    version = 3,
+        ZonaEntity::class,
+        TareaMentorEntity::class,
+        TareaGemaEntity::class,
+        RecompensaMentorEntity::class,
+        RecompensaGemaEntity::class,
+        TransaccionEntity::class,
+    ],
+    version = 16,
     exportSchema = false
 )
 abstract class TaskTallyDatabase : RoomDatabase() {
-    abstract fun usuarioDao(): UsuarioDao
-    abstract fun estadoDao(): EstadoDao
-    abstract fun personaDao(): PersonaDao
-    abstract fun personaRecompensaDao(): PersonaRecompensaDao
-    abstract fun recompensaDao(): RecompensaDao
-    abstract fun tareaDao(): TareaDao
+    abstract fun zonaDao(): ZonaDao
+    abstract fun mentorDao(): MentorDao
+    abstract fun recompensaGemaDao(): RecompensaGemaDao
+    abstract fun transaccionDao(): TransaccionDao
+    abstract fun gemaDao(): GemaDao
 }

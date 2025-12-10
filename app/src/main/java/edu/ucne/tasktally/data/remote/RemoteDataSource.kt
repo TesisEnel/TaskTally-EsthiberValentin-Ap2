@@ -1,84 +1,84 @@
 package edu.ucne.tasktally.data.remote
 
 import android.util.Log
-import edu.ucne.tasktally.data.remote.usuarios.UsuarioRequest
-import edu.ucne.tasktally.data.remote.usuarios.UsuarioResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.zone.JoinZoneRequest
+import edu.ucne.tasktally.data.remote.DTOs.gema.zone.JoinZoneResponse
+import edu.ucne.tasktally.data.remote.DTOs.gema.zone.LeaveZoneRequest
+import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneCodeResponse
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(
-    private val api: UsuarioApi
-){
-    suspend fun getUsuarios(): List<UsuarioResponse> {
-        return try {
-            val response = api.getUsuarios()
-            if (response.isSuccessful) {
-                response.body() ?: emptyList()
-            } else {
-                Log.e("RemoteDataSource", "Error getting usuarios: ${response.code()} ${response.message()}")
-                emptyList()
+    private val api: TaskTallyApi
+) {
+    suspend fun joinZone(gemaId: Int, zoneCode: String): JoinZoneResponse {
+        try {
+            val request = JoinZoneRequest(
+                gemaId = gemaId,
+                zoneCode = zoneCode
+            )
+            val response = api.joinZone(request)
+
+            if (!response.isSuccessful) {
+                Log.e("RemoteDataSource", "Error ingresando a zona: ${response.code()} - ${response.message()}")
+                throw Exception("Error al ingresar a Zona: ${response.message()}")
             }
-        } catch (e: Exception) {
-            Log.e("RemoteDataSource", "Exception getting usuarios", e)
-            emptyList()
-        }
-    }
 
-    suspend fun createUsuario(req: UsuarioRequest): Resource<UsuarioResponse> {
-        return try {
-            Log.d("RemoteDataSource", "Enviando request: userName=${req.userName}")
-            val response = api.createUsuario(req)
-            Log.d("RemoteDataSource", "Respuesta HTTP: code=${response.code()}, isSuccessful=${response.isSuccessful}")
-            if (response.isSuccessful) {
-                var body = response.body()
-                Log.d("RemoteDataSource", "Body recibido: usuarioId=${body?.usuarioId}, userName=${body?.userName}")
-
-                if (body != null && body.usuarioId == null) {
-                    val location = response.headers()["Location"]
-                    Log.d("RemoteDataSource", "Location header: $location")
-
-                    val idFromLocation = location?.let { obtenerIdLocation(it) }
-                    if (idFromLocation != null) {
-                        Log.d("RemoteDataSource", "ID extraido del Location: $idFromLocation")
-                        body = body.copy(usuarioId = idFromLocation)
-                    }
-                }
-
-                body?.let {
-                    Resource.Success(it)
-                } ?: Resource.Error("Respuesta vacia del servidor")
-            } else {
-                val errorBody = response.errorBody()?.string()
-                Log.e("RemoteDataSource", "Error HTTP ${response.code()}: ${response.message()}, body: $errorBody")
-                Resource.Error("HTTP ${response.code()}: ${response.message()}")
+            val joinZoneResponse = response.body()
+            if (joinZoneResponse == null) {
+                Log.e("RemoteDataSource", "Join zone response body is null")
+                throw Exception("Join zone response body is null")
             }
-        } catch (e: Exception) {
-            Log.e("RemoteDataSource", "Excepcion al crear usuario", e)
-            Resource.Error("Error de red: ${e.localizedMessage ?: "Ocurrio un error desconocido"}")
-        }
-    }
 
-    private fun obtenerIdLocation(location: String): Int? {
-        return try {
-            val regex = """[?&]id=(\d+)""".toRegex()
-            val matchResult = regex.find(location)
-            matchResult?.groupValues?.get(1)?.toIntOrNull()
-        } catch (e: Exception) {
-            Log.e("RemoteDataSource", "Error al extraer ID del Location", e)
-            null
-        }
-    }
-
-    suspend fun updateUsuario(id: Int, req: UsuarioRequest): Resource<Unit> {
-        return try {
-            val response = api.updateUsuario(id, req)
-            if (response.isSuccessful) {
-                Resource.Success(Unit)
-            } else {
-                Resource.Error("HTTP ${response.code()}: ${response.message()}")
+            if (joinZoneResponse.zoneId == null || joinZoneResponse.zoneName == null) {
+                Log.e("RemoteDataSource", "Join zone response missing required fields")
+                throw Exception("Join zone response missing required fields")
             }
+
+            Log.d("RemoteDataSource", "Se ingreso correctamente a la zona: ${joinZoneResponse.zoneName} (ID: ${joinZoneResponse.zoneId})")
+            return joinZoneResponse
         } catch (e: Exception) {
-            return Resource.Error("Error de red: ${e.localizedMessage ?: "Ocurrio un error desconocido"}")
+            Log.e("RemoteDataSource", "Exception Intentando ingresar a zona: ${e.message}", e)
+            throw e
         }
     }
 
+    suspend fun leaveZone(gemaId: Int) {
+        try {
+            val request = LeaveZoneRequest(gemaId = gemaId)
+            val response = api.leaveZone(request)
+
+            if (!response.isSuccessful) {
+                Log.e("RemoteDataSource", "Error saliendo de zona: ${response.code()} - ${response.message()}")
+                throw Exception("Error al salir de Zona: ${response.message()}")
+            }
+
+            Log.d("RemoteDataSource", "Se salio correctamente de la zona para gema ID: $gemaId")
+        } catch (e: Exception) {
+            Log.e("RemoteDataSource", "Exception intentando salir de zona: ${e.message}", e)
+            throw e
+        }
+    }
+
+    suspend fun updateZoneCode(mentorId: Int): UpdateZoneCodeResponse {
+        try {
+            val response = api.updateZoneCode(mentorId)
+
+            if (!response.isSuccessful) {
+                Log.e("RemoteDataSource", "Error actualizando codigo de zona: ${response.code()} - ${response.message()}")
+                throw Exception("Error al actualizar codigo de zona: ${response.message()}")
+            }
+
+            val updateZoneCodeResponse = response.body()
+            if (updateZoneCodeResponse == null) {
+                Log.e("RemoteDataSource", "Update zone code response body is null")
+                throw Exception("Update zone code response body is null")
+            }
+
+            Log.d("RemoteDataSource", "Codigo de zona actualizado correctamente para mentor ID: $mentorId")
+            return updateZoneCodeResponse
+        } catch (e: Exception) {
+            Log.e("RemoteDataSource", "Exception intentando actualizar codigo de zona: ${e.message}", e)
+            throw e
+        }
+    }
 }

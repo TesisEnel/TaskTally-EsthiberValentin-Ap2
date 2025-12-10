@@ -1,0 +1,24 @@
+package edu.ucne.tasktally.presentation.mentor.recompensas
+
+data class RecompensaUiState(
+    val isLoading: Boolean = false,
+    val message: String? = null,
+    val error: String? = null,
+
+    val recompensaId: String? = null,
+    val isEditing: Boolean = false,
+
+    val titulo: String = "",
+    val descripcion: String = "",
+    val precio: String = "",
+    val imgVector: String? = null,
+
+    val showImagePicker: Boolean = false,
+
+    val tituloError: String? = null,
+    val precioError: String? = null,
+
+    val mentorName: String = "Mentor",
+
+    val navigateBack: Boolean = false
+)
