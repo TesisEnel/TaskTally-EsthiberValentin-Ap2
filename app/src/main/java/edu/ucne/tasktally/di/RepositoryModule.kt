@@ -7,18 +7,11 @@ import dagger.hilt.components.SingletonComponent
 import edu.ucne.tasktally.data.repositories.GemaRepositoryImpl
 import edu.ucne.tasktally.data.repositories.MentorRepositoryImpl
 import edu.ucne.tasktally.data.repositories.RecompensaGemaRepositoryImpl
-import edu.ucne.tasktally.data.repositories.RecompensaMentorRepositoryImpl
-import edu.ucne.tasktally.data.repositories.TareaGemaRepositoryImpl
-import edu.ucne.tasktally.data.repositories.TareaMentorRepositoryImpl
-import edu.ucne.tasktally.data.repositories.UserInfoRepositoryImpl
 import edu.ucne.tasktally.data.repositories.ZonaRepositoryImpl
 import edu.ucne.tasktally.domain.repository.GemaRepository
 import edu.ucne.tasktally.domain.repository.MentorRepository
 import edu.ucne.tasktally.domain.repository.RecompensaGemaRepository
-import edu.ucne.tasktally.domain.repository.RecompensaMentorRepository
 import edu.ucne.tasktally.domain.repository.TareaGemaRepository
-import edu.ucne.tasktally.domain.repository.TareaMentorRepository
-import edu.ucne.tasktally.domain.repository.UserInfoRepository
 import edu.ucne.tasktally.domain.repository.ZonaRepository
 import javax.inject.Singleton
 
@@ -39,23 +32,6 @@ abstract class RepositoryModule {
     ): MentorRepository
 
 
-    @Binds
-    @Singleton
-    abstract fun bindTareaMentorRepository(
-        impl: TareaMentorRepositoryImpl
-    ): TareaMentorRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindTareaGemaRepository(
-        impl: TareaGemaRepositoryImpl
-    ): TareaGemaRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindRecompensaMentorRepository(
-        impl: RecompensaMentorRepositoryImpl
-    ): RecompensaMentorRepository
 
     @Binds
     @Singleton
@@ -69,9 +45,4 @@ abstract class RepositoryModule {
         impl: ZonaRepositoryImpl
     ): ZonaRepository
 
-    @Binds
-    @Singleton
-    abstract fun bindUserInfoRepository(
-        impl: UserInfoRepositoryImpl
-    ): UserInfoRepository
 }

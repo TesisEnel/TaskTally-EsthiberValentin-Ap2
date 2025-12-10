@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import edu.ucne.tasktally.data.local.entidades.RecompensaGemaEntity
+import edu.ucne.tasktally.data.local.entidades.gemas.RecompensaGemaEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

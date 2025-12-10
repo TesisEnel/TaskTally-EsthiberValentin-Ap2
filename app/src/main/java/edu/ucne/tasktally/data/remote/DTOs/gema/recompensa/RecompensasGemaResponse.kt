@@ -5,5 +5,7 @@ data class RecompensasGemaResponse(
     val titulo:String,
     val descripcion: String = "",
     val precio: Int = 0,
-    val nombreImgVector: String = ""
+    val nombreImgVector: String = "",
+    val canjeada: Boolean = false,
+    val transaccionId: Int?
 )

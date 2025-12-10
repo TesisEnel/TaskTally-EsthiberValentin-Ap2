@@ -130,8 +130,9 @@ class TareaViewModel @Inject constructor(
                 descripcion = st.descripcion.trim(),
                 puntos = st.puntos.toInt(),
                 nombreImgVector = st.imgVector,
-                mentorId = mentorId,
-                isPendingCreate = true
+                isPendingCreate = true,
+                repetir = 1, // TODO agregar campo
+                dias = "Lun", // TODO agregar campo
             )
 
             createTareaMentorLocalUseCase(tarea)
@@ -151,14 +152,22 @@ class TareaViewModel @Inject constructor(
 
     private suspend fun updateTarea(mentorId: Int, st: TareaUiState) {
         try {
-            val tarea = TareaMentor(
-                tareaId = st.tareaId!!,
+
+            val existingTarea = getTareaByIdUseCase(st.tareaId!!)
+            if (existingTarea == null) {
+                _state.update { it.copy(isLoading = false, error = "No se encontró la tarea para actualizar") }
+                return
+            }
+
+            val tarea = existingTarea.copy(
                 titulo = st.titulo.trim(),
                 descripcion = st.descripcion.trim(),
                 puntos = st.puntos.toInt(),
+                repetir = 0, // TODO agregar campo
+                dias = "Lun", // TODO agregar campo",
                 nombreImgVector = st.imgVector,
-                mentorId = mentorId,
-                isPendingUpdate = true
+                isPendingUpdate = true,
+                isPendingCreate = false
             )
 
             updateTareaMentorUseCase(tarea)

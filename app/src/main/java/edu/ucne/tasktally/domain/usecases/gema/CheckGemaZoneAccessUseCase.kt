@@ -7,8 +7,8 @@ import javax.inject.Inject
 class CheckGemaZoneAccessUseCase @Inject constructor(
     private val zonaRepository: ZonaRepository
 ) {
-    suspend operator fun invoke(gemaId: Int): Resource<Boolean> {
-        return when (val result = zonaRepository.getZoneInfoGema(gemaId)) {
+    suspend operator fun invoke(gemaId: Int, zoneId: Int): Resource<Boolean> {
+        return when (val result = zonaRepository.getZoneInfoGema(gemaId, zoneId)) {
             is Resource.Success -> {
                 val hasAccess = result.data != null
                 Resource.Success(hasAccess)

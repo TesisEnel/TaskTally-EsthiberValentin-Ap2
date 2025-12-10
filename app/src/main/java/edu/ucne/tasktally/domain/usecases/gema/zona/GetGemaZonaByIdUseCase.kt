@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetGemaZonaByIdUseCase @Inject constructor(
     private val repo: GemaRepository
 ) {
-    suspend operator fun invoke(zoneId: Int) = repo.getZoneInfo(zoneId)
+    suspend operator fun invoke(gemaId: Int, zoneId: Int) = repo.getZoneInfo(gemaId, zoneId)
 }

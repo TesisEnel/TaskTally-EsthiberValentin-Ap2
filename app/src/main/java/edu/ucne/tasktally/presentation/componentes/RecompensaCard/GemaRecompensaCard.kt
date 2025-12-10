@@ -1,12 +1,9 @@
 package edu.ucne.tasktally.presentation.componentes.RecompensaCard
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,14 +23,16 @@ import edu.ucne.tasktally.R
 import edu.ucne.tasktally.ui.theme.TaskTallyTheme
 
 @Composable
-fun MentorRecompensaCard(
+fun GemaRecompensaCard(
     modifier: Modifier = Modifier,
     numeroRecompensa: String = "Recompensa #1",
     titulo: String = "Cenar pizza",
+    descripcion: String = "",
     precio: Int = 750,
     imageName: String? = null,
-    onEditClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {}
+    puedeComprar: Boolean = true,
+    isProcessing: Boolean = false,
+    onCanjearClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
@@ -66,7 +65,6 @@ fun MentorRecompensaCard(
                         contentScale = ContentScale.Fit
                     )
                 } else {
-
                     Icon(
                         imageVector = Icons.Default.CardGiftcard,
                         contentDescription = null,
@@ -94,39 +92,45 @@ fun MentorRecompensaCard(
             Text(
                 text = "Valor: $precio pts",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
+                color = if (puedeComprar) Color.Black else MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp
             )
 
+            if (!puedeComprar) {
+                Text(
+                    text = "Puntos insuficientes",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 11.sp
+                )
+            }
+
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+            Button(
+                onClick = onCanjearClick,
+                enabled = puedeComprar && !isProcessing,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
-                IconButton(
-                    onClick = onEditClick
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar recompensa",
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                if (isProcessing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
                     )
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                IconButton(
-                    onClick = onDeleteClick
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Eliminar recompensa",
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                } else {
+                    Text(
+                        text = if (puedeComprar) "Canjear" else "Sin puntos",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
                     )
                 }
             }
@@ -179,29 +183,45 @@ private fun getDrawableResourceId(imageName: String?): Int? {
 
 @Preview(showBackground = true)
 @Composable
-fun MentorRecompensaCardPreview() {
+fun GemaRecompensaCardPreview() {
     TaskTallyTheme {
         Row(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            MentorRecompensaCard(
+            GemaRecompensaCard(
                 modifier = Modifier.weight(1f),
                 titulo = "Cenar pizza",
                 precio = 750,
                 imageName = "img27_pizza",
-                onEditClick = { },
-                onDeleteClick = { }
+                puedeComprar = true,
+                onCanjearClick = { }
             )
 
-            MentorRecompensaCard(
+            GemaRecompensaCard(
                 modifier = Modifier.weight(1f),
                 titulo = "Helado de chocolate",
                 precio = 300,
                 imageName = "img23_ice_cream",
-                onEditClick = { },
-                onDeleteClick = { }
+                puedeComprar = false,
+                onCanjearClick = { }
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GemaRecompensaCardProcessingPreview() {
+    TaskTallyTheme {
+        GemaRecompensaCard(
+            modifier = Modifier.width(180.dp),
+            titulo = "Pizza",
+            precio = 500,
+            imageName = "img27_pizza",
+            puedeComprar = true,
+            isProcessing = true,
+            onCanjearClick = { }
+        )
     }
 }

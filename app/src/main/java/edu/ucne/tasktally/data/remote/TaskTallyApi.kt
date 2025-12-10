@@ -9,20 +9,14 @@ import edu.ucne.tasktally.data.remote.DTOs.gema.tarea.UpdateTareaEstadoRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.BulkTareasRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.BulkTareasResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.tarea.BulkUpdateTareasResponse
-import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.CreateTareaRequest
-import edu.ucne.tasktally.data.remote.DTOs.mentor.tareas.UpdateTareaRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.BulkRecompensasRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.BulkRecompensasResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.CanjearRecompensaResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.RecompensasGemaResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.zone.JoinZoneResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.zone.ZoneInfoGemaResponse
-import edu.ucne.tasktally.data.remote.DTOs.mentor.TareaDto
 import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneResponse
-import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.CreateRecompensaRequest
-import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.RecompensaDto
-import edu.ucne.tasktally.data.remote.DTOs.mentor.recompensa.UpdateRecompensaRequest
 import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.UpdateZoneCodeResponse
 import edu.ucne.tasktally.data.remote.DTOs.mentor.zone.ZoneInfoMentorResponse
 import retrofit2.Response
@@ -55,49 +49,11 @@ interface TaskTallyApi {
     //region Acciones Mentor
     @GET("api/Mentors/{mentorId}/tareas-recompensas")
     suspend fun getTareasRecompensasMentor(
-        @Path("mentorId") mentorId: Int ): Response<List<MentorTareasRecompensasResponse>>
-
-
-    @POST("api/Mentors/{mentorId}/tareas")
-    suspend fun createTarea(
-        @Path("mentorId") mentorId: Int,
-        @Body request: CreateTareaRequest
-    ): Response<TareaDto>
-
-    @PUT("api/Mentors/{mentorId}/tareas/{tareasGroupId}")
-    suspend fun updateTarea(
-        @Path("mentorId") mentorId: Int,
-        @Path("tareasGroupId") tareasGroupId: Int,
-        @Body request: UpdateTareaRequest
-    ): Response<TareaDto>
-
-    @DELETE("api/Mentors/{mentorId}/tareas/{tareasGroupId}")
-    suspend fun deleteTarea(
-        @Path("mentorId") mentorId: Int,
-        @Path("tareasGroupId") tareasGroupId: Int
-    ): Response<Unit>
+        @Path("mentorId") mentorId: Int
+    ): Response<MentorTareasRecompensasResponse>
 
     @POST("api/Mentors/tareas/bulk")
     suspend fun bulkTareas(@Body request: BulkTareasRequest): Response<BulkTareasResponse>
-
-    @POST("api/Mentors/{mentorId}/recompensas")
-    suspend fun createRecompensa(
-        @Path("mentorId") mentorId: Int,
-        @Body request: CreateRecompensaRequest
-    ): Response<RecompensaDto>
-
-    @PUT("api/Mentors/{mentorId}/recompensas/{recompensaId}")
-    suspend fun updateRecompensa(
-        @Path("mentorId") mentorId: Int,
-        @Path("recompensaId") recompensaId: Int,
-        @Body request: UpdateRecompensaRequest
-    ): Response<RecompensaDto>
-
-    @DELETE("api/Mentors/{mentorId}/recompensas/{recompensaId}")
-    suspend fun deleteRecompensa(
-        @Path("mentorId") mentorId: Int,
-        @Path("recompensaId") recompensaId: Int
-    ): Response<Unit>
 
     @POST("api/Mentors/recompensas/bulk")
     suspend fun bulkRecompensas(@Body request: BulkRecompensasRequest): Response<BulkRecompensasResponse>
@@ -111,10 +67,16 @@ interface TaskTallyApi {
         @Body request: UpdateZoneRequest
     ): Response<UpdateZoneResponse>
 
-    @GET("api/Mentors/Zones/{zoneId}/info")
-    suspend fun obtenerMentorInfoZona(@Path("zoneId") zoneId: Int): Response<ZoneInfoMentorResponse>
+    @GET("api/Mentors/{mentorId}/Zones/{zoneId}/info")
+    suspend fun obtenerMentorInfoZona(
+        @Path("mentorId") mentorId: Int,
+        @Path("zoneId") zoneId: Int
+    ): Response<ZoneInfoMentorResponse>
 
-    @GET("api/Gemas/Zones/{zoneId}/info")
-    suspend fun obtenerGemaInfoZona(@Path("zoneId") zoneId: Int): Response<ZoneInfoGemaResponse>
+    @GET("api/Gemas/{gemaId}/Zones/{zoneId}/info")
+    suspend fun obtenerGemaInfoZona(
+        @Path("gemaId") gemaId: Int,
+        @Path("zoneId") zoneId: Int
+    ): Response<ZoneInfoGemaResponse>
 //endregion
 }

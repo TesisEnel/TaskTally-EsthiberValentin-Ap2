@@ -52,9 +52,9 @@ class ZonaRepositoryImpl @Inject constructor(
         dao.updateZoneName(zoneId, newName)
     }
 
-    override suspend fun getZoneInfoMentor(zoneId: Int): Resource<ZoneInfoMentorResponse> {
+    override suspend fun getZoneInfoMentor(mentorId: Int, zoneId: Int): Resource<ZoneInfoMentorResponse> {
         return try {
-            val response = api.obtenerMentorInfoZona(zoneId)
+            val response = api.obtenerMentorInfoZona(mentorId, zoneId)
             if (response.isSuccessful) {
                 response.body()?.let { zoneInfo ->
                     Resource.Success(zoneInfo)
@@ -69,9 +69,9 @@ class ZonaRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getZoneInfoGema(zoneId: Int): Resource<ZoneInfoGemaResponse> {
+    override suspend fun getZoneInfoGema(gemaId: Int, zoneId: Int): Resource<ZoneInfoGemaResponse> {
         return try {
-            val response = api.obtenerGemaInfoZona(zoneId)
+            val response = api.obtenerGemaInfoZona(gemaId, zoneId)
             if (response.isSuccessful) {
                 response.body()?.let { zoneInfo ->
                     Resource.Success(zoneInfo)

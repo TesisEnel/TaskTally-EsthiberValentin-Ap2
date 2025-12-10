@@ -119,7 +119,7 @@ class ZonaViewModel @Inject constructor(
                     return@launch
                 }
 
-                val zona = getMentorZonaByIdUseCase(zoneId)
+                val zona = getMentorZonaByIdUseCase(mentorId, zoneId)
                 _state.update {
                     it.copy(
                         zona = zona,
@@ -139,7 +139,20 @@ class ZonaViewModel @Inject constructor(
                     return@launch
                 }
 
-                val zona = getGemaZonaByIdUseCase(gemaId)
+                val userData = getCurrentUserUseCase().first()
+                val zoneId = userData.zoneId
+
+                if (zoneId == null || zoneId <= 0) {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            userMessage = "No tienes una zona asignada"
+                        )
+                    }
+                    return@launch
+                }
+
+                val zona = getGemaZonaByIdUseCase(gemaId, zoneId)
                 _state.update {
                     it.copy(
                         zona = zona,

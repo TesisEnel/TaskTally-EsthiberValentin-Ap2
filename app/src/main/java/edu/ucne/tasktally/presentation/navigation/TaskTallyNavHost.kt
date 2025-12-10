@@ -10,11 +10,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import edu.ucne.tasktally.presentation.mentor.perfil.PerfilScreen
-import edu.ucne.tasktally.presentation.Tienda.TiendaScreen
 import edu.ucne.tasktally.presentation.auth.LoginScreen
 import edu.ucne.tasktally.presentation.auth.LoginViewModel
 import edu.ucne.tasktally.presentation.auth.RegisterScreen
 import edu.ucne.tasktally.presentation.gema.tareas.GemaTareasScreen
+import edu.ucne.tasktally.presentation.gema.tienda.GemaTiendaScreen
 import edu.ucne.tasktally.presentation.mentor.recompensas.CreateRecompensaScreen
 import edu.ucne.tasktally.presentation.mentor.recompensas.list.ListRecompensaScreen
 import edu.ucne.tasktally.presentation.mentor.tareas.CreateTareaScreen
@@ -90,7 +90,7 @@ fun TaskTallyNavHost(
                 navController = navHostController,
                 requiredRole = "gema"
             ) {
-                TiendaScreen()
+                GemaTiendaScreen()
             }
         }
 

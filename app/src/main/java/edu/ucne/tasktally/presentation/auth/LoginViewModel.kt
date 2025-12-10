@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,7 +50,7 @@ class LoginViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(currentUser = userUiState)
 
                         if (userUiState.role == "gema" && userUiState.gemaId != null) {
-                            checkZoneAccess(userUiState.gemaId)
+                            checkZoneAccess(userUiState.gemaId,userData.zoneId ?: 0)
                         } else {
                             _uiState.value = _uiState.value.copy(hasZoneAccess = true)
                         }
@@ -108,8 +109,8 @@ class LoginViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(error = null)
     }
 
-    private suspend fun checkZoneAccess(gemaId: Int) {
-        when (val result = checkGemaZoneAccessUseCase(gemaId)) {
+    private suspend fun checkZoneAccess(gemaId: Int, zoneId: Int) {
+        when (val result = checkGemaZoneAccessUseCase(gemaId, zoneId)) {
             is Resource.Success -> {
                 _uiState.value = _uiState.value.copy(hasZoneAccess = result.data ?: false)
             }
@@ -127,7 +128,11 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             val currentUser = _uiState.value.currentUser
             if (currentUser?.role == "gema" && currentUser.gemaId != null) {
-                checkZoneAccess(currentUser.gemaId)
+                val userData = getCurrentUserUseCase().first()
+                val zoneId = userData.zoneId
+                if (zoneId != null && zoneId > 0) {
+                    checkZoneAccess(currentUser.gemaId, zoneId)
+                }
             }
         }
     }

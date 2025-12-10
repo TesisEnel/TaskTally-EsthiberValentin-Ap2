@@ -4,6 +4,8 @@ import com.squareup.moshi.Json
 
 data class BulkTareasRequest(
     @Json(name = "mentorId") val mentorId: Int,
+
+    @Json(name = "zoneId") val zoneId: Int,
     @Json(name = "tareas") val tareas: List<TareaOperationDto>
 )
 
@@ -13,10 +15,9 @@ data class TareaOperationDto(
     @Json(name = "titulo") val titulo: String?,
     @Json(name = "descripcion") val descripcion: String?,
     @Json(name = "puntos") val puntos: Int?,
-    @Json(name = "recurrente") val recurrente: Boolean?,
     @Json(name = "dias") val dias: String?,
+    @Json(name = "repetir") val repetir: Int?,
     @Json(name = "nombreImgVector") val nombreImgVector: String?,
-    @Json(name = "asignada") val asignada: String?
 )
 
 data class BulkTareasResponse(
@@ -27,8 +28,9 @@ data class BulkTareasResponse(
 
 data class TareaOperationResult(
     @Json(name = "accion") val accion: String,
-    @Json(name = "titulo") val titulo: String?,
     @Json(name = "tareasGroupId") val tareasGroupId: Int?,
+    @Json(name="zoneId") val zoneId: Int?,
+    @Json(name = "titulo") val titulo: String?,
     @Json(name = "success") val success: Boolean,
     @Json(name = "mensaje") val mensaje: String?
 )

@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetMentorZonaByIdUseCase @Inject constructor(
     private val repo: MentorRepository
 ) {
-    suspend operator fun invoke(zoneId: Int) = repo.getZoneInfo(zoneId)
+    suspend operator fun invoke(mentorId: Int, zoneId: Int) = repo.getZoneInfo(mentorId, zoneId)
 }
