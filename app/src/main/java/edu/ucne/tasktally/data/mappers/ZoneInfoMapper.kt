@@ -33,7 +33,7 @@ fun GemaInfoDto.toGemaDomain(): Gema {
         nombre = nombre,
         apellido = null,
         fechaNacimiento = null,
-        puntosActuales = 0,
+        puntosActuales = puntosActuales,
         zonaId = null,
         isPendingCreate = false,
         isPendingUpdate = false,
