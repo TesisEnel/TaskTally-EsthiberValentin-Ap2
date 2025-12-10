@@ -35,7 +35,6 @@ fun ImagePickerBottomSheet(
         "img1_purple_vines" to "🌿 Vines moradas",
         "img2_little_bush" to "🌱 Arbusto",
         "img3_little_plant" to "🪴 Plantita",
-        "img4_pink_tree" to "🌸 Árbol rosa",
         "img5_purple_flower" to "💐 Flor morada",
         "img6_purple_plant" to "🪻 Planta morada",
         "img7_green_tree" to "🌲 Árbol verde",
