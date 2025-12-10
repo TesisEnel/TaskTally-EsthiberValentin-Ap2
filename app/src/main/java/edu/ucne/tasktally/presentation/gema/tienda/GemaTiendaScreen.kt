@@ -65,7 +65,8 @@ fun GemaTiendaScreen(
                     Text(
                         text = "Tienda",
                         style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 },
                 actions = {
@@ -132,9 +133,7 @@ private fun PuntosCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+
     ) {
         Row(
             modifier = Modifier
