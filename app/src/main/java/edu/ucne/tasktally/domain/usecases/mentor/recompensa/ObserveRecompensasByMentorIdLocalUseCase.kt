@@ -8,5 +8,5 @@ import javax.inject.Inject
 class ObserveRecompensasByMentorIdLocalUseCase @Inject constructor(
     private val repo: MentorRepository
 ) {
-    operator fun invoke(mentorId: Int): Flow<List<RecompensaMentor>> = repo.observeRecompensasByMentor(mentorId)
+    operator fun invoke(mentorId: Int): Flow<List<RecompensaMentor>> = repo.observeRecompensas()
 }

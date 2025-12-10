@@ -287,7 +287,6 @@ fun ListRecompensaScreenPreview() {
                 recompensas = listOf(
                     RecompensaMentor(
                         recompensaId = "1",
-                        createdBy = 1,
                         titulo = "Cenar pizza",
                         descripcion = "Una deliciosa pizza familiar",
                         precio = 750,
@@ -295,7 +294,6 @@ fun ListRecompensaScreenPreview() {
                     ),
                     RecompensaMentor(
                         recompensaId = "2",
-                        createdBy = 1,
                         titulo = "Salir el fin de semana",
                         descripcion = "Paseo familiar",
                         precio = 1500,
@@ -303,7 +301,6 @@ fun ListRecompensaScreenPreview() {
                     ),
                     RecompensaMentor(
                         recompensaId = "3",
-                        createdBy = 1,
                         titulo = "Ir al cine",
                         descripcion = "Ver una película",
                         precio = 1300,
@@ -311,7 +308,6 @@ fun ListRecompensaScreenPreview() {
                     ),
                     RecompensaMentor(
                         recompensaId = "4",
-                        createdBy = 1,
                         titulo = "Nuevo celular",
                         descripcion = "Un smartphone nuevo",
                         precio = 100000,

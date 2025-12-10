@@ -1,4 +1,4 @@
-package edu.ucne.tasktally.data.local.entidades
+package edu.ucne.tasktally.data.local.entidades.mentor
 
 import androidx.room.Entity
 import androidx.room.Index
@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.util.UUID
 
 @Entity(
-    tableName = "tareas_gema",
+    tableName = "tareas_mentor",
     indices = [
         Index(value = ["remoteId"]),
         Index(value = ["isPendingCreate"]),
@@ -14,19 +14,19 @@ import java.util.UUID
         Index(value = ["isPendingDelete"])
     ]
 )
-data class TareaGemaEntity(
+data class TareaMentorEntity(
     @PrimaryKey val tareaId: String = UUID.randomUUID().toString(),
     val remoteId: Int? = null,
-    val perteneceA: Int? = null,
 
     val titulo: String,
-    val estado: String,
-    val puntos: Int,
     val descripcion: String,
+    val puntos: Int,
+    val repetir: Int = 1,
+    val dias: String? = null,
     val nombreImgVector: String? = null,
-    val dia: String? = null,
 
-    val isPendingCreate: Boolean = false,
+    val isPendingCreate: Boolean = true,
     val isPendingUpdate: Boolean = false,
     val isPendingDelete: Boolean = false
 )
+

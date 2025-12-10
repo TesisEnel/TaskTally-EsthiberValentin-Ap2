@@ -3,9 +3,12 @@ package edu.ucne.tasktally.presentation.gema.tareas
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
+import edu.ucne.tasktally.domain.usecases.gema.GetTareasRemoteUseCase
 import edu.ucne.tasktally.domain.usecases.gema.tareas.CompletarTareaUseCase
 import edu.ucne.tasktally.domain.usecases.gema.tareas.GetTareasGemaUseCase
 import edu.ucne.tasktally.domain.usecases.gema.tareas.IniciarTareaUseCase
+import edu.ucne.tasktally.domain.usecases.sync.TriggerSyncUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +21,9 @@ class GemaTareasViewModel @Inject constructor(
     private val getTareasUseCase: GetTareasGemaUseCase,
     private val iniciarTareaUseCase: IniciarTareaUseCase,
     private val completarTareaUseCase: CompletarTareaUseCase,
-    private val getCurrentUserUseCase: edu.ucne.tasktally.domain.usecases.auth.GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val triggerSyncUseCase: TriggerSyncUseCase,
+    private val getTareasRemoteUseCase: GetTareasRemoteUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GemaTareasUiState())
@@ -34,7 +39,8 @@ class GemaTareasViewModel @Inject constructor(
                 val gemaId = userData.gemaId
                 if (gemaId != null && gemaId != _uiState.value.gemaId) {
                     _uiState.update { it.copy(gemaId = gemaId) }
-                    loadTareas()
+                    // Primero intentar cargar desde la API
+                    loadTareasFromRemote()
                 } else if (gemaId == null) {
                     _uiState.update {
                         it.copy(
@@ -82,11 +88,51 @@ class GemaTareasViewModel @Inject constructor(
         }
     }
 
+    private fun loadTareasFromRemote() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            try {
+                // Intentar cargar tareas desde la API
+                val result = getTareasRemoteUseCase(_uiState.value.gemaId)
+
+                when (result) {
+                    is edu.ucne.tasktally.data.remote.Resource.Success -> {
+                        // Si fue exitoso, cargar las tareas locales actualizadas
+                        loadTareas()
+                    }
+                    is edu.ucne.tasktally.data.remote.Resource.Error -> {
+                        // Si falla, cargar tareas locales existentes y mostrar advertencia
+                        _uiState.update {
+                            it.copy(
+                                errorMessage = "No se pudo sincronizar con el servidor: ${result.message}. Mostrando datos locales."
+                            )
+                        }
+                        loadTareas()
+                    }
+                    is edu.ucne.tasktally.data.remote.Resource.Loading -> {
+                        // Continuar con el loading
+                    }
+                }
+            } catch (e: Exception) {
+                // En caso de excepción, cargar tareas locales
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "Error al sincronizar: ${e.message}. Mostrando datos locales."
+                    )
+                }
+                loadTareas()
+            }
+        }
+    }
+
     private fun iniciarTarea(tareaId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(processingTaskId = tareaId) }
             try {
                 iniciarTareaUseCase(tareaId)
+
+                // Sincronizar con el servidor después de iniciar
+                triggerSyncUseCase()
 
                 loadTareas()
             } catch (e: Exception) {
@@ -107,6 +153,10 @@ class GemaTareasViewModel @Inject constructor(
             _uiState.update { it.copy(processingTaskId = tareaId) }
             try {
                 completarTareaUseCase(tareaId)
+
+                // Sincronizar con el servidor después de completar
+                triggerSyncUseCase()
+
                 loadTareas()
             } catch (e: Exception) {
                 _uiState.update {

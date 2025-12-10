@@ -284,21 +284,19 @@ fun ListTareaScreenPreview() {
                 tareas = listOf(
                     TareaMentor(
                         tareaId = "1",
-                        mentorId = 1,
                         titulo = "Arreglar la habitación",
                         descripcion = "Ordenar y limpiar",
+                        repetir = 1,
                         puntos = 60,
-                        recurrente = false,
                         dias = null,
                         nombreImgVector = "img0_yellow_tree"
                     ),
                     TareaMentor(
                         tareaId = "2",
-                        mentorId = 1,
                         titulo = "Barrer la casa",
                         descripcion = "Barrer todas las habitaciones",
                         puntos = 100,
-                        recurrente = true,
+                        repetir = 2,
                         dias = "Mon,Wed,Fri",
                         nombreImgVector = "img5_purple_flower"
                     )

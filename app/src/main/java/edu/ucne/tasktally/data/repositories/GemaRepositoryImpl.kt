@@ -1,13 +1,14 @@
 package edu.ucne.tasktally.data.repositories
 
-import edu.ucne.tasktally.data.local.DAOs.RecompensaGemaDao
-import edu.ucne.tasktally.data.local.DAOs.TareaGemaDao
 import edu.ucne.tasktally.data.local.DAOs.ZonaDao
+import edu.ucne.tasktally.data.local.DAOs.gema.GemaDao
 import edu.ucne.tasktally.data.mappers.toTareaGemaDomain
+import edu.ucne.tasktally.data.mappers.toTareaGemaEntity
 import edu.ucne.tasktally.data.mappers.toZonaDomain
 import edu.ucne.tasktally.data.mappers.toDomain
 import edu.ucne.tasktally.data.mappers.toEntity
 import edu.ucne.tasktally.data.mappers.toRecompensaGemaDomain
+import edu.ucne.tasktally.data.mappers.toRecompensaGemaEntity
 import edu.ucne.tasktally.data.remote.DTOs.gema.recompensa.CanjearRecompensaRequest
 import edu.ucne.tasktally.data.remote.DTOs.gema.tarea.BulkUpdateTareasResponse
 import edu.ucne.tasktally.data.remote.DTOs.gema.tarea.UpdateTareaEstadoRequest
@@ -22,44 +23,92 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GemaRepositoryImpl @Inject constructor(
-    private val tareaDao: TareaGemaDao,
-    private val gemaDao: RecompensaGemaDao,
+    private val gemaDao: GemaDao,
     private val zonaDao: ZonaDao,
     private val api: TaskTallyApi
 ) : GemaRepository {
+    override suspend fun getTareasRemote(gemaId: Int): Resource<List<TareaGema>> {
+        return try {
+            val response = api.getTareasGema(gemaId)
+
+            if (response.isSuccessful) {
+                response.body()?.let { tareasResponse ->
+                    // Eliminar todas las tareas locales
+                    gemaDao.eliminarTodasLasTareas()
+
+                    // Insertar las tareas nuevas de la API
+                    tareasResponse.forEach { tareaDto ->
+                        gemaDao.upsertTarea(tareaDto.toTareaGemaEntity())
+                    }
+
+                    // Convertir a dominio y retornar
+                    val tareas = tareasResponse.map { it.toTareaGemaEntity().toTareaGemaDomain() }
+                    Resource.Success(tareas)
+                } ?: Resource.Error("Response body is null")
+            } else {
+                Resource.Error("API call failed: ${response.errorBody()?.string()}")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Exception occurred: ${e.message}")
+        }
+    }
 
     //region Tareas
     override fun observeTareas(): Flow<List<TareaGema>> =
-        tareaDao.observeAll().map { list ->
+        gemaDao.observeTodasLasTareas().map { list ->
             list.map { it.toTareaGemaDomain() }
         }
 
-    override suspend fun getTareasGemaLocal(gemaId: Int, dia: String?): List<TareaGema> =
-        tareaDao.getTareasGemaLocal(gemaId, dia).map { it.toTareaGemaDomain() }
 
     override suspend fun iniciarTareaGema(tareaId: String) {
-        tareaDao.iniciarTarea(tareaId)
+        gemaDao.iniciarTarea(tareaId)
     }
 
     override suspend fun completarTareaGema(tareaId: String) {
-        tareaDao.completarTarea(tareaId)
+        gemaDao.completarTarea(tareaId)
+    }
+
+    override suspend fun getRecompensasRemote(gemaId: Int): Resource<List<RecompensaGema>> {
+        return try {
+            val response = api.getRecompensasGema(gemaId)
+
+            if (response.isSuccessful) {
+                response.body()?.let { recompensasResponse ->
+                    // Eliminar todas las recompensas locales
+                    gemaDao.eliminarTodasLasRecompensas()
+
+                    // Insertar las recompensas nuevas de la API
+                    recompensasResponse.forEach { recompensaDto ->
+                        gemaDao.upsertRecompensa(recompensaDto.toRecompensaGemaEntity())
+                    }
+
+                    // Convertir a dominio y retornar
+                    val recompensas = recompensasResponse.map { it.toRecompensaGemaEntity().toRecompensaGemaDomain() }
+                    Resource.Success(recompensas)
+                } ?: Resource.Error("Response body is null")
+            } else {
+                Resource.Error("API call failed: ${response.errorBody()?.string()}")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Exception occurred: ${e.message}")
+        }
     }
     //endregion
 
     //region Recompensas
     override fun observeRecompensas(): Flow<List<RecompensaGema>> =
-        gemaDao.observeAll().map { list ->
+        gemaDao.observeTodasLasRecompensas().map { list ->
             list.map { it.toRecompensaGemaDomain() }
         }
 
     override suspend fun canjearRecompensa(recompensaId: String, gemaId: Int) {
-        val recompensa = gemaDao.getById(recompensaId)
+        val recompensa = gemaDao.obtenerRecompensaPorId(recompensaId)
         recompensa?.let {
             val updatedRecompensa = it.copy(
+                canjeada = true,
                 isPendingUpdate = true,
-                perteneceA = gemaId
             )
-            gemaDao.upsert(updatedRecompensa)
+            gemaDao.upsertRecompensa(updatedRecompensa)
         }
     }
     //endregion
@@ -95,28 +144,26 @@ class GemaRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun postPendingEstadosTareas(): Resource<BulkUpdateTareasResponse> {
+    override suspend fun postPendingEstadosTareas(gemaId: Int): Resource<BulkUpdateTareasResponse> {
         return try {
-            val pendingTareas = tareaDao.getPendingUpdate()
+            val pendingTareas = gemaDao.getPendingUpdateTareas()
 
-        if (pendingTareas.isEmpty()) {
-            return Resource.Success(BulkUpdateTareasResponse(0, 0, emptyList()))
-        }
-
-        val updateRequests = pendingTareas.mapNotNull { tarea ->
-            tarea.remoteId?.let { remoteId ->
-                UpdateTareaEstadoRequest(
-                    tareaId = remoteId,
-                    estado = tarea.estado
-                )
+            if (pendingTareas.isEmpty()) {
+                return Resource.Success(BulkUpdateTareasResponse(0, 0, emptyList()))
             }
-        }
 
-        if (updateRequests.isEmpty()) {
-            return Resource.Success(BulkUpdateTareasResponse(0, 0, emptyList()))
-        }
+            val updateRequests = pendingTareas.mapNotNull { tarea ->
+                tarea.remoteId?.let { remoteId ->
+                    UpdateTareaEstadoRequest(
+                        tareaId = remoteId,
+                        estado = tarea.estado
+                    )
+                }
+            }
 
-            val gemaId = pendingTareas.firstOrNull()?.perteneceA ?: return Resource.Error("No tiene gemaId")
+            if (updateRequests.isEmpty()) {
+                return Resource.Success(BulkUpdateTareasResponse(0, 0, emptyList()))
+            }
 
             val response = api.bulkUpdateEstadoTareas(gemaId, updateRequests)
 
@@ -125,7 +172,7 @@ class GemaRepositoryImpl @Inject constructor(
 
                     pendingTareas.forEach { tarea ->
                         val updatedTarea = tarea.copy(isPendingUpdate = false)
-                        tareaDao.upsert(updatedTarea)
+                        gemaDao.upsertTarea(updatedTarea)
                     }
                     Resource.Success(bulkResponse)
                 } ?: Resource.Error("Response body is null")
@@ -137,9 +184,9 @@ class GemaRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun postPendingCanjearRecompensas(): Resource<Unit> {
+    override suspend fun postPendingCanjearRecompensas(gemaId: Int): Resource<Unit> {
         return try {
-            val pendingRecompensas = gemaDao.getPendingUpdate()
+            val pendingRecompensas = gemaDao.getPendingUpdateRecompensas()
 
             if (pendingRecompensas.isEmpty()) {
                 return Resource.Success(Unit)
@@ -149,16 +196,20 @@ class GemaRepositoryImpl @Inject constructor(
                 recompensa.remoteId?.let { remoteId ->
                     val canjearRequest = CanjearRecompensaRequest(
                         recompensaId = remoteId,
-                        gemaId = recompensa.perteneceA ?: 0
+                        gemaId = gemaId
                     )
 
                     val response = api.canjearRecompensa(canjearRequest)
 
                     if (response.isSuccessful) {
                         val updatedRecompensa = recompensa.copy(isPendingUpdate = false)
-                        gemaDao.upsert(updatedRecompensa)
+                        gemaDao.upsertRecompensa(updatedRecompensa)
                     } else {
-                        return Resource.Error("Failed to canjear recompensa: ${response.errorBody()?.string()}")
+                        return Resource.Error(
+                            "Failed to canjear recompensa: ${
+                                response.errorBody()?.string()
+                            }"
+                        )
                     }
                 }
             }

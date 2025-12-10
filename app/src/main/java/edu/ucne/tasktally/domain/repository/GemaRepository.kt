@@ -9,20 +9,24 @@ import kotlinx.coroutines.flow.Flow
 
 interface GemaRepository {
     //region Tareas
+
+    suspend fun getTareasRemote(gemaId: Int): Resource<List<TareaGema>>
+
     fun observeTareas(): Flow<List<TareaGema>>
-    suspend fun getTareasGemaLocal(gemaId: Int, dia: String?): List<TareaGema>
     suspend fun iniciarTareaGema(tareaId: String)
     suspend fun completarTareaGema(tareaId: String)
     //endregion
 
     //region Recompensas
+    suspend fun getRecompensasRemote(gemaId: Int): Resource<List<RecompensaGema>>
+
     fun observeRecompensas(): Flow<List<RecompensaGema>>
     suspend fun canjearRecompensa(recompensaId: String, gemaId: Int)
     //endregion
 
-    suspend fun getZoneInfo(gemaId: Int, zoneId: Int) : Zona
+    suspend fun getZoneInfo(gemaId: Int, zoneId: Int): Zona
 
-    suspend fun postPendingEstadosTareas(): Resource<BulkUpdateTareasResponse>
-    suspend fun postPendingCanjearRecompensas(): Resource<Unit>
+    suspend fun postPendingEstadosTareas(gemaId: Int): Resource<BulkUpdateTareasResponse>
+    suspend fun postPendingCanjearRecompensas(gemaId: Int): Resource<Unit>
 
 }

@@ -4,6 +4,8 @@ import com.squareup.moshi.Json
 
 data class BulkRecompensasRequest(
     @Json(name = "mentorId") val mentorId: Int,
+
+    @Json(name = "zoneId") val zoneId: Int,
     @Json(name = "recompensas") val recompensas: List<RecompensaOperationDto>
 )
 

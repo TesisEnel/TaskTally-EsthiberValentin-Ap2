@@ -132,7 +132,6 @@ class RecompensaViewModel @Inject constructor(
                 descripcion = st.descripcion.trim(),
                 precio = st.precio.toInt(),
                 nombreImgVector = st.imgVector,
-                createdBy = mentorId,
                 isPendingCreate = true
             )
 
@@ -153,14 +152,20 @@ class RecompensaViewModel @Inject constructor(
 
     private suspend fun updateRecompensa(mentorId: Int, st: RecompensaUiState) {
         try {
-            val recompensa = RecompensaMentor(
-                recompensaId = st.recompensaId!!,
+
+            val existingRecompensa = getRecompensaByIdLocalUseCase(st.recompensaId!!)
+            if (existingRecompensa == null) {
+                _state.update { it.copy(isLoading = false, error = "No se encontró la recompensa para actualizar") }
+                return
+            }
+
+            val recompensa = existingRecompensa.copy(
                 titulo = st.titulo.trim(),
                 descripcion = st.descripcion.trim(),
                 precio = st.precio.toInt(),
                 nombreImgVector = st.imgVector,
-                createdBy = mentorId,
-                isPendingUpdate = true
+                isPendingUpdate = true,
+                isPendingCreate = false
             )
 
             updateRecompensaMentorUseCase(recompensa)

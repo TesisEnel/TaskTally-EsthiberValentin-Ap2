@@ -6,6 +6,6 @@ import javax.inject.Inject
 class ObserveTareasByMentorIdLocalUseCase @Inject constructor(
     private val repo: MentorRepository
 )  {
-    operator fun invoke(mentorId: Int) = repo.observeTareasByMentor(mentorId)
+    operator fun invoke(mentorId: Int) = repo.observeTareas()
 }
 
