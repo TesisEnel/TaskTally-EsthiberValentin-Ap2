@@ -13,8 +13,8 @@ interface GemaRepository {
     suspend fun getTareasRemote(gemaId: Int): Resource<List<TareaGema>>
 
     fun observeTareas(): Flow<List<TareaGema>>
-    suspend fun iniciarTareaGema(tareaId: String)
-    suspend fun completarTareaGema(tareaId: String)
+    suspend fun iniciarTareaGema(gemaId: Int, tareaId: String)
+    suspend fun completarTareaGema(gemaId: Int, tareaId: String)
     //endregion
 
     //region Recompensas

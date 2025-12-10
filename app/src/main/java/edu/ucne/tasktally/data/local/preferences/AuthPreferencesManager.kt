@@ -33,6 +33,8 @@ class AuthPreferencesManager @Inject constructor(
         private val MENTOR_ID_KEY = intPreferencesKey("mentor_id")
         private val GEMA_ID_KEY = intPreferencesKey("gema_id")
         private val ZONE_ID_KEY = intPreferencesKey("zone_id")
+        private val PUNTOS_DISPONIBLES_KEY = intPreferencesKey("puntos_disponibles")
+        private val PUNTOS_GASTADOS_KEY = intPreferencesKey("puntos_gastados")
     }
 
     suspend fun saveAuthData(
@@ -45,7 +47,9 @@ class AuthPreferencesManager @Inject constructor(
         role: String? = null,
         mentorId: Int? = null,
         gemaId: Int? = null,
-        zoneId: Int? = null
+        zoneId: Int? = null,
+        puntosDisponibles: Int? = null,
+        puntosGastados: Int? = null
     ) {
         dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN_KEY] = accessToken
@@ -59,6 +63,8 @@ class AuthPreferencesManager @Inject constructor(
             if (mentorId != null) preferences[MENTOR_ID_KEY] = mentorId
             if (gemaId != null) preferences[GEMA_ID_KEY] = gemaId
             if (zoneId != null) preferences[ZONE_ID_KEY] = zoneId
+            if (puntosDisponibles != null) preferences[PUNTOS_DISPONIBLES_KEY] = puntosDisponibles
+            if (puntosGastados != null) preferences[PUNTOS_GASTADOS_KEY] = puntosGastados
         }
     }
 
@@ -122,5 +128,20 @@ class AuthPreferencesManager @Inject constructor(
 
     val zoneId: Flow<Int?> = dataStore.data.map { preferences ->
         preferences[ZONE_ID_KEY]
+    }
+
+    val puntosDisponibles: Flow<Int?> = dataStore.data.map { preferences ->
+        preferences[PUNTOS_DISPONIBLES_KEY]
+    }
+
+    val puntosGastados: Flow<Int?> = dataStore.data.map { preferences ->
+        preferences[PUNTOS_GASTADOS_KEY]
+    }
+
+    suspend fun updatePuntos(puntosDisponibles: Int, puntosGastados: Int) {
+        dataStore.edit { preferences ->
+            preferences[PUNTOS_DISPONIBLES_KEY] = puntosDisponibles
+            preferences[PUNTOS_GASTADOS_KEY] = puntosGastados
+        }
     }
 }

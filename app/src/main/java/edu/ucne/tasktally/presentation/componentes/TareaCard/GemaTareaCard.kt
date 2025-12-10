@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -95,6 +94,18 @@ fun GemaTareaCard(
                 ) {
                     Text(
                         text = "${tarea.puntos} puntos",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                    )
+                }
+                Surface(
+                    color = Color.Black.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(6.dp)
+                ) {
+                    Text(
+                        text = " ✨ ${tarea.gemaCompletoNombre}",
                         color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
@@ -272,9 +283,9 @@ fun GemaTareaCardPreview() {
                 tarea = TareaGema(
                     tareaId = "1",
                     titulo = "Arreglar la habitación",
-                    descripcion = "Organizar y limpiar toda la habitación",
                     estado = "pendiente",
                     puntos = 60,
+                    descripcion = "Organizar y limpiar toda la habitación",
                     nombreImgVector = "img0_yellow_tree"
                 )
             )
@@ -284,9 +295,9 @@ fun GemaTareaCardPreview() {
                 tarea = TareaGema(
                     tareaId = "2",
                     titulo = "Hacer la tarea de matemáticas",
-                    descripcion = "Completar ejercicios del capítulo 5",
                     estado = "iniciada",
                     puntos = 45,
+                    descripcion = "Completar ejercicios del capítulo 5",
                     nombreImgVector = "img25_notebook"
                 )
             )
@@ -296,9 +307,9 @@ fun GemaTareaCardPreview() {
                 tarea = TareaGema(
                     tareaId = "3",
                     titulo = "Lavar los platos",
-                    descripcion = "Lavar todos los platos del desayuno",
                     estado = "completada",
                     puntos = 30,
+                    descripcion = "Lavar todos los platos del desayuno",
                     nombreImgVector = "img16_dishes"
                 )
             )

@@ -23,6 +23,9 @@ interface GemaDao {
     @Query("UPDATE tareas_gema SET isPendingUpdate = 1, estado = 'completada' WHERE tareaId = :id AND isPendingDelete = 0")
     suspend fun completarTarea(id: String)
 
+    @Query("UPDATE tareas_gema SET puntos = puntos + :puntos WHERE tareaId = :id")
+    suspend fun darPuntos(id: String, puntos: Int)
+
     @Upsert
     suspend fun upsertTarea(tarea: TareaGemaEntity)
 

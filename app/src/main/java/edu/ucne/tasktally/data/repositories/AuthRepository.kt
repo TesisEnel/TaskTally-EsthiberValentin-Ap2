@@ -31,7 +31,10 @@ class AuthRepository @Inject constructor(
                         role = loginResponse.user.role,
                         mentorId = loginResponse.user.mentorId,
                         gemaId = loginResponse.user.gemaId,
-                        zoneId = loginResponse.user.zoneId
+                        zoneId = loginResponse.user.zoneId,
+
+                        puntosDisponibles = loginResponse.user.puntosDisponibles,
+                        puntosGastados = loginResponse.user.puntosGastados
                     )
                     Resource.Success(loginResponse)
                 } else {
@@ -124,8 +127,14 @@ class AuthRepository @Inject constructor(
                 authPreferencesManager.zoneId
             ) { role, mentorId, gemaId, zoneId ->
                 listOf(role, mentorId, gemaId, zoneId)
+            },
+            combine(
+                authPreferencesManager.puntosDisponibles,
+                authPreferencesManager.puntosGastados
+            ) { puntosDisponibles, puntosGastados ->
+                listOf(puntosDisponibles, puntosGastados)
             }
-        ) { userBasic, userRole ->
+        ) { userBasic, userRole, puntos ->
             UserData(
                 userId = userBasic.first,
                 username = userBasic.second,
@@ -133,7 +142,10 @@ class AuthRepository @Inject constructor(
                 role = userRole[0] as String?,
                 mentorId = userRole[1] as Int?,
                 gemaId = userRole[2] as Int?,
-                zoneId = userRole[3] as Int?
+                zoneId = userRole[3] as Int?,
+                puntosTotales = null,
+                puntosDisponibles = puntos[0] as Int?,
+                puntosGastados = puntos[1] as Int?
             )
         }
     }
@@ -172,5 +184,9 @@ data class UserData(
     val role: String?,
     val mentorId: Int?,
     val gemaId: Int?,
-    val zoneId: Int?
+    val zoneId: Int?,
+
+    val puntosTotales: Int?,
+    val puntosDisponibles: Int?,
+    val puntosGastados: Int?
 )

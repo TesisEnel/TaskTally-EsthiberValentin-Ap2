@@ -1,13 +1,13 @@
 package edu.ucne.tasktally.domain.usecases.gema.tienda
 
-import edu.ucne.tasktally.domain.repository.GemaRepository
+import edu.ucne.tasktally.data.local.preferences.AuthPreferencesManager
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class GetPuntosGemaUseCase @Inject constructor(
-    private val repo: GemaRepository
+    private val authPreferencesManager: AuthPreferencesManager
 ) {
     suspend operator fun invoke(gemaId: Int, zoneId: Int): Int {
-        val zona = repo.getZoneInfo(gemaId, zoneId)
-        return zona.gemas.find { it.remoteId == gemaId }?.puntosActuales ?: 0
+        return authPreferencesManager.puntosDisponibles.first() ?: 0
     }
 }
