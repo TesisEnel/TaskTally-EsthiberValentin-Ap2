@@ -102,3 +102,4 @@ Usuario hijo/hija encargado de completar tareas y canjear puntos por recompensas
 ## 📌 Notas Finales
 
 TaskTally está diseñado para fomentar la responsabilidad y la colaboración familiar mediante un sistema de recompensas que motiva a los hijos a completar sus tareas diarias.
+
